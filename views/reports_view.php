@@ -28,7 +28,7 @@
 			</ul> -->
 			<!-- <div class="tab-content"> -->
 				<!-- preset -->
-				<!-- div class="tab-pane active" id="tabs1-preset">
+				<!-- <div class="tab-pane active" id="tabs1-preset">
 					<table>
 						<tr>
 							<td style="height:330px;width:50%;vertical-align: top;" rowspan="1">
@@ -69,13 +69,12 @@
 											<span class="input-group-addon" style="width: 40%;"><b style="color:red;">*</b> Criteria :</span>
 											<select  class="textfield form-control" id="criteria" name="the_criteria">
 							                   	<option value="-1">*Select criteria to use*</option>
-							                   	<!-- <option value="5">Show All Data</option> -->
-							                   	<?php $user_filter = $this->session -> userdata("user_filter"); if($partner_option==3){if(!$menuless){ if($user_filter){ foreach ($user_filter as $filter) {echo '<option value="3">Show All Data For '.$filter["user_filter_name"].'</option>'; } } } }else { } ?>
+							                   	<?php echo $partner_option; ?>
 							                   	<option value="1">Show By Device</option>
 							                   	<option value="2">Show By Facility</option>
 							                   	<?php if($combo_box_county_option!="")
 									                   	{
-									                   		echo "<option value='4'>Show My County</option>";
+									                   		echo $combo_box_county_option;
 									                   	}
 									                   	else
 									                   	{
@@ -91,7 +90,7 @@
 							                   	<option value="1"> Tests Report Only</option>
 							                   	<option value="3"> Tests < 350 Report </option>
 							                   	<option value="2"> Errors Report Only</option>
-							                   	<!-- <option value="4"> Errors Report by % </option>	 -->							                   	                  												                   	                  					
+							                   	<option value="4"> Errors Report by % </option>								                   	                  												                   	                  					
 							                </select>
 						                </div>
 						                <div class="input-group" style="width: 100%;padding:4px;" id="dev">
