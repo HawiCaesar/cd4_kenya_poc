@@ -180,10 +180,10 @@ class reports extends MY_Controller {
 					set a default start date and end date for the month selected
 
 				*/
-				$month_from_date="-01";
-				$from_month=$YearM."-".$monthly.$month_from_date;
+				$from_month=$YearM."-".$monthly.'-01';
 			 	//$monthly++;
-			 	$end_month=date('Y-m-d',mktime(0,0,0,$monthly,31,$YearM));
+				$num_days=cal_days_in_month(CAL_GREGORIAN, $monthly,$YearM);
+			 	$end_month=$YearM.'-'.$monthly.'-'.$num_days;
 		 	
 			 	if($report_type==3)// Tests < 350 
 			 	{
@@ -672,11 +672,11 @@ class reports extends MY_Controller {
 				$PDF_document.='<table border="1" align="center" width="680">';
 				$PDF_document.='<tr>';
 				$PDF_document.='<th bgcolor="#006600" style="color:#FFF;">Successful Tests Done</th>';
-				$PDF_document.='<th bgcolor="#990000" style="color:#FFF;">Tests < 350</th>';
-				$PDF_document.='<th bgcolor="#006600" style="color:#FFF;">Tests >= 350</th>';
+				$PDF_document.='<th bgcolor="#eb9316" style="color:#FFF;">Tests < 500</th>';
+				$PDF_document.='<th bgcolor="#006600" style="color:#FFF;">Tests >= 500</th>';
 				$PDF_document.='<th bgcolor="#000066" style="color:#FFF;">Total Number of Tests</th>';
 				$PDF_document.'</tr>';
-				$PDF_document.='<tr><td align="center">'.$pdf_data['tests_done'].'</td>';
+				$PDF_document.='<tr><td align="center">'.$pdf_data['valid_tests'].'</td>';
 				$PDF_document.='<td align="center">'.$pdf_data['less_than350'].'</td>';
 				$PDF_document.='<td align="center">'.$pdf_data['greater_equal_to350'].'</td>';
 				$PDF_document.='<td align="center">'.$pdf_data['count'].'</td></tr>';
@@ -699,7 +699,7 @@ class reports extends MY_Controller {
 			{
 				$PDF_document.='<table width="480" border="1" align="center">';
 				$PDF_document.='<tr>';
-				$PDF_document.='<th bgcolor="#990000" style="color:#FFF;"># Tests < 350</th>';
+				$PDF_document.='<th bgcolor="#eb9316" style="color:#FFF;"># Tests < 500</th>';
 				$PDF_document.='<th bgcolor="#000066" style="color:#FFF;">Total Number of Tests</th>';
 				$PDF_document.='</tr>';
 				$PDF_document.='<tr><td align="center">'.$pdf_data['less_than350'].'</td>';
@@ -711,12 +711,12 @@ class reports extends MY_Controller {
 				$PDF_document.='<table width="680" border="1" align="center">';
 				$PDF_document.='<tr>';
 				$PDF_document.='<th bgcolor="#006600" style="color:#FFF;">Successful Tests Done</th>';
-				$PDF_document.='<th bgcolor="#990000" style="color:#FFF;">Tests < 350</th>';
-				$PDF_document.='<th bgcolor="#006600" style="color:#FFF;">Tests >= 350</th>';
+				$PDF_document.='<th bgcolor="#eb9316" style="color:#FFF;">Tests < 500</th>';
+				$PDF_document.='<th bgcolor="#006600" style="color:#FFF;">Tests >= 500</th>';
 				$PDF_document.='<th bgcolor="#CC0000" style="color:#FFF;">Tests With Errors</th>';
 				$PDF_document.='<th bgcolor="#000066" style="color:#FFF;">Total Number of Tests</th>';
 				$PDF_document.='</tr>';
-				$PDF_document.='<tr><td align="center">'.$pdf_data['tests_done'].'</td>';
+				$PDF_document.='<tr><td align="center">'.$pdf_data['valid_tests'].'</td>';
 				$PDF_document.='<td align="center">'.$pdf_data['less_than350'].'</td>';
 				$PDF_document.='<td align="center">'.$pdf_data['greater_equal_to350'].'</td>';
 				$PDF_document.='<td align="center">'.$pdf_data['errors'].'</td>';
@@ -725,16 +725,28 @@ class reports extends MY_Controller {
 
 			}
 		
-			$PDF_document.='<br />'.$pdf_data['table']; //place details in table
+			
 
-			// echo $PDF_document;
-			// //print_r($pdf_data);
-			// die;
 			$this->load->library('mpdf/mpdf');// Load the mpdf library
 
 			$mpdf=new mPDF();//initialize
 
-			$mpdf->AddPage('L', // L - landscape, P - portrait
+			ini_set("memory_limit",'-1');
+
+			$mpdf->SetWatermarkText('NASCOP');//Water Mark Text
+			$mpdf->watermark_size="0.2";
+			$mpdf->showWatermarkText = true;//Water Mark set value
+			$mpdf->simpleTables = true;
+
+			if($all_data==5) //only for all data reporting
+			{
+				$mpdf->WriteHTML($PDF_document);//place content in pdf
+			}
+			else
+			{	
+				$PDF_document.='<br />'.$pdf_data['table']; //place details in table
+
+				$mpdf->AddPage('L', // L - landscape, P - portrait
 						            '', '', '', '',
 						            30, // margin_left
 						            30, // margin right
@@ -743,14 +755,10 @@ class reports extends MY_Controller {
 						            18, // margin header
 						            12); // margin footer
 
-			$mpdf->SetWatermarkText('NASCOP');//Water Mark Text
-			$mpdf->watermark_size="0.2";
-			$mpdf->showWatermarkText = true;//Water Mark set value
-
-			$mpdf->simpleTables = true;
-			$mpdf->WriteHTML($PDF_document);//place content in pdf
-
-			$mpdf->Output($filename,'D'); //bring up "Save as Dialog" box
+				$mpdf->WriteHTML($PDF_document);//place content in pdf		
+			}
+			//$mpdf->Output($filename,'D'); //bring up "Save as Dialog" box
+			$mpdf->Output($filename,'I');
 
 			
 
@@ -767,10 +775,10 @@ class reports extends MY_Controller {
 				$filename="";
 				if($YearM!="" && $monthly!="")// Month and Year chosen
 				{
-					$month_from_date="-01";
-					$from_month=$YearM."-".$monthly.$month_from_date;
-				 	$monthly+1;
-				 	$end_month=date('Y-m-d',mktime(0,0,0,$monthly,31,$YearM));
+					$from_month=$YearM."-".$monthly.'-01';
+				 	//$monthly+1;
+				 	$num_days=cal_days_in_month(CAL_GREGORIAN, $monthly,$YearM);
+		 			$end_month=$YearM.'-'.$monthly.'-'.$num_days;
 
 				 	$month_name=$this->reports_model->GetMonthName($monthly);
 
@@ -1073,8 +1081,8 @@ class reports extends MY_Controller {
 				}
 
 				$the_file=$this->config->item('server_root').'assets/excel_files/'.$filename;
-				$this->excel->getSecurity()->setLockWindows(true);
-				$this->excel->getSecurity()->setLockStructure(true);
+				// $this->excel->getSecurity()->setLockWindows(true);
+				// $this->excel->getSecurity()->setLockStructure(true);
 				$obWrite=PHPExcel_IOFactory::createWriter($this->excel,'Excel2007');
 
 				// header('Content-Type: application/vnd.ms-excel');// *can use ms-excel2007
@@ -1086,12 +1094,17 @@ class reports extends MY_Controller {
 				if(file_exists($the_file))
 				{
 					redirect($the_file);
-					delete_files($this->config->item('server_root').'assets/excel_files/');//delete the files
+					//delete_files($this->config->item('server_root').'assets/excel_files/');//delete the files
+					$files = scandir($dir);
+					foreach ($files as $object) 
+					{
+						if ($object != "." && $object != "..") {
+							unlink($dir . "/" . $object);
+						}
+					}
 					
 				}
 				
-
-
 			}
 			/*..................................... Format: Excel is selected End ..........................................*/
 
@@ -1116,7 +1129,7 @@ class reports extends MY_Controller {
 				$series_errors['color']='#FF0000';
 
 				$series_lessthan350 = array();
-				$series_lessthan350['name']='Tests < 350';
+				$series_lessthan350['name']='Tests < 500';
 				$series_lessthan350['color']='#990000';
 
 				$series_percentage_errors= array();
@@ -1134,9 +1147,10 @@ class reports extends MY_Controller {
 					$data['customized']=0;
 
 					$month_from_date="-01";
-					$from_month=$YearM."-".$monthly.$month_from_date;
-				 	//$monthly++;
-				 	$end_month=date('Y-m-d',mktime(0,0,0,$monthly,31,$YearM));
+					$from_month=$YearM."-".$monthly.'-01';
+
+				 	$num_days=cal_days_in_month(CAL_GREGORIAN, $monthly,$YearM);
+		 			$end_month=$YearM.'-'.$monthly.'-'.$num_days;
 
 				 	$test_results=$this->reports_charts_model->month_graph_view($YearM,$monthly,$Facility,$Device,$all_data,$county_name_value,$report_type);
 
@@ -1278,7 +1292,7 @@ class reports extends MY_Controller {
 			 		}
 			 		
 			 	}
-			 	else if($report_type==3)//Tests < 350
+			 	else if($report_type==3)//Tests < 500
 			 	{
 			 		$data['percentage_flag']=0;
 			 		$series_tests_and_errors['data']=$test_results['both_results'];//Fetch
@@ -1287,6 +1301,9 @@ class reports extends MY_Controller {
 
 			 		array_push($result,$series_tests_and_errors);
 		 			array_push($result,$series_lessthan350);
+
+		 			// print_r($result);
+		 			// die;
 
 			 	}
 			 	else if($report_type==4)//Errors By Percentage

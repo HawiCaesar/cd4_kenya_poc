@@ -240,6 +240,11 @@ class charts_model extends MY_Model{
 							          RIGHT JOIN `cd4_test`
 							          ON `pima_test`.`cd4_test_id`=`cd4_test`.`id` 
 							          WHERE `error_id` = 0 
+							          AND `pima_test`.`sample_code`!='NORMAL' 
+						              AND `pima_test`.`sample_code` !='QC NORMAL' 
+						              AND `pima_test`.`sample_code`!='LOW' 
+						              AND `pima_test`.`sample_code` !='QC LOW'
+						              AND  1 
 							          $date_delimiter
 						          AND `cd4_test`.`result_date` between '$from' and '$to'
 						         ) AS `test`, 
@@ -249,6 +254,11 @@ class charts_model extends MY_Model{
 							          RIGHT JOIN `cd4_test`
 							          ON `pima_test`.`cd4_test_id`=`cd4_test`.`id` 
 							          WHERE `error_id` > 0 
+							          AND `pima_test`.`sample_code`!='NORMAL' 
+						              AND `pima_test`.`sample_code` !='QC NORMAL' 
+						              AND `pima_test`.`sample_code`!='LOW' 
+						              AND `pima_test`.`sample_code` !='QC LOW'
+						              AND  1 
 							          $date_delimiter
 							          AND `cd4_test`.`result_date` between '$from' and '$to'         
 						        ) AS `error`
@@ -307,7 +317,7 @@ class charts_model extends MY_Model{
 
 		array_push($data, array("seriesname"	=>	"Actual Reporting Pima Devices ",
 								"color"			=>	"FF0000",
-								"data"			=>	$this->yearly_pima_errors_trend($year)));
+								"data"			=>	$this->yearly_pima_actualreporting_trend($year)));
 
 		$json_dataset_pima	=	array(
 									"dataset" =>	$data										
@@ -330,16 +340,39 @@ class charts_model extends MY_Model{
 			$date_delimiter	=	" WHERE `cd4_test`.`result_date` between '$from' and '$to' ";
 		}
 
+        $user_delimiter ="";
+		
+		
+		$user_group  = $this->session->userdata("user_group_id");
+		$user_filter= $this->session->userdata("user_filter");
+		
+		if($user_group==3 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+			$user_delimiter 	= 	" AND `partner_id` ='".$user_filter[0]['user_filter_id']."' ";
+		}elseif($user_group==6 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+			$user_delimiter 	= 	" AND `facility_id` ='".$user_filter[0]['user_filter_id']."' ";
+		}elseif($user_group==8 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+			$user_delimiter 	= 	" AND `district_id` ='".$user_filter[0]['user_filter_id']."' ";
+		}elseif($user_group==9 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+			$user_delimiter 	= 	" AND `region_id` ='".$user_filter[0]['user_filter_id']."' ";
+		}
+       
 		$sql =	"SELECT 
 						`pima_error`.`error_code`, 
 						`pima_error`.`error_detail`, 
 						COUNT(`pima_test`.`error_id`) as `total` 
 					FROM `pima_error` 
 					LEFT JOIN `pima_test` 
-					ON `pima_test`.`error_id`=`pima_error`.`id` 	
+					ON `pima_test`.`error_id`=`pima_error`.`id`
+					AND `pima_test`.`sample_code`!='NORMAL' 
+						AND `pima_test`.`sample_code` !='QC NORMAL' 
+						AND `pima_test`.`sample_code`!='LOW' 
+						AND `pima_test`.`sample_code` !='QC LOW'
+						AND  1 	
 						LEFT JOIN `cd4_test`
-						ON `pima_test`.`cd4_test_id`=`cd4_test`.`id` 
-						$date_delimiter 
+						ON `pima_test`.`cd4_test_id`=`cd4_test`.`id`
+						  
+						$date_delimiter
+						$user_delimiter 
 					GROUP BY `error_code`";
 		//echo $sql;
 		$errors_reporteds_assoc 	=	R::getAll($sql);
@@ -598,7 +631,7 @@ class charts_model extends MY_Model{
 			if($added['yearmonth']==($year-1)."-".$a){
 				$devices_added_array[0]['cumulative'] =$added['cumulative'];
 			}else{
-				$devices_added_array[0]['cumulative'] =0;
+				$devices_added_array[0]['cumulative'] =1;
 			}
 			$a++;
 		}			
@@ -654,7 +687,7 @@ class charts_model extends MY_Model{
 		
 		return $data;
 	}
-private function actual_reporting_pima_array($year){
+ private function actual_reporting_pima_array($year){
 		$sql_added	=	"SELECT
 								`t1`.`date_added` as `rank_date`,
 								`t1`.`yearmonth`,
@@ -785,17 +818,19 @@ private function actual_reporting_pima_array($year){
 		//USER FILTER
 		//$user_delimiter=$this->get_user_sql_where_delimiter();
 		
-		$user_delimiter 	= 	"";
+		$user_delimiter ="";
+		
+		
 		$user_group  = $this->session->userdata("user_group_id");
 		$user_filter= $this->session->userdata("user_filter");
-
-		if($user_group==3 && sizeof($user_filter)> 0 ){
+		
+		if($user_group==3 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
 			$user_delimiter 	= 	" AND `partner_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==6 && sizeof($user_filter)> 0 ){
+		}elseif($user_group==6 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
 			$user_delimiter 	= 	" AND `facility_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==8 && sizeof($user_filter)> 0 ){
+		}elseif($user_group==8 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
 			$user_delimiter 	= 	" AND `district_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==9 && sizeof($user_filter)> 0 ){
+		}elseif($user_group==9 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
 			$user_delimiter 	= 	" AND `region_id` ='".$user_filter[0]['user_filter_id']."' ";
 		}
 
@@ -808,7 +843,13 @@ private function actual_reporting_pima_array($year){
 					RIGHT JOIN `cd4_test`
 						ON `pima_test`.`cd4_test_id`=`cd4_test`.`id`
 					WHERE `error_id`= 0 
-					AND YEAR(`cd4_test`.`result_date`) = $year 
+					AND YEAR(`cd4_test`.`result_date`) = $year
+					AND `pima_test`.`sample_code`!='NORMAL' 
+					AND `pima_test`.`sample_code` !='QC NORMAL' 
+					AND `pima_test`.`sample_code`!='LOW' 
+					AND `pima_test`.`sample_code` !='QC LOW'
+					AND  1
+					$user_delimiter  
 					GROUP BY `yearmonth`";
 		$tests_assoc	=	R::getAll($sql);
 
@@ -830,6 +871,22 @@ private function actual_reporting_pima_array($year){
 		return $data;
 	}
 	private function yearly_pima_errors_trend($year){
+			
+		$user_delimiter ="";
+		
+		
+		$user_group  = $this->session->userdata("user_group_id");
+		$user_filter= $this->session->userdata("user_filter");
+		
+		if($user_group==3 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+			$user_delimiter 	= 	" AND `partner_id` ='".$user_filter[0]['user_filter_id']."' ";
+		}elseif($user_group==6 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+			$user_delimiter 	= 	" AND `facility_id` ='".$user_filter[0]['user_filter_id']."' ";
+		}elseif($user_group==8 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+			$user_delimiter 	= 	" AND `district_id` ='".$user_filter[0]['user_filter_id']."' ";
+		}elseif($user_group==9 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+			$user_delimiter 	= 	" AND `region_id` ='".$user_filter[0]['user_filter_id']."' ";
+		}
 
 		$sql = "SELECT 
 						CONCAT(YEAR(`cd4_test`.`result_date`),'-',MONTH(`cd4_test`.`result_date`)) AS `yearmonth`, 
@@ -840,7 +897,14 @@ private function actual_reporting_pima_array($year){
 						LEFT JOIN `cd4_test`
 						ON `pima_test`.`cd4_test_id`=`cd4_test`.`id` 
 					WHERE `error_id`> 0 
-					AND YEAR(`cd4_test`.`result_date`) = $year 
+					AND YEAR(`cd4_test`.`result_date`) = $year
+					AND `pima_test`.`sample_code`!='NORMAL' 
+					AND `pima_test`.`sample_code` !='QC NORMAL' 
+					AND `pima_test`.`sample_code`!='LOW' 
+					AND `pima_test`.`sample_code` !='QC LOW'
+					AND  1 
+					$user_delimiter
+					
 					GROUP BY `yearmonth`";
 
 		$errors_assoc	=	R::getAll($sql);
@@ -862,6 +926,45 @@ private function actual_reporting_pima_array($year){
 
 		return $data;
 	}
+	
+	
+	private function yearly_pima_actualreporting_trend($year){
+
+		$sql = "SELECT 						`t1`.`yearmonth` , 
+											COUNT( `t1`.`facility_equipment_id` ) AS `reported_devices` ,
+											`month`
+		
+										FROM (
+										
+										SELECT DISTINCT `facility_equipment_id` , CONCAT(YEAR(`v_tests_details`.`result_date`),'-',MONTH(`v_tests_details`.`result_date`)) AS `yearmonth`,
+										MONTH(`v_tests_details`.`result_date`) AS `month` 
+										FROM `v_tests_details` 
+										WHERE 1 
+										AND YEAR( `result_date` ) = $year
+										) AS `t1` 
+										GROUP BY `t1`.`yearmonth`";
+
+		$tests_assoc	=	R::getAll($sql);
+
+		
+		$tests_array	= array();
+		
+		$data = array();
+		for($i=1;$i<=12;$i++){
+			$tests_array[$i]['month'] =	$this->get_month_name($i);
+			$tests_array[$i]['value'] = 0;
+
+			foreach ($tests_assoc as $test) {
+				if($i==$test['month'] && $test['yearmonth']==$year."-".$i){
+					$tests_array[$i]['value']	=	$test['reported_devices'];
+				}				
+			}
+			array_push($data, array('value'=>$tests_array[$i]['value']));
+		}
+
+		return $data;
+	}
+	
 	private function month_categories(){
 		$cat = array();
 		for($i=1;$i<=12;$i++){

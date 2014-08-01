@@ -148,7 +148,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':F'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['result_date']);
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['date_test']);
 		 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':I'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -368,7 +368,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':G'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('H'.$num.'',$value['result_date']);
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('H'.$num.'',$value['date_test']);
 		 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('H'.$num.'')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('H'.$num.':J'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('H'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -615,7 +615,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':F'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['result_date']);
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['date_test']);
 		 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':I'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -836,7 +836,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':G'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('H'.$num.'',$value['result_date']);
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('H'.$num.'',$value['date_test']);
 		 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('H'.$num.'')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('H'.$num.':J'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('H'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -1084,7 +1084,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':F'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['result_date']);
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['date_test']);
 		 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':I'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -1305,7 +1305,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':G'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('H'.$num.'',$value['result_date']);
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('H'.$num.'',$value['date_test']);
 		 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('H'.$num.'')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('H'.$num.':J'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('H'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -1552,7 +1552,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':F'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['result_date']);
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['date_test']);
 		 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':I'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -1773,7 +1773,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':G'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('H'.$num.'',$value['result_date']);
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('H'.$num.'',$value['date_test']);
 		 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('H'.$num.'')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('H'.$num.':J'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('H'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -2021,7 +2021,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':F'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['result_date']);
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['date_test']);
 		 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':I'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -2242,7 +2242,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':G'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('H'.$num.'',$value['result_date']);
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('H'.$num.'',$value['date_test']);
 		 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('H'.$num.'')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('H'.$num.':J'.$num.'');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('H'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -2525,7 +2525,7 @@ class reports_excel_model extends MY_Model{
 			$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':J'.$num.'');
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['result_date']);
+			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['date_test']);
 	 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getFont()->setSize(12);
 			$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K'.$num.':M'.$num.'');
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -2804,7 +2804,7 @@ class reports_excel_model extends MY_Model{
 			$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':J'.$num.'');
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['result_date']);
+			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['date_test']);
 	 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getFont()->setSize(12);
 			$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K'.$num.':M'.$num.'');
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -3086,7 +3086,7 @@ class reports_excel_model extends MY_Model{
 			$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':J'.$num.'');
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['result_date']);
+			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['date_test']);
 	 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getFont()->setSize(12);
 			$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K'.$num.':M'.$num.'');
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -3368,7 +3368,7 @@ class reports_excel_model extends MY_Model{
 			$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':J'.$num.'');
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['result_date']);
+			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['date_test']);
 	 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getFont()->setSize(12);
 			$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K'.$num.':M'.$num.'');
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -3649,7 +3649,7 @@ class reports_excel_model extends MY_Model{
 			$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':J'.$num.'');
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['result_date']);
+			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['date_test']);
 	 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getFont()->setSize(12);
 			$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K'.$num.':M'.$num.'');
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -3798,7 +3798,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K2:M2');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 350');
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 500');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setBold(true);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('N2:O2');
@@ -3818,7 +3818,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G2:I2');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('J2','CD4 count < 350');
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('J2','CD4 count < 500');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('J2')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('J2')->getFont()->setBold(true);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('J2:K2');
@@ -3867,7 +3867,7 @@ class reports_excel_model extends MY_Model{
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':F'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['result_date']);
+						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['date_test']);
 				 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getFont()->setSize(12);
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':I'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -3922,7 +3922,7 @@ class reports_excel_model extends MY_Model{
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':F'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['result_date']);
+						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['date_test']);
 				 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getFont()->setSize(12);
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':I'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -3992,7 +3992,7 @@ class reports_excel_model extends MY_Model{
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':J'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['result_date']);
+						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['date_test']);
 				 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getFont()->setSize(12);
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K'.$num.':M'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -4059,7 +4059,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K2:M2');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 350');
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 500');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setBold(true);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('N2:O2');
@@ -4079,7 +4079,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G2:I2');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('J2','CD4 count < 350');
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('J2','CD4 count < 500');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('J2')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('J2')->getFont()->setBold(true);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('J2:K2');
@@ -4128,7 +4128,7 @@ class reports_excel_model extends MY_Model{
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':F'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['result_date']);
+						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['date_test']);
 				 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getFont()->setSize(12);
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':I'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -4183,7 +4183,7 @@ class reports_excel_model extends MY_Model{
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':F'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['result_date']);
+						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['date_test']);
 				 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getFont()->setSize(12);
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':I'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -4253,7 +4253,7 @@ class reports_excel_model extends MY_Model{
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':J'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['result_date']);
+						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['date_test']);
 				 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getFont()->setSize(12);
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K'.$num.':M'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -4321,7 +4321,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K2:M2');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 350');
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 500');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setBold(true);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('N2:O2');
@@ -4341,7 +4341,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G2:I2');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('J2','CD4 count < 350');
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('J2','CD4 count < 500');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('J2')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('J2')->getFont()->setBold(true);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('J2:K2');
@@ -4391,7 +4391,7 @@ class reports_excel_model extends MY_Model{
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':F'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['result_date']);
+						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['date_test']);
 				 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getFont()->setSize(12);
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':I'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -4446,7 +4446,7 @@ class reports_excel_model extends MY_Model{
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':F'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['result_date']);
+						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['date_test']);
 				 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getFont()->setSize(12);
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':I'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -4518,7 +4518,7 @@ class reports_excel_model extends MY_Model{
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':J'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['result_date']);
+						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['date_test']);
 				 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getFont()->setSize(12);
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K'.$num.':M'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -4586,7 +4586,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K2:M2');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 350');
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 500');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setBold(true);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('N2:O2');
@@ -4606,7 +4606,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G2:I2');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('J2','CD4 count < 350');
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('J2','CD4 count < 500');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('J2')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('J2')->getFont()->setBold(true);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('J2:K2');
@@ -4655,7 +4655,7 @@ class reports_excel_model extends MY_Model{
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':F'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['result_date']);
+						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['date_test']);
 				 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getFont()->setSize(12);
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':I'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -4710,7 +4710,7 @@ class reports_excel_model extends MY_Model{
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':F'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['result_date']);
+						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['date_test']);
 				 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getFont()->setSize(12);
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':I'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -4781,7 +4781,7 @@ class reports_excel_model extends MY_Model{
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':J'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['result_date']);
+						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['date_test']);
 				 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getFont()->setSize(12);
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K'.$num.':M'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -4849,7 +4849,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K2:M2');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 350');
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 500');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setBold(true);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('N2:O2');
@@ -4869,7 +4869,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G2:I2');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('J2','CD4 count < 350');
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('J2','CD4 count < 500');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('J2')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('J2')->getFont()->setBold(true);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('J2:K2');
@@ -4918,7 +4918,7 @@ class reports_excel_model extends MY_Model{
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':F'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['result_date']);
+						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['date_test']);
 				 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getFont()->setSize(12);
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':I'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -4973,7 +4973,7 @@ class reports_excel_model extends MY_Model{
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('D'.$num.':F'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('D'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['result_date']);
+						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('G'.$num.'',$value['date_test']);
 				 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getFont()->setSize(12);
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':I'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -5043,7 +5043,7 @@ class reports_excel_model extends MY_Model{
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('G'.$num.':J'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('G'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['result_date']);
+						$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('K'.$num.'',$value['date_test']);
 				 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getFont()->setSize(12);
 						$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K'.$num.':M'.$num.'');
 						$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K'.$num.'')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -5074,75 +5074,68 @@ class reports_excel_model extends MY_Model{
 
 			$sql = $this->config->item('preset_sql');
 
-			$tests_sql= $sql["pima_test_details"];
+			$tests_sql= $sql["pima_excel_tests_details"];
 
 			$date_delimiter	 	=	"";
 			$delimiter="";
-			$less_than350=" AND `tst_dt`.`cd4_count` < 350 ";
 
 			if($facility!="")
 			{
 				if($report_type==1)
 				{
-					$criteria =" AND  `facility`='".$facility."'";
-					$report_type= " AND `tst_dt`.`valid`='1'";
+					$criteria =" AND  `f`.`name` ='".$facility."'";
+					$report_type= " AND `tst`.`valid` ='1'";
 				}
 				else if($report_type==2)
 				{
-					$criteria =" AND  `facility`='".$facility."'";
-					$report_type= " AND `tst_dt`.`valid`='0'";
+					$criteria =" AND  `f`.`name` ='".$facility."'";
+					$report_type= " AND `tst`.`valid` ='0'";
 				}
 				else if($report_type==0)
 				{
-					$criteria =" AND  `facility`='".$facility."'";
+					$criteria =" AND  `f`.`name` ='".$facility."'";
 					$report_type= " ";
 				}
 				else if($report_type==3)
 				{
-					$criteria =" AND  `facility`='".$facility."'".$less_than350;
-					$report_type= " AND `tst_dt`.`valid`='1' ";
+					$criteria =" AND  `f`.`name` ='".$facility."' AND `tst`.`cd4_count` < 500 ";
+					$report_type= " AND `tst`.`valid` ='1' ";
 				}
 					
 			}
 
 			if($device!="")
 			{	
-				$facility_equipment=$this->get_equipment_id($device);
-
-				foreach ($facility_equipment as $value) 
-				{	
-					
-					$criteria=" AND `tst_dt`.`facility_equipment_id`='".$value['facility_equipment_id']."' ";
-				}
+				$criteria=" AND `fp`.`serial_num` ='".$device."' ";
 
 				if($report_type==1)
 				{
-					$report_type= " AND `tst_dt`.`valid`='1'";
+					$report_type= " AND `tst`.`valid` ='1'";
 				}
 				else if($report_type==2)
 				{	
-					$report_type= " AND `tst_dt`.`valid`='0'";
+					$report_type= " AND `tst`.`valid` ='0'";
 				}
 				else if($report_type==0)
 				{
-
 					$report_type= " ";
 				}
 				else if($report_type==3)
 				{
-					$criteria.=$less_than350;
-					$report_type="  AND `tst_dt`.`valid`='1' ";
+					$criteria.=' AND `tst`.`cd4_count` < 500 ';
+					$report_type="  AND `tst`.`valid` ='1' ";
 				}
 					
 			}
 
-			$date_delimiter	=	" AND `pim_tst`.`result_date` between '$from' and '$to' ";
+			$date_delimiter	=	" AND MONTH(`tst`.`result_date`) BETWEEN '".date('m',strtotime($from))."' AND '".date('m',strtotime($to))."'
+								  AND YEAR(`tst`.`result_date`) BETWEEN '".date('Y',strtotime($from))."' AND '".date('Y',strtotime($to))."' ";
 			
 			$test_details=R::getAll($tests_sql.$criteria.$date_delimiter.$report_type);
 
-			/*echo $tests_sql.$criteria.$date_delimiter.$report_type;
+			// echo $tests_sql.$criteria.$date_delimiter.$report_type;
 	
-			die;*/
+			// die;
 
 			return $test_details;
 
@@ -5154,37 +5147,36 @@ class reports_excel_model extends MY_Model{
 
 			$sql = $this->config->item('preset_sql');
 
-			$tests_sql= $sql["pima_test_details"];
+			$tests_sql= $sql["pima_excel_tests_details"];
 
 			$date_delimiter	 	=	"";
 			$delimiter="";
 			$user_delimiter = "";
-			$less_than350=" AND `tst_dt`.`cd4_count` < 350 ";
 
 			$user_group_id = $this->session->userdata("user_group_id");
 
 			$user_filter_used=$this->session->userdata("user_filter_used");
 
 			if($user_group_id == 3){
-				$user_delimiter = " AND `partner_id` = '".$user_filter_used."' ";
+				$user_delimiter = " AND `p`.`ID` = '".$user_filter_used."' ";
 			}elseif ($user_group_id == 9) {
-				$user_delimiter = " AND `region_id` = '".$user_filter_used."' ";
+				$user_delimiter = " AND `r`.`id` = '".$user_filter_used."' ";
 			}elseif ($user_group_id == 8) {
-				$user_delimiter = " AND `district_id` = '".$user_filter_used."' ";
+				$user_delimiter = " AND `d`.`id` = '".$user_filter_used."' ";
 			}elseif ($user_group_id == 6) {
-				$user_delimiter = " AND `facility_id` = '".$user_filter_used."' ";
+				$user_delimiter = " AND `f`.`id` = '".$user_filter_used."' ";
 			}
 
-			if($all==5)
+			if($all==5)// get all the data
 			{
 				if($report_type==1)
 				{
-					$report_type= " AND `tst_dt`.`valid`='1'";
+					$report_type= " AND `tst`.`valid`='1'";
 					$user_delimiter= " ";
 				}
 				else if($report_type==2)
 				{	
-					$report_type= " AND `tst_dt`.`valid`='0'";
+					$report_type= " AND `tst`.`valid`='0'";
 					$user_delimiter= " ";
 				}
 				else if($report_type==0)
@@ -5194,21 +5186,21 @@ class reports_excel_model extends MY_Model{
 				}
 				else if($report_type==3)
 				{
-					$delimiter=$less_than350;
-					$report_type="  AND `tst_dt`.`valid`='1' ";
+					$delimiter=" AND `tst`.`cd4_count` < 500 ";
+					$report_type="  AND `tst`.`valid`='1' ";
 					$user_delimiter= " ";
 				}
 			}
 
-			else if($all==4)
+			else if($all==4) //get data by county
 			{
 				if($report_type==1)
 				{
-					$report_type= " AND `tst_dt`.`valid`='1'";
+					$report_type= " AND `tst`.`valid`='1'";
 				}
 				else if($report_type==2)
 				{	
-					$report_type= " AND `tst_dt`.`valid`='0'";
+					$report_type= " AND `tst`.`valid`='0'";
 				}
 				else if($report_type==0)
 				{
@@ -5217,19 +5209,19 @@ class reports_excel_model extends MY_Model{
 				}
 				else if($report_type==3)
 				{
-					$delimiter=$less_than350;
-					$report_type="  AND `tst_dt`.`valid`='1' ";
+					$delimiter=" AND `tst`.`cd4_count` < 500 ";
+					$report_type=" AND `tst`.`valid`='1' ";
 				}	
 			}
 			else if($all==3)
 			{
 				if($report_type==1)
 				{
-					$report_type= " AND `tst_dt`.`valid`='1'";
+					$report_type= " AND `tst`.`valid`='1'";
 				}
 				else if($report_type==2)
 				{	
-					$report_type= " AND `tst_dt`.`valid`='0'";
+					$report_type= " AND `tst`.`valid`='0'";
 				}
 				else if($report_type==0)
 				{
@@ -5237,12 +5229,13 @@ class reports_excel_model extends MY_Model{
 				}
 				else if($report_type==3)
 				{
-					$delimiter=$less_than350;
-					$report_type="  AND `tst_dt`.`valid`='1' ";
+					$delimiter=" AND `tst`.`cd4_count` < 500 ";
+					$report_type="  AND `tst`.`valid`='1' ";
 				}
 			}
 
-			$date_delimiter	=	" AND `pim_tst`.`result_date` between '".$from."' and '".$to."' ";
+			$date_delimiter	=	" AND MONTH(`tst`.`result_date`) BETWEEN '".date('m',strtotime($from))."' AND '".date('m',strtotime($to))."'
+								  AND YEAR(`tst`.`result_date`) BETWEEN '".date('Y',strtotime($from))."' AND '".date('Y',strtotime($to))."' ";
 
 
 			$test_details=R::getAll($tests_sql.$user_delimiter.$date_delimiter.$delimiter.$report_type);
@@ -5252,27 +5245,6 @@ class reports_excel_model extends MY_Model{
 
 			return $test_details;
 			
-		}
-
-		function get_equipment_id($serial)
-		{
-			$sql="SELECT facility_equipment_id from facility_pima where serial_num='".$serial."' ";
-
-			$equipment=$this->db->query($sql);
-
-			$result_id="";
-			if($equipment->num_rows()>0)
-			{
-				foreach ($equipment->result_array() as $value) 
-				{
-					$result_id[]=$value;
-				}
-			}
-			else
-			{
-				$result_id="";
-			}
-			return $result_id;
 		}
 
 	 /*=================== Excel: Sql functions =====================================================================*/

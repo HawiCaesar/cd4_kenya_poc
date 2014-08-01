@@ -31,13 +31,35 @@ class users extends MY_Controller {
 
 		$this -> template($data);
 	}
+	function deactivate() //deactivate user
+	{
+		$id=$this->input->post('user_id');
+		$deactive_value=array('status'=>0);
+
+		$this->db->where('id',$id);
+		$this->db->update('user',$deactive_value);
+	}
+	function reset_password() //reset password
+	{
+		$id=$this->input->post('user_id');
+		//$pass=md5(123456);
+		$pass=$this->encrypt(123456);
+		$reset=array('password'=>$pass);
+
+		$this->db->where('id',$id);
+		$this->db->update('user',$reset);
+	}
+	function update_profile()
+	{
+
+	}
 	
 	public function getfacilitydetails(){
 		
 		$preset_sql = $this->config->item("preset_sql");
 
 		$sql 	=	$preset_sql["fac"];
-	    $data=R::getAll($sql);;
+	    $data=R::getAll($sql);
 		
 		return $data;
 	    }
@@ -47,7 +69,7 @@ class users extends MY_Controller {
 		$preset_sql = $this->config->item("preset_sql");
 
 		$sql 	=	$preset_sql["subcounty"];
-	    $data=R::getAll($sql);;
+	    $data=R::getAll($sql);
 		
 		return $data;
 	    }
@@ -65,7 +87,7 @@ class users extends MY_Controller {
 		$preset_sql = $this->config->item("preset_sql");
 
 		$sql 	=	$preset_sql["partner"];
-	    $data=R::getAll($sql);;
+	    $data=R::getAll($sql);
 		
 		return $data;
 	    }
@@ -74,7 +96,7 @@ class users extends MY_Controller {
 		$preset_sql = $this->config->item("preset_sql");
 
 		$sql 	=	$preset_sql["usertype"];
-	    $data=R::getAll($sql);;
+	    $data=R::getAll($sql);
 		
 		return $data;
 	    }

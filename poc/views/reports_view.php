@@ -88,7 +88,7 @@
 											<select  onchange="error_p()" class="textfield form-control" name="report_type" id="test_errors" >
 							                   	<option value="0">*Show Both Tests and Errors*</option> 
 							                   	<option value="1"> Tests Report Only</option>
-							                   	<option value="3"> Tests < 350 Report </option>
+							                   	<option value="3"> Tests < 500 Report </option>
 							                   	<option value="2"> Errors Report Only</option>
 							                   	<option value="4"> Errors Report by % </option>								                   	                  												                   	                  					
 							                </select>

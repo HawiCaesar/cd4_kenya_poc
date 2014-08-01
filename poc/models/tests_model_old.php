@@ -2,7 +2,7 @@
 
 class tests_model extends MY_Model{
 	
-	public function get_tests_details($from,$to){
+	public function get_tests_details($from,$to,$user_filter_used){
 
 		$date_delimiter	 	=	"";
 		$user_delimiter     =   "";
@@ -13,38 +13,37 @@ class tests_model extends MY_Model{
 		}
 		
 		//USER FILTER
-		$user_delimiter ="";
+		//$user_delimiter=$this->get_user_sql_where_delimiter();
 		
-		
+		$user_delimiter 	= 	"";
 		$user_group  = $this->session->userdata("user_group_id");
 		$user_filter= $this->session->userdata("user_filter");
-		
-		if($user_group==3 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+
+		if($user_group==3 && sizeof($user_filter)> 0 ){
 			$user_delimiter 	= 	" AND `partner_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==6 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+		}elseif($user_group==6 && sizeof($user_filter)> 0 ){
 			$user_delimiter 	= 	" AND `facility_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==8 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+		}elseif($user_group==8 && sizeof($user_filter)> 0 ){
 			$user_delimiter 	= 	" AND `district_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==9 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+		}elseif($user_group==9 && sizeof($user_filter)> 0 ){
 			$user_delimiter 	= 	" AND `region_id` ='".$user_filter[0]['user_filter_id']."' ";
 		}
 		
 		
-		$tests_sql	=	"SELECT 
-						CONCAT(YEAR(`tst`.`result_date`),'-',MONTH(`tst`.`result_date`)) AS `yearmonth`, 
-						`tst`.`result_date`,						
-						MONTH(`tst`.`result_date`) AS `month`,
-						COUNT(*) AS `total_tests`,
-						YEAR(`tst`.`result_date`) AS `year`,
-						COUNT(`tst`.`id`) AS `total_tests`,
-						SUM(CASE WHEN `pima_test`.`error_id`= '0'    THEN 1 ELSE 0 END) AS `valid`,
-						SUM(CASE WHEN `pima_test`.`error_id`> 0  THEN 1 ELSE 0 END) AS `errors`,
-						SUM(CASE WHEN `pima_test`.`error_id` = 0  AND  `tst`.`cd4_count` < 500 THEN 1 ELSE 0 END) AS `failed`,
-						SUM(CASE WHEN `pima_test`.`error_id` = 0  AND  `tst`.`cd4_count` >= 500 THEN 1 ELSE 0 END) AS `passed`
-					FROM `pima_test`
-					LEFT JOIN `cd4_test` `tst`
-						ON `tst`.`id`=`pima_test`.`cd4_test_id`
-					LEFT JOIN 
+		$tests_sql	=	"SELECT  
+                                                        `tst`.`facility_id`,
+														`tst`.`result_date`,
+														MONTH(`tst`.`result_date`) AS `month`,
+														YEAR(`tst`.`result_date`) AS `year`,
+														COUNT(DISTINCT `fac`.`facility`) AS `facilities_reported`,
+														COUNT(`tst`.`id`) AS `total_tests`,
+														SUM(CASE WHEN `tst`.`valid`= '1'    THEN 1 ELSE 0 END) AS `valid`,
+														SUM(CASE WHEN `tst`.`valid`= '0'    THEN 1 ELSE 0 END) AS `errors`,
+														SUM(CASE WHEN `tst`.`valid`= '1'  AND  `tst`.`cd4_count` < 350 THEN 1 ELSE 0 END) AS `failed`,
+														SUM(CASE WHEN `tst`.`valid`= '1'  AND  `tst`.`cd4_count` >= 350 THEN 1 ELSE 0 END) AS `passed`,
+														CONCAT(YEAR(`tst`.`result_date`),'-',MONTH(`tst`.`result_date`)) AS `yearmonth`											
+													FROM `cd4_test` `tst`
+													LEFT JOIN 
 															(SELECT `fac`.`id` AS `facility_id`,
 																	`fac`.`name` AS `facility`,
 																	`fac`.`email`,
@@ -86,25 +85,19 @@ class tests_model extends MY_Model{
 																ON `fac`.`id` = `fac_eq`.`facility_id`
 																GROUP BY `facility_id`
 																) AS `fac`
-													ON `tst`.`facility_id`= `fac`.`facility_id` 
-					
-					WHERE `error_id`>= 0 
-					AND YEAR(`tst`.`result_date`) = 2014
-					AND `pima_test`.`sample_code`!='NORMAL' 
-					AND `pima_test`.`sample_code` !='QC NORMAL' 
-					AND `pima_test`.`sample_code`!='LOW' 
-					AND `pima_test`.`sample_code` !='QC LOW'
-					AND  1 
-					
-					$date_delimiter
-				    $user_delimiter
-					GROUP BY `yearmonth`	
-					ORDER BY 	`result_date` DESC
+													ON `tst`.`facility_id`= `fac`.`facility_id`
+													
+													WHERE 1
+												  $date_delimiter
+												  $user_delimiter
+
+														GROUP BY  	`yearmonth`	
+														ORDER BY 	`result_date` DESC
+												  
 												  
 												  ";
 
-		//$tests_sql1 	=	$tests_sql.$user_delimiter;
-
+		
 
 		$tests_details 		=		R::getAll($tests_sql);
 

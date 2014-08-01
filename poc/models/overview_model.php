@@ -1,7 +1,8 @@
 <?php
 
-class home_page_model extends MY_Model{
-	public function devices_tests_totals($from,$to,$user_filter_used){
+class overview_model extends MY_Model{
+
+public function devices_tests_totals($from,$to,$user_filter_used){
 
 		$date_delimiter	 	=	"";
 		$user_delimiter	 	=	"";
@@ -11,19 +12,20 @@ class home_page_model extends MY_Model{
 			$date_delimiter	=	"AND `cd4_test`.`result_date` between '$from' and '$to'";
 		}
 		//USER FILTER
-		$user_delimiter ="";
+		//$user_delimiter=$this->get_user_sql_where_delimiter();
 		
-		
+		$user_delimiter 	= 	"";
+
 		$user_group  = $this->session->userdata("user_group_id");
 		$user_filter= $this->session->userdata("user_filter");
-		
-		if($user_group==3 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+
+		if($user_group==3 && sizeof($user_filter)> 0 ){
 			$user_delimiter 	= 	" AND `partner_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==6 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+		}elseif($user_group==6 && sizeof($user_filter)> 0 ){
 			$user_delimiter 	= 	" AND `facility_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==8 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+		}elseif($user_group==8 && sizeof($user_filter)> 0 ){
 			$user_delimiter 	= 	" AND `district_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==9 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+		}elseif($user_group==9 && sizeof($user_filter)> 0 ){
 			$user_delimiter 	= 	" AND `region_id` ='".$user_filter[0]['user_filter_id']."' ";
 		}
 
@@ -45,14 +47,14 @@ class home_page_model extends MY_Model{
 							     `facility_user`.`facility_id`,
 					            COUNT(`cd4_test`.`cd4_count`)AS `total`
 					       FROM `equipment`,`cd4_test`, `facility` `fac`,`partner_user`,`region_user`,`facility_user`,`district_user`
-					       WHERE `cd4_test`.`equipment_id`=`equipment`.`id` AND `cd4_test`.`valid`=1 AND `cd4_test`.`cd4_count`>= 500
+					       WHERE `cd4_test`.`equipment_id`=`equipment`.`id` AND `cd4_test`.`valid`=1 AND `cd4_test`.`cd4_count`>= 350
 					       AND `fac`.`id`= `cd4_test`.`facility_id`
 					       AND `partner_user`.`partner_id`=`fac`.`partnerID` 
 					       AND `district_user`.`district_id`=`fac`.`district` 
 					       AND `facility_user`.`facility_id`=`fac`.`id`
 					       AND `partner_user`.`partner_id`=`fac`.`partnerID` 
 					       AND  `equipment`.`status`=1
-					        $date_delimiter
+					        $date_delimiter 
 					        $user_delimiter
 					    GROUP BY `equipment`.`description`) AS `success`
 					LEFT JOIN 
@@ -67,7 +69,7 @@ class home_page_model extends MY_Model{
 									 `facility_user`.`facility_id`,
 						            COUNT(`cd4_test`.`cd4_count`)AS `total`
 						        FROM `equipment`,`cd4_test`, `facility` `fac`,`partner_user`,`region_user`,`facility_user`,`district_user`
-						        WHERE `cd4_test`.`equipment_id`=`equipment`.`id` AND `cd4_test`.`valid`=1 AND `cd4_test`.`cd4_count`< 500
+						        WHERE `cd4_test`.`equipment_id`=`equipment`.`id` AND `cd4_test`.`valid`=1 AND `cd4_test`.`cd4_count`< 350
 						        AND `fac`.`id`= `cd4_test`.`facility_id`
 					            AND  `partner_user`.`partner_id`=`fac`.`partnerID`
 					            AND `district_user`.`district_id`=`fac`.`district` 
@@ -105,7 +107,7 @@ class home_page_model extends MY_Model{
 		return $stat_assoc;
 	}
 	
-	public function pima_statistics($from,$to,$user_filter_used){
+	public function pima_statistics($from,$to){
 
 		$date_delimiter	 	=	"";
 
@@ -114,21 +116,22 @@ class home_page_model extends MY_Model{
 			$date_delimiter	=	"AND `cd4_test`.`result_date` between '$from' and '$to'";
 		}
 		//USER FILTER
-		$user_delimiter ="";
+		//$user_delimiter=$this->get_user_sql_where_delimiter();
 		
-		
+		/*$user_delimiter 	= 	"";
+
 		$user_group  = $this->session->userdata("user_group_id");
 		$user_filter= $this->session->userdata("user_filter");
-		
-		if($user_group==3 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+
+		if($user_group==3 && sizeof($user_filter)> 0 ){
 			$user_delimiter 	= 	" AND `partner_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==6 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+		}elseif($user_group==6 && sizeof($user_filter)> 0 ){
 			$user_delimiter 	= 	" AND `facility_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==8 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+		}elseif($user_group==8 && sizeof($user_filter)> 0 ){
 			$user_delimiter 	= 	" AND `district_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==9 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+		}elseif($user_group==9 && sizeof($user_filter)> 0 ){
 			$user_delimiter 	= 	" AND `region_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}
+		}*/
 
 		$pima_test_sql	=	"SELECT 	`totals_res`.`totals` ,
 								        `fails_res`.`fails`,
@@ -138,48 +141,28 @@ class home_page_model extends MY_Model{
 											    (SELECT count(*) as `totals`
 											        FROM  `pima_test`,`cd4_test`
 											     		WHERE `pima_test`.`cd4_test_id`=`cd4_test`.`id`
-											     		AND `pima_test`.`sample_code`!='NORMAL' 
-														AND `pima_test`.`sample_code` !='QC NORMAL' 
-														AND `pima_test`.`sample_code`!='LOW' 
-														AND `pima_test`.`sample_code` !='QC LOW'
 											            AND  1 
-											     	$date_delimiter
-											     	
+											     	$date_delimiter 
 											    ) as `totals_res`,
 											    (SELECT count(*) as `fails`
 											         FROM  `pima_test`,`cd4_test`
 											     		WHERE `pima_test`.`cd4_test_id`=`cd4_test`.`id`
-											        AND  `cd4_test`.`cd4_count` < 500  
+											        AND  `cd4_test`.`cd4_count` < 350  
 											        AND  `pima_test`.`error_id` = 0 
-											        AND `pima_test`.`sample_code`!='NORMAL' 
-													AND `pima_test`.`sample_code` !='QC NORMAL' 
-													AND `pima_test`.`sample_code`!='LOW' 
-													AND `pima_test`.`sample_code` !='QC LOW'
-											        $date_delimiter
-											        
+											        $date_delimiter  
 											    ) as `fails_res`,
 											    (SELECT count(*) as `success`
 											         FROM  `pima_test`,`cd4_test`
 											     		WHERE `pima_test`.`cd4_test_id`=`cd4_test`.`id`
-											        AND  `cd4_test`.`cd4_count` >= 500   
-											        AND  `pima_test`.`error_id` = 0
-											        AND `pima_test`.`sample_code`!='NORMAL' 
-													AND `pima_test`.`sample_code` !='QC NORMAL' 
-													AND `pima_test`.`sample_code`!='LOW' 
-													AND `pima_test`.`sample_code` !='QC LOW' 
+											        AND  `cd4_test`.`cd4_count` >= 350   
+											        AND  `pima_test`.`error_id` = 0 
 											        $date_delimiter
-											       
 											    ) as `success_res`,
 											    (SELECT count(*) as `errors`
 											        FROM  `pima_test`,`cd4_test`
 											     		WHERE `pima_test`.`cd4_test_id`=`cd4_test`.`id`
 											        AND  `pima_test`.`error_id` > 0 
-											        AND `pima_test`.`sample_code`!='NORMAL' 
-													AND `pima_test`.`sample_code` !='QC NORMAL' 
-													AND `pima_test`.`sample_code`!='LOW' 
-													AND `pima_test`.`sample_code` !='QC LOW'
-											        $date_delimiter
-											        
+											        $date_delimiter 
 											    ) as `errors_res`
 									";
 		$pima_test_res	=	R::getAll($pima_test_sql);
@@ -196,11 +179,11 @@ class home_page_model extends MY_Model{
 										'data'		=>	$pima_test_res[0]['totals']
 										),
 									array(
-										'caption'	=>	"CD4 Tests < 500 cells/mm3",
+										'caption'	=>	"CD4 Tests < 350 cells/mm3",
 										'data'		=>	$pima_test_res[0]['fails']
 										),
 									array(
-										'caption'	=>	"CD4 Tests > 500 cells/mm3",
+										'caption'	=>	"CD4 Tests > 350 cells/mm3",
 										'data'		=>	$pima_test_res[0]['success']
 										),
 									array(
@@ -218,8 +201,6 @@ class home_page_model extends MY_Model{
 								);
 		return $pima_array;
 	}
-	
-}
 
-/* End of file home_page_model.php */
-/* Location: ./application/modules/poc/models/home_page_model.php */
+}
+?>

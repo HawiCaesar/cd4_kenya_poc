@@ -20,6 +20,7 @@ class reports_charts_model extends MY_Model{
 
 	function month_graph_view($year,$monthly,$facility,$device,$all,$county_name_value,$report_type)
 	{
+
 		if(!$facility=="")//By Facility
 		{
 			$device="";
@@ -49,18 +50,21 @@ class reports_charts_model extends MY_Model{
 		{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type);
-
-			foreach ($the_total as $key => $value) 
+			
+			if(!empty($the_total))
 			{
-				$tests_results['both_results'][] = $value['data'];
+				foreach ($the_total as $key => $value) 
+				{
+					$tests_results['both_results'][] = $value['data'];
+					$tests_results['tests'][] = $value['valid'];
+				}
 			}
-
-			$report_type= " AND `tst_dt`.`valid`='1' ";
-			$the_tests=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type);
-
-			foreach ($the_tests as $key => $value) 
+			else
 			{
-				$tests_results['tests'][] = $value['data'];
+				$tests_results['tests'][]=0;
+				$tests_results['both_results'][]=0;
+
+				return $tests_results;
 			}
 
 		}
@@ -69,17 +73,20 @@ class reports_charts_model extends MY_Model{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type);
 
-			foreach ($the_total as $key => $value) 
+			if(!empty($the_total))
 			{
-				$tests_results['both_results'][] = $value['data'];
+				foreach ($the_total as $key => $value) 
+				{
+					$tests_results['both_results'][] = $value['data'];
+					$tests_results['errors'][] = $value['errors'];
+				}
 			}
-
-			$report_type= " AND `tst_dt`.`valid`='0' ";
-			$the_errors=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type);
-
-			foreach ($the_errors as $key => $value) 
+			else
 			{
-				$tests_results['errors'][] = $value['data'];
+				$tests_results['errors'][]=0;
+				$tests_results['both_results'][]=0;
+
+				return $tests_results;
 			}
 		}
 		else if($report_type==0)//Tests and Errors
@@ -87,43 +94,44 @@ class reports_charts_model extends MY_Model{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type);
 
-			foreach ($the_total as $key => $value) 
+			if(!empty($the_total))
 			{
-				$tests_results['both_results'][] = $value['data'];
+				foreach ($the_total as $key => $value) 
+				{	
+					$tests_results['both_results'][] = $value['data'];
+					$tests_results['tests'][] = $value['valid'];
+					$tests_results['errors'][] = $value['errors'];
+				}
 			}
-
-			$report_type= " AND `tst_dt`.`valid`='1' ";
-			$the_tests=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type);
-
-			foreach ($the_tests as $key => $value) 
+			else
 			{
-				$tests_results['tests'][] = $value['data'];
+				$tests_results['tests'][]=0;
+				$tests_results['errors'][]=0;
+				$tests_results['both_results'][]=0;
+
+				return $tests_results;
 			}
-
-			$report_type= " AND `tst_dt`.`valid`='0' ";
-			$the_errors=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type);
-
-			foreach ($the_errors as $key => $value) 
-			{
-				$tests_results['errors'][] = $value['data'];
-			}	
 		}
 		else if($report_type==3)// Tests Less than 350
 		{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type);
 
-			foreach ($the_total as $key => $value) 
+			if(!empty($the_total))
 			{
-				$tests_results['both_results'][] = $value['data'];
+				foreach ($the_total as $key => $value) 
+				{
+					$tests_results['both_results'][] = $value['data'];
+					$tests_results['tests'][] = $value['failed'];
+				}
+
 			}
-
-			$report_type= " AND `tst_dt`.`valid`='1'  AND `tst_dt`.`cd4_count` < 350  ";
-			$the_tests=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type);
-
-			foreach ($the_tests as $key => $value) 
+			else
 			{
-				$tests_results['tests'][] = $value['data'];
+				$tests_results['tests'][]=0;
+				$tests_results['both_results'][]=0;
+
+				return $tests_results;
 			}
 		}
 		else if($report_type==4)//Errors by percentage
@@ -133,20 +141,27 @@ class reports_charts_model extends MY_Model{
 
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type);
-
-			foreach($the_total as $key => $value)
+			
+			if(!empty($the_total))
+			{				
+				foreach($the_total as $key => $value)
+				{
+					$percentage_successful=round(($value['valid']/$value['data'])*100,1);
+					$percentage_error=round(($value['errors']/$value['data'])*100,1);
+				}
+				$tests_results['tests'][]=$percentage_successful;
+				$tests_results['errors'][]=$percentage_error;
+			}else
 			{
-				$percentage_successful=round(($value['valid']/$value['data'])*100,1);
-				$percentage_error=round(($value['errors']/$value['data'])*100,1);
+				$tests_results['tests'][]=0;
+				$tests_results['errors'][]=0;
+
+				return $tests_results;
 			}
-			$tests_results['tests'][]=$percentage_successful;
-			$tests_results['errors'][]=$percentage_error;
 			
 		}
 
-	return $tests_results;
-	
-
+		return $tests_results;
 	}
 	/*---------------------- End month graph -------------------------------------------------------*/
 
@@ -154,7 +169,9 @@ class reports_charts_model extends MY_Model{
 
 	function quarter_graph_view($year,$quarter,$facility,$device,$all,$county_name_value,$report_type)
 	{
-		$my_array= array(0,0,0,0);
+		$my_array1= array(0,0,0,0);
+		$my_array2= array(0,0,0,0);
+		$my_array3= array(0,0,0,0);
 
 		if(!$facility=="")//By Facility
 		{
@@ -202,126 +219,124 @@ class reports_charts_model extends MY_Model{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
 
-			foreach ($the_total as $key => $value) 
+			if(!empty($the_total))
+			{	
+				foreach ($the_total as $key => $value) 
+				{
+					$my_array1[($value['mth']-1)]= $value['data'];
+					$my_array2[($value['mth']-1)]= $value['valid'];
+				}
+				$tests_results['both_results']=$my_array1;
+				$tests_results['tests']=$my_array2;
+			}else
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
+				$tests_results['tests']=0;
+				$tests_results['both_results']=0;
+
+				return $tests_results;
 			}
-
-			$tests_results['both_results']=$my_array;
-
-			$my_array = array(0,0,0,0);
-			$report_type= " AND `tst_dt`.`valid`='1' ";
-			$the_tests=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_tests as $key => $value) 
-			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
-
-			$tests_results['tests']=$my_array;
 
 		}
 		else if($report_type==2)//Errors only
 		{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_total as $key => $value) 
+			
+			if(!empty($the_total))
+			{	
+				foreach ($the_total as $key => $value) 
+				{
+					$my_array1[($value['mth']-1)]= $value['data'];
+					$my_array2[($value['mth']-1)]= $value['errors'];
+				}
+				$tests_results['both_results']=$my_array1;
+				$tests_results['errors']=$my_array2;
+			}else
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
+				$tests_results['errors']=0;
+				$tests_results['both_results']=0;
+
+				return $tests_results;
 			}
-
-			$tests_results['both_results']=$my_array;
-
-			$my_array = array(0,0,0,0);
-			$report_type= " AND `tst_dt`.`valid`='0' ";
-			$the_errors=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_errors as $key => $value) 
-			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
-
-			$tests_results['errors']=$my_array;
 		}
 		else if($report_type==0)//Both Tests and Errors
 		{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_total as $key => $value) 
+			
+			if(!empty($the_total))
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
+				foreach ($the_total as $key => $value) 
+				{
+					$my_array1[($value['mth']-1)]= $value['data'];
+					$my_array2[($value['mth']-1)]= $value['valid'];
+					$my_array3[($value['mth']-1)]= $value['errors'];
+				}
+				$tests_results['both_results']=$my_array1;
+				$tests_results['tests']=$my_array2;
+				$tests_results['errors']=$my_array3;
 			}
-
-			$tests_results['both_results']=$my_array;
-
-			$my_array = array(0,0,0,0);
-			$report_type= " AND `tst_dt`.`valid`='1' ";
-			$the_tests=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_tests as $key => $value) 
+			else
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
+				$tests_results['errors']=0;
+				$tests_results['tests']=0;
+				$tests_results['both_results']=0;
+
+				return $tests_results;
 			}
-
-			$tests_results['tests']=$my_array;
-
-			$my_array = array(0,0,0,0);
-			$report_type= " AND `tst_dt`.`valid`='0' ";
-			$the_errors=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_errors as $key => $value) 
-			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
-
-			$tests_results['errors']=$my_array;
 		}
 		else if($report_type==3)//Tests < 350
 		{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
 
-			foreach ($the_total as $key => $value) 
+			if(!empty($the_total))
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
+				foreach ($the_total as $key => $value) 
+				{
+					$my_array1[($value['mth']-1)]= $value['data'];
+					$my_array2[($value['mth']-1)]= $value['failed'];
+				}
 
-			$tests_results['both_results']=$my_array;
-
-			$my_array = array(0,0,0,0);
-			$report_type= " AND `tst_dt`.`valid`='1' AND `tst_dt`.`cd4_count` < 350 ";
-			$the_tests=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_tests as $key => $value) 
+				$tests_results['both_results']=$my_array1;
+				$tests_results['tests']=$my_array2;
+			}else
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
+				$tests_results['tests']=0;
+				$tests_results['both_results']=0;
 
-			$tests_results['tests']=$my_array;
+				return $tests_results;
+			}
 		}
 		else if($report_type==4)//Error Percenatge
 		{
 			$percentage_successful=0;
 			$percentage_error=0;
 
-			$my_array2 = array(0,0,0,0);
-
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
 
-			foreach ($the_total as $key => $value) 
+			if(!empty($the_total))
 			{
-				$percentage_successful=round( ($value['valid']/$value['data'])*100,1);
-				$percentage_error=round(($value['errors']/$value['data'])*100,1);
+				foreach ($the_total as $key => $value) 
+				{
+					$percentage_successful=round( ($value['valid']/$value['data'])*100,1);
+					$percentage_error=round(($value['errors']/$value['data'])*100,1);
 
-				$my_array[($value['mth']-1)]=$percentage_successful;
-				$my_array2[($value['mth']-1)]=$percentage_error;
+					$my_array1[($value['mth']-1)]=$percentage_successful;
+					$my_array2[($value['mth']-1)]=$percentage_error;
+				}
+
+				$tests_results['tests']=$my_array1;
+				$tests_results['errors']=$my_array2;
+			}else
+			{
+
+				$tests_results['tests']=0;
+				$tests_results['errors']=0;
+
+				return $tests_results;
 			}
-
-			$tests_results['tests']=$my_array;
-			$tests_results['errors']=$my_array2;
 		}
 
 	return $tests_results;	
@@ -332,7 +347,9 @@ class reports_charts_model extends MY_Model{
 
 	function biannual_graph_view($year,$biannual,$facility,$device,$all,$county_name_value,$report_type)
 	{
-		$my_array= array(0,0,0,0,0,0);
+		$my_array1= array(0,0,0,0,0,0);
+		$my_array2= array(0,0,0,0,0,0);
+		$my_array3= array(0,0,0,0,0,0);
 
 		if(!$facility=="")//By Facility
 		{
@@ -374,24 +391,23 @@ class reports_charts_model extends MY_Model{
 		{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_total as $key => $value) 
+			
+			if(!empty($the_total))
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
-
-			$tests_results['both_results']=$my_array;
-
-			$my_array = array(0,0,0,0,0,0);
-			$report_type= " AND `tst_dt`.`valid`='1' ";
-			$the_tests=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_tests as $key => $value) 
+				foreach ($the_total as $key => $value) 
+				{
+					$my_array1[($value['mth']-1)]= $value['data'];
+					$my_array2[($value['mth']-1)]= $value['valid'];
+				}
+				$tests_results['both_results']=$my_array1;
+				$tests_results['tests']=$my_array2;
+			}else
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
+				$tests_results['tests']=0;
+				$tests_results['both_results']=0;
 
-			$tests_results['tests']=$my_array;
+				return $tests_results;
+			}
 
 		}
 		else if($report_type==2)//Errors only
@@ -399,106 +415,104 @@ class reports_charts_model extends MY_Model{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
 
-			foreach ($the_total as $key => $value) 
+			if(!empty($the_total))
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
-
-			$tests_results['both_results']=$my_array;
-
-			$my_array = array(0,0,0,0,0,0);
-			$report_type= " AND `tst_dt`.`valid`='0' ";
-			$the_errors=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_errors as $key => $value) 
+				foreach ($the_total as $key => $value) 
+				{
+					$my_array1[($value['mth']-1)]= $value['data'];
+					$my_array2[($value['mth']-1)]= $value['valid'];
+				}
+				
+				$tests_results['both_results']=$my_array1;
+				$tests_results['errors']=$my_array2;
+			}else
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
+				$tests_results['errors']=0;
+				$tests_results['both_results']=0;
 
-			$tests_results['errors']=$my_array;
+				return $tests_results;
+			}
 		}
 		else if($report_type==0)//Both Tests and Errors
 		{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
 
-			foreach ($the_total as $key => $value) 
+			if(!empty($the_total))
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
+				foreach ($the_total as $key => $value) 
+				{
+					$my_array1[($value['mth']-1)]= $value['data'];
+					$my_array2[($value['mth']-1)]= $value['valid'];
+					$my_array3[($value['mth']-1)]= $value['errors'];
+				}
 
-			$tests_results['both_results']=$my_array;
-
-			$my_array = array(0,0,0,0,0,0);
-			$report_type= " AND `tst_dt`.`valid`='1' ";
-			$the_tests=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_tests as $key => $value) 
+				$tests_results['both_results']=$my_array1;
+				$tests_results['tests']=$my_array2;
+				$tests_results['errors']=$my_array3;
+			}else
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
+				$tests_results['errors']=0;
+				$tests_results['tests']=0;
+				$tests_results['both_results']=0;
+
+				return $tests_results;
 			}
-
-			$tests_results['tests']=$my_array;
-
-			$my_array = array(0,0,0,0,0,0);
-			$report_type= " AND `tst_dt`.`valid`='0' ";
-			$the_errors=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_errors as $key => $value) 
-			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
-
-			$tests_results['errors']=$my_array;
 		}
 		else if($report_type==3)
 		{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
 
-			foreach ($the_total as $key => $value) 
+			if(!empty($the_total))
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
+				foreach ($the_total as $key => $value) 
+				{
+					$my_array1[($value['mth']-1)]= $value['data'];
+					$my_array2[($value['mth']-1)]= $value['failed'];
+				}
 
-			$tests_results['both_results']=$my_array;
-
-			$my_array = array(0,0,0,0,0,0);
-			$report_type= " AND `tst_dt`.`valid`='1' AND `tst_dt`.`cd4_count` < 350 ";
-			$the_tests=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_tests as $key => $value) 
+				$tests_results['both_results']=$my_array1;
+				$tests_results['tests']=$my_array2;
+			}else
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
+				$tests_results['tests']=0;
+				$tests_results['both_results']=0;
 
-			$tests_results['tests']=$my_array;
+				return $tests_results;
+			}
 		}
 		else if($report_type==4)//Error Percenatge
 		{
 			$percentage_successful=0;
 			$percentage_error=0;
 
-			$my_array2 = array(0,0,0,0,0,0);
-
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
 
-			foreach ($the_total as $key => $value) 
+			if(!empty($the_total))
 			{
-				$percentage_successful=round( ($value['valid']/$value['data'])*100,1);
-				$percentage_error=round(($value['errors']/$value['data'])*100,1);
+				foreach ($the_total as $key => $value) 
+				{
+					$percentage_successful=round( ($value['valid']/$value['data'])*100,1);
+					$percentage_error=round(($value['errors']/$value['data'])*100,1);
 
-				$my_array[($value['mth']-1)]=$percentage_successful;
-				$my_array2[($value['mth']-1)]=$percentage_error;
+					$my_array1[($value['mth']-1)]=$percentage_successful;
+					$my_array2[($value['mth']-1)]=$percentage_error;
+				}
+
+				$tests_results['tests']=$my_array1;
+				$tests_results['errors']=$my_array2;
+			}else
+			{
+				$tests_results['tests']=0;
+				$tests_results['errors']=0;
+
+				return $tests_results;
 			}
-
-			$tests_results['tests']=$my_array;
-			$tests_results['errors']=$my_array2;
 		}
 
-			
-	return $tests_results;	
+	return $tests_results;
 	}
 
 	/*----------------------- End biannual graph --------------------------------------------------*/
@@ -507,7 +521,9 @@ class reports_charts_model extends MY_Model{
 
 	function year_graph_view($year,$facility,$device,$all,$county_name_value,$report_type)
 	{
-		$my_array = array(0,0,0,0,0,0,0,0,0,0,0,0);
+		$my_array1 = array(0,0,0,0,0,0,0,0,0,0,0,0);
+		$my_array2 = array(0,0,0,0,0,0,0,0,0,0,0,0);
+		$my_array3 = array(0,0,0,0,0,0,0,0,0,0,0,0);
 
 		if(!$facility=="")//By Facility
 		{
@@ -542,23 +558,23 @@ class reports_charts_model extends MY_Model{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
 
-			foreach ($the_total as $key => $value) 
+			if(!empty($the_total))
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
+				foreach ($the_total as $key => $value) 
+				{
+					$my_array1[($value['mth']-1)]= $value['data'];
+					$my_array2[($value['mth']-1)]= $value['valid'];
+				}
 
-			$tests_results['both_results']=$my_array;
-
-			$my_array = array(0,0,0,0,0,0,0,0,0,0,0,0);
-			$report_type= " AND `tst_dt`.`valid`='1' ";
-			$the_tests=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_tests as $key => $value) 
+				$tests_results['both_results']=$my_array;
+				$tests_results['tests']=$my_array;
+			}else
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
+				$tests_results['tests']=0;
+				$tests_results['both_results']=0;
 
-			$tests_results['tests']=$my_array;
+				return $tests_results;
+			}
 
 		}
 		else if($report_type==2)//Errors only
@@ -566,102 +582,100 @@ class reports_charts_model extends MY_Model{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
 
-			foreach ($the_total as $key => $value) 
+			if(!empty($the_total))
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
+				foreach ($the_total as $key => $value) 
+				{
+					$my_array1[($value['mth']-1)]= $value['data'];
+					$my_array2[($value['mth']-1)]= $value['errors'];
+				}
 
-			$tests_results['both_results']=$my_array;
-
-			$my_array = array(0,0,0,0,0,0,0,0,0,0,0,0);
-			$report_type= " AND `tst_dt`.`valid`='0' ";
-			$the_errors=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_errors as $key => $value) 
+				$tests_results['both_results']=$my_array1;
+				$tests_results['errors']=$my_array2;
+			}else
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
+				$tests_results['errors']=0;
+				$tests_results['both_results']=0;
 
-			$tests_results['errors']=$my_array;
+				return $tests_results;
+			}
 		}
 		else if($report_type==0)//Both Tests and Errors
 		{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_total as $key => $value) 
+			
+			if(!empty($the_total))
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
+				foreach ($the_total as $key => $value) 
+				{
+					$my_array1[($value['mth']-1)]= $value['data'];
+					$my_array2[($value['mth']-1)]= $value['valid'];
+					$my_array3[($value['mth']-1)]= $value['errors'];
+				}
 
-			$tests_results['both_results']=$my_array;
-
-			$my_array = array(0,0,0,0,0,0,0,0,0,0,0,0);
-			$report_type= " AND `tst_dt`.`valid`='1' ";
-			$the_tests=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_tests as $key => $value) 
+				$tests_results['both_results']=$my_array1;
+				$tests_results['tests']=$my_array2;
+				$tests_results['errors']=$my_array3;
+			}else
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
+				$tests_results['errors']=0;
+				$tests_results['tests']=0;
+				$tests_results['both_results']=0;
+
+				return $tests_results;
 			}
-
-			$tests_results['tests']=$my_array;
-
-			$my_array = array(0,0,0,0,0,0,0,0,0,0,0,0);
-			$report_type= " AND `tst_dt`.`valid`='0' ";
-			$the_errors=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_errors as $key => $value) 
-			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
-
-			$tests_results['errors']=$my_array;
 		}
 		else if($report_type==3)//Tests < 350
 		{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
 
-			foreach ($the_total as $key => $value) 
+			if(!empty($the_total))
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
-
-			$tests_results['both_results']=$my_array;
-
-			$my_array = array(0,0,0,0,0,0,0,0,0,0,0,0);
-			$report_type= " AND `tst_dt`.`valid`='1' AND `tst_dt`.`cd4_count` < 350 ";
-			$the_tests=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
-
-			foreach ($the_tests as $key => $value) 
+				foreach ($the_total as $key => $value) 
+				{
+					$my_array1[($value['mth']-1)]= $value['data'];
+					$my_array2[($value['mth']-1)]= $value['failed'];
+				}
+				$tests_results['both_results']=$my_array1;
+				$tests_results['tests']=$my_array2;
+			}else
 			{
-				$my_array[($value['mth']-1)]= $value['data'];
-			}
+				$tests_results['tests']=0;
+				$tests_results['both_results']=0;
 
-			$tests_results['tests']=$my_array;
+				return $tests_results;
+			}
 		}
 		else if($report_type==4)//Error Percenatge
 		{
 			$percentage_successful=0;
 			$percentage_error=0;
 
-			$my_array2 = array(0,0,0,0,0,0,0,0,0,0,0,0);
-
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
 
-			foreach ($the_total as $key => $value) 
+			if(!empty($the_total))
 			{
-				$percentage_successful=round( ($value['valid']/$value['data'])*100,1);
-				$percentage_error=round(($value['errors']/$value['data'])*100,1);
+				foreach ($the_total as $key => $value) 
+				{
+					$percentage_successful=round( ($value['valid']/$value['data'])*100,1);
+					$percentage_error=round(($value['errors']/$value['data'])*100,1);
 
-				$my_array[($value['mth']-1)]=$percentage_successful;
-				$my_array2[($value['mth']-1)]=$percentage_error;
+					$my_array1[($value['mth']-1)]=$percentage_successful;
+					$my_array2[($value['mth']-1)]=$percentage_error;
+				}
+
+				$tests_results['tests']=$my_array1;
+				$tests_results['errors']=$my_array2;
+			}else
+			{
+				$tests_results['tests']=0;
+				$tests_results['errors']=0;
+
+				return $tests_results;
 			}
-
-			$tests_results['tests']=$my_array;
-			$tests_results['errors']=$my_array2;
 		}
 			
 	return $tests_results;	
@@ -708,22 +722,22 @@ class reports_charts_model extends MY_Model{
 			
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type);
 
-			foreach ($the_total as $key => $value) 
+			if(!empty($the_total))
 			{
-				$total+=$value['data'];
-			}
-
-			$tests_results['both_results'][]=$total;
-
-			$report_type= " AND `tst_dt`.`valid`='1' ";
-			$the_tests=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type);
-
-			foreach ($the_tests as $key => $value) 
+				foreach ($the_total as $key => $value) 
+				{
+					$total+=$value['data'];
+					$tests+=$value['valid'];
+				}
+				$tests_results['both_results'][]=$total;
+				$tests_results['tests'][]=$tests;
+			}else
 			{
-				$tests+=$value['data'];
-			}
+				$tests_results['tests'][]=0;
+				$tests_results['both_results'][]=0;
 
-			$tests_results['tests'][]=$tests;
+				return $tests_results;
+			}
 
 		}
 		else if($report_type==2)//Errors only
@@ -731,76 +745,70 @@ class reports_charts_model extends MY_Model{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type);
 
-			foreach ($the_total as $key => $value) 
+			if(!empty($the_total))
 			{
-				$total+=$value['data'];
-			}
-
-			$tests_results['both_results'][]=$total;
-
-			$report_type= " AND `tst_dt`.`valid`='0' ";
-			$the_errors=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$report_type);
-
-			foreach ($the_errors as $key => $value) 
+				foreach ($the_total as $key => $value) 
+				{
+					$total+=$value['data'];
+					$errors+=$value['errors'];
+				}
+				$tests_results['both_results'][]=$total;
+				$tests_results['errors'][]=$errors;
+			}else
 			{
-				$errors+=$value['data'];
-			}
+				$tests_results['errors'][]=0;
+				$tests_results['both_results'][]=0;
 
-			$tests_results['errors'][]=$errors;
+				return $tests_results;
+			}
 		}
 		else if($report_type==0)//Both Tests and Errors
 		{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type);
 
-			foreach ($the_total as $key => $value) 
+			if(!empty($the_total))
 			{
-				$total+=$value['data'];
-			}
+				foreach ($the_total as $key => $value) 
+				{
+					$total+=$value['data'];
+					$tests+=$value['valid'];
+					$errors+=$value['errors'];
+				}
 
-			$tests_results['both_results'][]=$total;
-
-			$report_type= " AND `tst_dt`.`valid`='1' ";
-			$the_tests=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type);
-
-			foreach ($the_tests as $key => $value) 
+				$tests_results['both_results'][]=$total;
+				$tests_results['tests'][]=$tests;
+				$tests_results['errors'][]=$errors;
+			}else
 			{
-				$tests+=$value['data'];
+				$tests_results['errors'][]=0;
+				$tests_results['tests'][]=0;
+				$tests_results['both_results'][]=0;
+
+				return $tests_results;
 			}
-
-			$tests_results['tests'][]=$tests;
-
-			$report_type= " AND `tst_dt`.`valid`='0' ";
-			$the_errors=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type);
-
-			foreach ($the_errors as $key => $value) 
-			{
-				$errors+=$value['data'];
-			}
-
-			$tests_results['errors'][]=$errors;
 		}
 		else if($report_type==3)// Tests <350
 		{
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type);
 
-			foreach ($the_total as $key => $value) 
+			if(!empty($the_total))
 			{
-				$total+=$value['data'];
-			}
-
-			$tests_results['both_results'][]=$total;
-
-			$report_type= " AND `tst_dt`.`valid`='1' AND `tst_dt`.`cd4_count` < 350 ";
-			$the_tests=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type);
-
-			foreach ($the_tests as $key => $value) 
+				foreach ($the_total as $key => $value) 
+				{
+					$total+=$value['data'];
+					$tests+=$value['failed'];
+				}
+				$tests_results['both_results'][]=$total;
+				$tests_results['tests'][]=$tests;
+			}else
 			{
-				$tests+=$value['data'];
-			}
+				$tests_results['tests'][]=0;
+				$tests_results['both_results'][]=0;
 
-			$tests_results['tests'][]=$tests;
+				return $tests_results;
+			}
 		}
 		else if($report_type==4)//Errors by percentage
 		{
@@ -812,19 +820,27 @@ class reports_charts_model extends MY_Model{
 
 			$report_type= " ";
 			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type);
-
-			foreach($the_total as $key => $value)
+			if(!empty($the_total))
 			{
-				$total_successful+=$value['valid'];
-				$total_errors+=$value['errors'];
-				$grand_total+=$value['data'];		
+				foreach($the_total as $key => $value)
+				{
+					$total_successful+=$value['valid'];
+					$total_errors+=$value['errors'];
+					$grand_total+=$value['data'];		
+				}
+
+				$percentage_successful=round(($total_successful/$grand_total)*100,1);
+				$percentage_error=round(($total_errors/$grand_total)*100,1);
+
+				$tests_results['tests'][]=$percentage_successful;
+				$tests_results['errors'][]=$percentage_error;
+			}else
+			{
+				$tests_results['tests'][]=0;
+				$tests_results['errors'][]=0;
+
+				return $tests_results;
 			}
-
-			$percentage_successful=round(($total_successful/$grand_total)*100,1);
-			$percentage_error=round(($total_errors/$grand_total)*100,1);
-
-			$tests_results['tests'][]=$percentage_successful;
-			$tests_results['errors'][]=$percentage_error;
 			
 		}
 

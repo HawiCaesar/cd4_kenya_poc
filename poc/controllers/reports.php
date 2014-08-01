@@ -136,7 +136,8 @@ class reports extends MY_Controller {
 				$month_from_date="-01";
 				$from_month=$YearM."-".$monthly.$month_from_date;
 			 	//$monthly++;
-			 	$end_month=date('Y-m-d',mktime(0,0,0,$monthly,31,$YearM));
+			 	$num_days=cal_days_in_month(CAL_GREGORIAN, $monthly,$YearM);
+	 			$end_month=$YearM.'-'.$monthly.'-'.$num_days;
 		 	
 			 	if($report_type==3)// Tests < 350 
 			 	{
@@ -529,11 +530,11 @@ class reports extends MY_Controller {
 				$PDF_document.='<table border="1" align="center" width="680">';
 				$PDF_document.='<tr>';
 				$PDF_document.='<th bgcolor="#006600" style="color:#FFF;">Successful Tests Done</th>';
-				$PDF_document.='<th bgcolor="#990000" style="color:#FFF;">Tests < 350</th>';
-				$PDF_document.='<th bgcolor="#eb9316" style="color:#FFF;">Tests >= 350</th>';
+				$PDF_document.='<th bgcolor="#eb9316" style="color:#FFF;">Tests < 500</th>';
+				$PDF_document.='<th bgcolor="#006600" style="color:#FFF;">Tests >= 500</th>';
 				$PDF_document.='<th bgcolor="#000066" style="color:#FFF;">Total Number of Tests</th>';
 				$PDF_document.='</tr>';
-				$PDF_document.='<tr><td align="center">'.$pdf_data['tests_done'].'</td>';
+				$PDF_document.='<tr><td align="center">'.$pdf_data['valid_tests'].'</td>';
 				$PDF_document.='<td align="center">'.$pdf_data['less_than350'].'</td>';
 				$PDF_document.='<td align="center">'.$pdf_data['greater_equal_to350'].'</td>';
 				$PDF_document.='<td align="center">'.$pdf_data['count'].'</td></tr>';
@@ -556,7 +557,7 @@ class reports extends MY_Controller {
 			{
 				$PDF_document.='<table width="480" border="1" align="center">';
 				$PDF_document.='<tr>';
-				$PDF_document.='<th bgcolor="#eb9316" style="color:#FFF;"># Tests < 350</th>';
+				$PDF_document.='<th bgcolor="#eb9316" style="color:#FFF;"># Tests < 500</th>';
 				$PDF_document.='<th bgcolor="#000066" style="color:#FFF;">Total Number of Tests</th>';
 				$PDF_document.='</tr>';
 				$PDF_document.='<tr><td align="center">'.$pdf_data['less_than350'].'</td>';
@@ -568,12 +569,12 @@ class reports extends MY_Controller {
 				$PDF_document.='<table width="880" border="1" align="center">';
 				$PDF_document.='<tr>';
 				$PDF_document.='<th bgcolor="#006600" style="color:#FFF;">Successful Tests Done</th>';
-				$PDF_document.='<th bgcolor="#eb9316" style="color:#FFF;">Tests < 350</th>';
-				$PDF_document.='<th bgcolor="#006600" style="color:#FFF;">Tests >= 350</th>';
+				$PDF_document.='<th bgcolor="#eb9316" style="color:#FFF;">Tests < 500</th>';
+				$PDF_document.='<th bgcolor="#006600" style="color:#FFF;">Tests >= 500</th>';
 				$PDF_document.='<th bgcolor="#CC0000" style="color:#FFF;">Tests With Errors</th>';
 				$PDF_document.='<th bgcolor="#000066" style="color:#FFF;">Total Number of Tests</th>';
 				$PDF_document.='</tr>';
-				$PDF_document.='<tr><td align="center">'.$pdf_data['tests_done'].'</td>';
+				$PDF_document.='<tr><td align="center">'.$pdf_data['valid_tests'].'</td>';
 				$PDF_document.='<td align="center">'.$pdf_data['less_than350'].'</td>';
 				$PDF_document.='<td align="center">'.$pdf_data['greater_equal_to350'].'</td>';
 				$PDF_document.='<td align="center">'.$pdf_data['errors'].'</td>';
@@ -582,8 +583,8 @@ class reports extends MY_Controller {
 
 			}
 			$PDF_document.='<br />'.$pdf_data['table']; //place details in table
-			echo $PDF_document;
-			die;
+			// echo $PDF_document;
+			// die;
 			$this->load->library('mpdf/mpdf');// Load the mpdf library
 
 			$mpdf=new mPDF();//initialize
@@ -604,7 +605,8 @@ class reports extends MY_Controller {
 			$mpdf->simpleTables = true;
 			$mpdf->WriteHTML($PDF_document);//place content in pdf
 
-			$mpdf->Output($filename,'D'); //bring up "Save as Dialog" box
+			//$mpdf->Output($filename,'D'); //bring up "Save as Dialog" box
+			$mpdf->Output($filename,'I');
 
 			
 
@@ -621,10 +623,10 @@ class reports extends MY_Controller {
 				$filename="";
 				if($YearM!="" && $monthly!="")// Month and Year chosen
 				{
-					$month_from_date="-01";
-					$from_month=$YearM."-".$monthly.$month_from_date;
-				 	$monthly+1;
-				 	$end_month=date('Y-m-d',mktime(0,0,0,$monthly,31,$YearM));
+					$from_month=$YearM."-".$monthly.'-01';
+					
+				 	$num_days=cal_days_in_month(CAL_GREGORIAN, $monthly,$YearM);
+		 			$end_month=$YearM.'-'.$monthly.'-'.$num_days;
 
 				 	$month_name=$this->reports_model->GetMonthName($monthly);
 
@@ -929,8 +931,8 @@ class reports extends MY_Controller {
 				$dir=$this->config->item('server_root').'assets/excel_files/';
 				
 				$the_file=$this->config->item('server_root').'assets/excel_files/'.$filename;
-				$this->excel->getSecurity()->setLockWindows(true);
-				$this->excel->getSecurity()->setLockStructure(true);
+				// $this->excel->getSecurity()->setLockWindows(true);
+				// $this->excel->getSecurity()->setLockStructure(true);
 				$obWrite=PHPExcel_IOFactory::createWriter($this->excel,'Excel2007');
 				
 				$obWrite->save($the_file);
@@ -954,7 +956,6 @@ class reports extends MY_Controller {
 
 			/*..................................... Format: Excel is selected End ..........................................*/
 
-
 			else if($Format=="graph")
 			{
 				$this->load->model('reports_charts_model');//load model
@@ -974,8 +975,8 @@ class reports extends MY_Controller {
 				$series_errors['color']='#FF0000';
 
 				$series_lessthan350 = array();
-				$series_lessthan350['name']='Tests < 350';
-				$series_lessthan350['color']='#990000';
+				$series_lessthan350['name']='Tests < 500';
+				$series_lessthan350['color']='#eb9316';
 
 				$series_percentage_errors= array();
 				$series_percentage_errors['name']='Errors';
@@ -992,9 +993,10 @@ class reports extends MY_Controller {
 					$data['customized']=0;
 
 					$month_from_date="-01";
-					$from_month=$YearM."-".$monthly.$month_from_date;
-				 	//$monthly++;
-				 	$end_month=date('Y-m-d',mktime(0,0,0,$monthly,31,$YearM));
+					$from_month=$YearM."-".$monthly.'-01';
+
+				 	$num_days=cal_days_in_month(CAL_GREGORIAN, $monthly,$YearM);
+		 			$end_month=$YearM.'-'.$monthly.'-'.$num_days;
 
 				 	$test_results=$this->reports_charts_model->month_graph_view($YearM,$monthly,$Facility,$Device,$all_data,$login_id,$report_type);
 
@@ -1060,7 +1062,7 @@ class reports extends MY_Controller {
 				 	{
 				 		$category[]=$this->reports_model->GetMonthName($i);
 				 	}
-
+				 	
 				 	$test_results=$this->reports_charts_model->biannual_graph_view($yearB,$biannual,$Facility,$Device,$all_data,$login_id,$report_type);
 				
 				}//Biannual Graph End
@@ -1093,9 +1095,18 @@ class reports extends MY_Controller {
 					$new_from_date=date('d-F-Y',strtotime($Fromdate));
 					$new_to_date=date('d-F-Y',strtotime($Todate));
 
-					$category[]=$new_from_date;
-					$category[]=$new_to_date;
-					$c="Customized_Dates";
+					// $category[]=$new_from_date;
+					// $category[]=$new_to_date;
+					// $c="Customized_Dates";
+					//$category[]=array('Customized_Dates');
+					$category[]=$this->reports_model->GetMonthName($month_limit_begin);
+					$category[]=$this->reports_model->GetMonthName($month_limit_end);
+					// print_r($category);
+					// die;
+
+					// array_push($category,$new_from_date);
+					// array_push($category,$new_to_date);
+
 
 					$test_results=$this->reports_charts_model->customized_graph_view($month_limit_begin,$month_limit_end,$year_begin,$year_end,$Facility,$Device,$all_data,$login_id,$report_type);
 					

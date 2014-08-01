@@ -15,8 +15,8 @@
 				</tr>
 				<tr>
 					<th>Reset Password</th>
-					<th>Activate</th>
-					<th>Remove</th>
+					<!-- <th>Activate</th> -->
+					<th>Deactivate User</th>
 					<th>Edit Details</th>
 				</tr>
 			</thead>
@@ -34,39 +34,45 @@
 					<td><?php echo $user['user_group'];?></td>					
 					<td><?php echo $user['status_desc'];?></td>
 					<td>
-						<a title =" Reset User (<?php echo $user['username'];?>) Password" href="javascript:void(null);" style="border-radius:1px;" class="" onclick="reset_password(<?php echo $user['user_id'];?>)"> 
-							<span style="font-size: 1.4em;color: #eb9316;" class="glyphicon glyphicon-pencil"></span>
-						</a>
+						<center>
+							<a title =" Reset User (<?php echo $user['username'];?>) Password" href="#user_password" data-toggle="modal" data-id="<?php echo $user['user_id']; ?>" data-name="<?php echo $user['name'] ?>" style="border-radius:1px;" class="rpassword"> 
+								<span style="font-size: 1.4em;color: #eb9316;" class="glyphicon glyphicon-pencil"></span>
+							</a>
+						</center>
 					</td>				
-					<td>						
+					<!-- <td> -->						
 						<?php 
-							$id = $user["user_id"];
-							$status = $user["status_desc"];
+							// $id = $user["user_id"];
+							// $status = $user["status_desc"];
 
-							echo '<a title ="'.$status.'" href="javascript:void(null);" style="border-radius:1px;" class="" onclick="rollout_toggle('.$id.')">';
+							// echo '<a title ="'.$status.'" href="javascript:void(null);" style="border-radius:1px;" class="" onclick="rollout_toggle('.$id.')">';
 				
-							if($user['status']==5){
-								echo '<span style="font-size: 1.4em;color: #2d6ca2;" class="glyphicon glyphicon-minus-sign" ></span></a>';								
-							}elseif($user['status']==1){
-								echo '<span style="font-size: 1.4em;color: #3e8f3e;" class="glyphicon glyphicon-ok-sign"></span></a>';								
-							}elseif($user['status']==4){
-								echo '<span style="font-size: 1.4em;color: #c12e2a;" class="glyphicon glyphicon-remove-sign"></span></a>';								
-							}else{
-								echo '<span style="font-size: 1.4em;color: #eb9316;" class="glyphicon glyphicon-question-sign"></span></a>';																
-							}						
-							echo '</a>';
+							// if($user['status']==5){
+							// 	echo '<span style="font-size: 1.4em;color: #2d6ca2;" class="glyphicon glyphicon-minus-sign" ></span></a>';								
+							// }elseif($user['status']==1){
+							// 	echo '<span style="font-size: 1.4em;color: #3e8f3e;" class="glyphicon glyphicon-ok-sign"></span></a>';								
+							// }elseif($user['status']==4){
+							// 	echo '<span style="font-size: 1.4em;color: #c12e2a;" class="glyphicon glyphicon-remove-sign"></span></a>';								
+							// }else{
+							// 	echo '<span style="font-size: 1.4em;color: #eb9316;" class="glyphicon glyphicon-question-sign"></span></a>';																
+							// }						
+							// echo '</a>';
 						?>
 						
+					<!-- </td> -->
+					<td>
+						<center>
+							<a title =" Deactivate User (<?php echo $user['username'];?>) " href="#deactivate_user" data-toggle="modal" data-id="<?php echo $user['user_id']; ?>" data-name="<?php echo $user['name'] ?>" style="border-radius:1px;" class="remove_active" > 
+								<span style="font-size: 1.4em;color: #2d6ca2;" class="glyphicon glyphicon-minus-sign"></span>
+							</a>
+						</center>
 					</td>
 					<td>
-						<a title =" Remove User (<?php echo $user['username'];?>) " href="javascript:void(null);" style="border-radius:1px;" class="" onclick="remove_user(<?php echo $user['user_id'];?>)"> 
-							<span style="font-size: 1.4em;color: #2d6ca2;" class="glyphicon glyphicon-minus-sign"></span>
-						</a>
-					</td>
-					<td>
-						<a title =" Edit User (<?php echo $user['username'];?>)" href="javascript:void(null);" style="border-radius:1px;" class="" onclick="edit_user(<?php echo $user['user_id'];?>)"> 
-							<span style="font-size: 1.3em;color:#2aabd2;" class="glyphicon glyphicon-pencil"></span>
-						</a>
+						<center>
+							<a title =" Edit User (<?php echo $user['username'];?>)" href="javascript:void(null);" style="border-radius:1px;" class="" onclick="edit_user(<?php echo $user['user_id'];?>)"> 
+								<span style="font-size: 1.3em;color:#2aabd2;" class="glyphicon glyphicon-pencil"></span>
+							</a>
+						</center>
 					</td>
 				</tr>
 				<?php
@@ -77,6 +83,81 @@
 		</table>
 	</div>
 </div>
+
+<!-- deactivate user modal -->
+	<div class="modal fade" id="deactivate_user" >
+	  	<div class="modal-dialog" style="width:37%;margin-bottom:2px;">
+	    	<div class="modal-content" >
+	      		<div class="modal-header">
+	        		<h4>Deactivate User<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button></h4>
+	      		</div>
+	      		<div class="modal-body" style="padding-bottom:0px;">
+
+	      			<b><div style="width:210px;float:left;">Are you sure you want to deactivate</div><div style="width:210px;float:left;" id="user_name"></div></b>
+	      			<br />	
+	      			<form action="" method="POST" id="deactivate_form" >
+	      				<input type="hidden" name="user_id" id="user_id" value="" /><br />
+	      				<button class="btn btn-primary" onclick="user_updates(1)" ><i class="glyphicon glyphicon-save"></i>Confim</button>
+	      				<button type="button" class="btn btn-danger" data-dismiss="modal"><i class="glyphicon glyphicon-remove"></i>Close</button>
+
+	      			</form>
+	      			<div id="response"></div>     			
+	      		</div>		      		
+	      		<div class="modal-footer" style="height:11px;padding-top:11px;">
+	      			<?php echo $this->config->item("copyrights");?>
+	      		</div> 
+	   		</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+<!-- END deactivate user modal -->
+
+<!-- reset user modal -->
+	<div class="modal fade" id="user_password" >
+	  	<div class="modal-dialog" style="width:37%;margin-bottom:2px;">
+	    	<div class="modal-content" >
+	      		<div class="modal-header">
+	        		<h4>Reset User Password<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button></h4>
+	      		</div>
+	      		<div class="modal-body" style="padding-bottom:0px;">
+
+	      			<b><div style="width:290px;float:left; ">Are you sure you want to reset the password for </div><div style="width:150px;float:left;" id="user_name_p"></div></b>
+	      			<br /><br />		
+	      			<form action="" method="POST" id="deactivate_form" >
+	      				<input type="hidden" name="user_id" id="user_id" value="" /><br />
+	      				<button class="btn btn-primary" onclick="user_updates(2)" ><i class="glyphicon glyphicon-save"></i>Confim</button>
+	      				<button type="button" class="btn btn-danger" data-dismiss="modal"><i class="glyphicon glyphicon-remove"></i>Close</button>
+
+	      			</form>
+	      			<div id="response"></div>     			
+	      		</div>		      		
+	      		<div class="modal-footer" style="height:11px;padding-top:11px;">
+	      			<?php echo $this->config->item("copyrights");?>
+	      		</div> 
+	   		</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+<!-- END reset user modal -->
+
+<!-- user profile modal -->
+	<div class="modal fade" id="user_password" >
+	  	<div class="modal-dialog" style="width:37%;margin-bottom:2px;">
+	    	<div class="modal-content" >
+	      		<div class="modal-header">
+	        		<h4>Reset User Password<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button></h4>
+	      		</div>
+	      		<div class="modal-body" style="padding-bottom:0px;">
+	      			<?php //$this->load->view('user_profile_view'); ?>
+	      			
+	      			<!-- <div id="response"></div> -->     			
+	      		</div>		      		
+	      		<div class="modal-footer" style="height:11px;padding-top:11px;">
+	      			<?php echo $this->config->item("copyrights");?>
+	      		</div> 
+	   		</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+<!-- END user  profile modal -->
+
 <div>
 	<div class="tabbable span12" style="margin-top:5px;">
 		<ul class="nav nav-tabs">
@@ -127,6 +208,53 @@
  	
 });
 
+	 $(document).on("click", ".remove_active", function () { //pick value from the table and put in bootstrap modal
+	     var id = $(this).data('id');
+	     var name=$(this).data('name');
+
+	     $(".modal-body #user_id").val( id );
+	     document.getElementById('user_name').innerHTML=name + " ?";
+	});
+
+	$(document).on("click", ".rpassword", function () { //pick value from the table and put in bootstrap modal
+	     var id = $(this).data('id');
+	     var name=$(this).data('name');
+
+	     $(".modal-body #user_id").val( id );
+	     document.getElementById('user_name_p').innerHTML=name + " ?";
+	});
+
+
+	 function user_updates(value) //deactivate function that runs as ajax 
+	 {
+	 	var formData = {
+			'user_id' : $('input[name=user_id]').val(),
+		};
+		var the_url='';
+
+		if(value==1)// deactivate user
+		{
+			var the_url='<?php echo base_url();?>admin/users/deactivate';
+		}
+		else if(value==2)// reset password
+		{
+			var the_url='<?php echo base_url();?>admin/users/reset_password';
+		}
+		else if(value==3)// profile update
+		{
+			var the_url='<?php echo base_url();?>admin/users/update_profile';
+		}
+
+		$.ajax({
+					type 		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
+					url 		: the_url, // the url where we want to POST
+					data 		: formData, // our data object
+					success: function(result) {
+	    				$('#response').html(result).fadeOut(9000);
+
+	    			}
+				})
+	 }
     </script>
 			<!-- Add new -->
 			<div class="tab-pane active" id="tabs1-add" >
@@ -260,4 +388,7 @@
 			</div>
 		</div>
 	</div>
+</div>
+
+<div>
 </div>

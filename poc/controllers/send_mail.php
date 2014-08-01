@@ -5,8 +5,14 @@ class send_mail extends MY_Controller {
 
 function daemon_monthly_email()
 {
-	$from_month=date('Y-m-01');//first day of the month
-	$end_month=date('Y-m-t',strtotime('0 month'));//last day of the month
+	// $from_month=date('Y-m-01');//first day of the month
+	// //$num_days=cal_days_in_month(CAL_GREGORIAN, $monthly,$YearM);
+	// $end_month=date('Y-m-t',strtotime('0 month'));//last day of the month
+	$f="2014-07-01";
+	$e="2014-07-31";
+
+	$from_month=date('Y-m-d',strtotime($f));
+	$end_month=date('Y-m-d',strtotime($e));
 
 	$month=date('m');
 	$year=date('Y');
@@ -17,6 +23,20 @@ function daemon_monthly_email()
 	$report_type=3;
 	$Device="";
 	$email_receipients=array();
+
+	//CHAI team
+	$CHAI_team=array('brianhawi92@gmail.com',
+					 'tngugi@clintonhealthaccess.org',
+					 'skadima@clintonhealthaccess.org',
+					 'onjathi@clintonhealthaccess.org',
+					 'jlusike@clintonhealthaccess.org',
+					 'kanyonga.nicholas@gmail.com',
+					 );
+	// $National_team=array('jbatuka@usaid.gov',
+	// 				     'Uys0@cdc.gov',
+	// 				     'mamoumuro@gmail.com',
+	// 				     'njebungei@yahoo.com',
+	// 				     'hoy4@cdc.gov');
 
 	$img=$this->config->item('server_root').'img/nascop.jpg';// Nascop Logo
 
@@ -52,13 +72,13 @@ function daemon_monthly_email()
 			$title_filename="";
 			$pdf_results="";
 
-			//get all the tests < 350 for the facility 
-			$pdf_results=$this->send_mail_model->tests_less_than350_month($from_month,$end_month,$results['facility_name']);
+			//get all the tests < 500 for the facility 
+			$pdf_results=$this->send_mail_model->tests_less_than500($from_month,$end_month,$results['facility_name']);
 
-			if(!$pdf_results['less_than350']==0)//check if facility has tests < 350 cp/ml
+			if(!$pdf_results['less_than350']==0)//check if facility has tests < 500 cp/ml
 			{
 				//make a file name with the extension .pdf
-				$title_filename=$the_month.' Report For '.$results['facility_name'].' For Patients With Outcomes Less Than 350 cp per ml';
+				$title_filename=$the_month.' Report For '.$results['facility_name'].' For Patients With Outcomes Less Than 500 cp per ml';
 				$file=$this->config->item('server_root').'assets/email/'.$title_filename.'.pdf';
 
 				//set the pdf content
@@ -70,7 +90,7 @@ function daemon_monthly_email()
 
 				$PDF_content.='<table width="480" border="1" align="center">';
 				$PDF_content.='<tr>';
-				$PDF_content.='<th bgcolor="#990000" style="color:#FFF;"># Tests < 350</th>';
+				$PDF_content.='<th bgcolor="#990000" style="color:#FFF;"># Tests < 500</th>';
 				$PDF_content.='<th bgcolor="#000066" style="color:#FFF;">Total Number of Tests</th>';
 				$PDF_content.='</tr>';
 				$PDF_content.='<tr><td align="center">'.$pdf_results['less_than350'].'</td>';
@@ -105,7 +125,8 @@ function daemon_monthly_email()
 				
 				$county_receipients=array();
 				$partner_receipients=array();
-				
+				$email_receipients=array();
+
 				$county_coordinator_email=$this->send_mail_model->get_county_email($results['region_id']);
 
 				foreach($county_coordinator_email as $cemail)
@@ -121,16 +142,21 @@ function daemon_monthly_email()
 				}
 
 				$email_receipients=array_merge($partner_receipients,$county_receipients);
-
-				$this->email->from('CD4 PIMA Notification', 'CD4Poc@nascop.org');
-				//$this->email->to($email_receipients);//send to specific receiver
-				$this->email->to('brian.odhiambo932@gmail.com,tngugi@gmail.com,kanyonga.nicholas@gmail.com');//send to specific receiver
-
+				echo "******";
+				echo "<pre>";
+				print_r($email_receipients);
+				echo "</pre>";
+				echo $results['region_name']."-----".$results['partner_name'];
+				echo "******<br />";
+				$this->email->from('cd4poc@gmail.com', 'CD4 PIMA Notification');
+				$this->email->to($email_receipients);//send to specific receiver
+				$this->email->bcc($CHAI_team);//CHAI team
+				//$this->email->to('tngugi@clintonhealthaccess.org');
 				
-				$this->email->subject('Tests < 350 cp/ml Monthly Report'); //subject
+				$this->email->subject('Tests < 500 cp/ml Monthly Report'); //subject
 				$this->email->attach($file);//attach the facility pdf document
 
-				$message="Hi.<br /><br />Please Find Attached the List of all patients with outcomes < 350cp/ml.
+				$message="Hi.<br /><br />Please Find Attached the List of all patients with outcomes < 500cp/ml.
 									<br /><br />They require a Follow Up Viral Load Test & Initiation into treatment.
 									<br /><br />Many Thanks.
 									<br /><br />--
@@ -156,24 +182,46 @@ function daemon_monthly_email()
 		}
 		
 	}
-	delete_files($this->config->item('server_root').'assets/email/');//delete the files
+	//delete_files($this->config->item('server_root').'assets/email/');//delete the files
 }
 
 function daemon_weekly_email()
 {
+	$this->load->config('email');
+
 	$this->load->model('send_mail_model');
 
-	$last_monday_date=date('Y-m-d',strtotime('last monday'));//last monday
-	$last_sunday_date=date('Y-m-d',strtotime('last sunday'));//last sunday
+	// $last_monday_date=date('Y-m-d',strtotime('last monday'));//last monday
+	// $last_sunday_date=date('Y-m-d',strtotime('last sunday'));//last sunday
+	$d="2014-07-21";
+	$e="2014-07-29";
+	$last_monday_date=date('Y-m-d',strtotime($d));//last monday
+	$last_sunday_date=date('Y-m-d',strtotime($e));//last sunday
 
-	$last_monday=date('jS F Y',strtotime('last monday'));
-	$last_sunday=date('jS F Y',strtotime('last sunday'));
+	// $last_monday=date('jS F Y',strtotime('last monday'));
+	// $last_sunday=date('jS F Y',strtotime('last sunday'));
+
+	$last_monday=date('jS F Y',strtotime($d));
+	$last_sunday=date('jS F Y',strtotime($e));
 
 	$month=date('m');
 	$year=date('Y');
 
 	$email_receipients=array();
-
+	//CHAI team
+	$CHAI_team=array('brianhawi92@gmail.com',
+					 'tngugi@clintonhealthaccess.org',
+					 'skadima@clintonhealthaccess.org',
+					 'onjathi@clintonhealthaccess.org',
+					 'jlusike@clintonhealthaccess.org',
+					 'kanyonga.nicholas@gmail.com',
+					 );
+	$National_team=array('jbatuka@usaid.gov',
+					     'Uys0@cdc.gov',
+					     'mamoumuro@gmail.com',
+					     'njebungei@yahoo.com',
+					     'hoy4@cdc.gov');
+	
 	$this->load->library('mpdf/mpdf');// Load the mpdf library
 
 	$uploaded_facilities=$this->send_mail_model->uploads_by_facility($last_monday_date,$last_sunday_date);
@@ -240,14 +288,15 @@ function daemon_weekly_email()
 				$e->getMessage();
 			}
 
-			$this->email->from('CD4 PIMA Notification', 'CD4Poc@nascop.org');
+			$this->email->from('cd4poc@gmail.com', 'CD4 PIMA Notification');
 	
-			$this->email->to('brian.odhiambo932@gmail.com,tngugi@gmail.com,kanyonga.nicholas@gmail.com');//send to specific receiver
+			$this->email->to($National_team);//send to CHAI team
+			$this->email->bcc($CHAI_team);
 
 			$this->email->subject('Weekly National Activty Report'); //subject
 			$this->email->attach($file);//attach the pdf document
 
-			$message="Hi.<br /><br />Please find attached the summary for PIMA Test uploads for the week ending ".$last_monday." and ".$last_sunday."  ".$the_month." " .$year.".
+			$message="Hi.<br /><br />Please find attached the summary for PIMA Test uploads for the week ending ".$last_monday." and ".$last_sunday.".
 								<br /><br />Many Thanks.
 								<br /><br />--
 								<br /><br />CD4 Support Team
@@ -262,7 +311,7 @@ function daemon_weekly_email()
 			{
 				show_error($this->email->print_debugger());//show error message
 			}
-		 	break;
+		 	break;//break to not loop again
 		 }
 		
 	}	
@@ -339,16 +388,22 @@ function daemon_weekly_email()
 			{
 				$county_receipients[]=$cemail;
 			}
-
-			$this->email->from('CD4 PIMA Notification', 'CD4Poc@nascop.org');
-
-			//$this->email->to(county_receipients);//send to specific receiver
-			$this->email->to('brian.odhiambo932@gmail.com,tngugi@gmail.com,kanyonga.nicholas@gmail.com');//send to specific receiver
+			// echo "*****";
+			// echo $results['region_name'];
+			// echo "<pre>";
+			// print_r($county_receipients);
+			// echo "</pre>";
+			// echo "----------------------------------------------------------------";
+			$this->email->from('cd4poc@gmail.com', 'CD4 PIMA Notification');
+			
+			//$this->email->to($CHAI_team);
+			$this->email->to($county_receipients); //send to specific receiver
+			$this->email->bcc($CHAI_team); //CHAI team
 
 			$this->email->subject('Weekly Activity Report'); //subject
 			$this->email->attach($file);//attach the pdf document
 
-			$message="Hi.<br /><br />Please find attached the summary for PIMA Test uploads for the week ending ".$last_monday." and ".$last_sunday."  ".$the_month." " .$year." for ".$results['region_name']." county.
+			$message="Hi.<br /><br />Please find attached the summary for PIMA Test uploads for the week ending ".$last_monday." and ".$last_sunday." for ".$results['region_name']." county.
 								<br /><br />These tests are for the previous week
 								<br /><br />Many Thanks.
 								<br /><br />--
@@ -442,14 +497,21 @@ function daemon_weekly_email()
 			{
 				$partner_receipients[]=$pemail;
 			}
-			$this->email->from('CD4 PIMA Notification', 'CD4Poc@nascop.org');
-			//$this->email->to(partner_receipients);//send to specific receivers
-			$this->email->to('brian.odhiambo932@gmail.com,tngugi@gmail.com,kanyonga.nicholas@gmail.com');//send to specific receiver
+			// echo "*****";
+			// echo $results['partner_name'];
+			// echo "<pre>";
+			// print_r($partner_receipients);
+			// echo "</pre>";
+			// echo "----------------------------------------------------------------";
+			$this->email->from('cd4poc@gmail.com', 'CD4 PIMA Notification');
+			//$this->email->to($CHAI_team);
+			$this->email->to($partner_receipients); //send to specific receivers
+			$this->email->cc($CHAI_team); //CHAI team
 
 			$this->email->subject('Weekly Activity Report'); //subject
 			$this->email->attach($file);//attach the pdf document
 
-			$message="Hi.<br /><br />Please find attached the summary for PIMA Test uploads for the week ending ".$last_monday." and ".$last_sunday."  ".$the_month." " .$year." for ".$results['partner_name'].".
+			$message="Hi.<br /><br />Please find attached the summary for PIMA Test uploads for the week ending ".$last_monday." and ".$last_sunday."  for ".$results['partner_name'].".
 								<br /><br />Many Thanks.
 								<br /><br />--
 								<br /><br />CD4 Support Team
@@ -469,10 +531,10 @@ function daemon_weekly_email()
 	}
 
 	
-	delete_files($this->config->item('server_root').'assets/weekly_email_national/');//delete the files
-	delete_files($this->config->item('server_root').'assets/weekly_email_county/');//delete the files
-	delete_files($this->config->item('server_root').'assets/weekly_email_partner/');//delete the files
-
+	// delete_files($this->config->item('server_root').'assets/weekly_email_national/');//delete the files
+	// delete_files($this->config->item('server_root').'assets/weekly_email_county/');//delete the files
+	// delete_files($this->config->item('server_root').'assets/weekly_email_partner/');//delete the files
+	//die;
 }
 	
 	

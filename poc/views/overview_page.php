@@ -3,6 +3,7 @@
 		<ul class="nav nav-tabs">
 			
 			<li id ="tabPima" class="active"><a id = "linkPima" href="#tabs1-pima" data-toggle="tab">PIMA</a></li>
+			<li id ="tabSummary" ><a id = "linkSummary"  href="#tabs1-summary" data-toggle="tab">Summary</a></li>
 		</ul>
 		<div class="tab-content">
 
@@ -36,14 +37,14 @@
 						</td>
 						<td style="height:130px;width:35%;vertical-align: top;">
 							<center>
-								<div class="section-title" ><center>CD4 Tests < 500cell/mm3 For <?php echo $date_filter_desc;?></center></div>
+								<div class="section-title" ><center>CD4 Tests < 350cell/mm3 For <?php echo $date_filter_desc;?></center></div>
 								<table class="data-table" style=" margin-left:0px;">
 				                    <tbody>
 				                    	<tr class="even">
 					                        <th>&nbsp;</th>
 					                        <th><center>Tests</center></th>
-					                        <th nowrap="nowrap"><center>&lt;500</center></th>
-					                        <th nowrap="nowrap"><center>&lt;500 % </center></th>					                        
+					                        <th nowrap="nowrap"><center>&lt;350</center></th>
+					                        <th nowrap="nowrap"><center>&lt;350 % </center></th>					                        
 				                    	</tr>
 				                    	<?php 
 				                    		foreach ($devices_tests_totals as $device ) { 

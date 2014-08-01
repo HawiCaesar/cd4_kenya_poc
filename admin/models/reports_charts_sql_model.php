@@ -17,17 +17,11 @@ class reports_charts_sql_model extends CI_Model
 
 		if(!$facility=="")
 		{
-			$criteria =" AND  `facility`='".$facility."'";
+			$criteria =" AND  `f`.`name`='".$facility."'";
 		}
 		if(!$device=="")
-		{
-			$facility_equipment=$this->get_equipment_id($device);
-
-			foreach ($facility_equipment as $value) 
-			{	
-				
-				$criteria=" AND `tst_dt`.`facility_equipment_id`='".$value['facility_equipment_id']."' ";
-			}
+		{	
+			$criteria=" AND `fp`.`serial_num`='".$device."' ";
 		}
 		if($all==3)// by partner 
 		{
@@ -40,13 +34,13 @@ class reports_charts_sql_model extends CI_Model
 		}
 		else if($all==4)// by county
 		{
-			$criteria =" AND `region_id`= '".$county_id."' ";
+			$criteria =" AND `r`.`id`= '".$county_id."' ";
 		}
 		
-		$delimiter=" AND MONTH( `tst_dt`.`result_date` ) 
+		$delimiter=" AND MONTH( `tst`.`result_date` ) 
 					BETWEEN  '$limit'
 					AND  '$limit_end'
-					AND YEAR( `tst_dt`.`result_date` ) BETWEEN '".$year."' AND '".$year_end."'
+					AND YEAR( `tst`.`result_date` ) BETWEEN '".$year."' AND '".$year_end."'
 					GROUP BY mth ";	
 
 		$test_details=R::getAll($tests_sql.$user_delimiter.$criteria.$report_type.$delimiter);
@@ -54,33 +48,7 @@ class reports_charts_sql_model extends CI_Model
 		// echo $tests_sql.$user_delimiter.$criteria.$report_type.$delimiter;
 
 		// die;
-
 		return $test_details;
-		
-
 	}
-	public function get_equipment_id($serial)
-	{
-		$sql="SELECT facility_equipment_id from facility_pima where serial_num='".$serial."' ";
-
-		$equipment=$this->db->query($sql);
-
-		$result_id="";
-		if($equipment->num_rows()>0)
-		{
-			foreach ($equipment->result_array() as $value) 
-			{
-				$result_id[]=$value;
-			}
-		}
-		else
-		{
-			$result_id="";
-		}
-		return $result_id;
-	}
-
-
-
 }//End of reports_charts_sql_model
 ?>

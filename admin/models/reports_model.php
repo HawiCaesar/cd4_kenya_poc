@@ -83,11 +83,11 @@ function get_tested_years_by_county($ID)
 
 	function year_month_report($Year,$Monthly,$all,$facility,$device,$from_month,$end_month,$report_type,$login_id,$county_name_value)
 	{
-		$tests_done=0;
-		$count=0;
-		$errors=0;
-		$less_than350=0;
-		$greater_equal_to350=0;
+		// $tests_done=0;
+		// $count=0;
+		// $errors=0;
+		// $less_than350=0;
+		// $greater_equal_to350=0;
 
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
@@ -100,7 +100,7 @@ function get_tested_years_by_county($ID)
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";
 		$pdf_data['table'].="<th>Facility - Device</th>";
-		$pdf_data['table'].="<th>Date</th>";
+		$pdf_data['table'].="<th>Date Run</th>";
 		$pdf_data['table'].="<th>Test Status</th>";
 		$pdf_data['table'].="<th>CD4 Count</th>";
 		$pdf_data['table'].="</tr>";
@@ -112,7 +112,9 @@ function get_tested_years_by_county($ID)
 			$device="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id);
+			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+
+			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
 			
 		}
 
@@ -121,7 +123,9 @@ function get_tested_years_by_county($ID)
 			$facility="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id);
+			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+
+			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
 			
 		}
 
@@ -136,11 +140,15 @@ function get_tested_years_by_county($ID)
 
 				$county_id=$this->get_county_id($county_name_value);
 			
-				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id);
+				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
 			}
 			else
 			{
-				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id);
+				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
 			}
 			
 		}
@@ -153,45 +161,26 @@ function get_tested_years_by_county($ID)
 				{
 					$string_unix="";
 					$string_unix=mysql_to_unix($value['date_test']);
-
-					if($value['valid']==1)
-					{
-						$tests_done+=$value['valid'];
-						$count++;
-
-						if($value['valid']==1 && $value['cd4_count']>=350)
-						{
-							$greater_equal_to350++;								
-						}
-						else if($value['valid']==1 && $value['cd4_count']<350)
-						{
-							$less_than350++;
-						}
-						$pdf_data['table'].='<tr>';
-						$pdf_data['table'].='<td>'.$i.'</td>';
-						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
-						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
-						$pdf_data['table'].='<td><center>Successful</center></td>';
-						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
-						$pdf_data['table'].='</tr>';
-
-					$i++;
-
-					}
-					else
-					{
-						$count++;
-					}
 					
+					$pdf_data['table'].='<tr>';
+					$pdf_data['table'].='<td>'.$i.'</td>';
+					$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
+					$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
+					$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+					$pdf_data['table'].='<td><center>Successful</center></td>';
+					$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
+					$pdf_data['table'].='</tr>';
+
+					$i++;	
 				}
 			}
 			else
 			{
-				$tests_done=0;
-				$count=0;
-				$less_than350=0;
-				$greater_equal_to350=0;
+				$pdf_data['less_than350']=0;
+				$pdf_data['count']=0;
+				$pdf_data['valid_tests']=0;
+				$pdf_data['greater_equal_to350']=0;
+				$pdf_data['errors']=0;
 			}		
 		}
 		else if($report_type==2)// Errors Only
@@ -203,35 +192,26 @@ function get_tested_years_by_county($ID)
 					$string_unix="";
 					$string_unix=mysql_to_unix($value['date_test']);
 
-					if($value['valid']==0)
-					{
-						$errors++;
-						$count++;
+					$pdf_data['table'].='<tr>';
+					$pdf_data['table'].='<td>'.$i.'</td>';
+					$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
+					$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
+					$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+					$pdf_data['table'].='<td><center>Error</center></td>';
+					$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
+					$pdf_data['table'].='</tr>';
 
-						$pdf_data['table'].='<tr>';
-						$pdf_data['table'].='<td>'.$i.'</td>';
-						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
-						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
-						$pdf_data['table'].='<td><center>Error</center></td>';
-						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
-						$pdf_data['table'].='</tr>';
-
-						$i++;
-					}
-					else
-					{
-						$count++;
-					}
-
-					
+					$i++;		
 				}
 				
 			}
 			else
 			{
-				$errors=0;
-				$count=0;
+				$pdf_data['less_than350']=0;
+				$pdf_data['count']=0;
+				$pdf_data['valid_tests']=0;
+				$pdf_data['greater_equal_to350']=0;
+				$pdf_data['errors']=0;
 			}
 							
 		}
@@ -246,17 +226,6 @@ function get_tested_years_by_county($ID)
 
 					if($value['valid']==1)
 					{
-						$tests_done+=$value['valid'];
-						$count++;
-
-						if($value['valid']==1 && $value['cd4_count']>=350)
-						{
-							$greater_equal_to350++;		
-						}
-						else if($value['valid']==1 && $value['cd4_count']<350)
-						{
-							$less_than350++;								
-						}
 
 						$pdf_data['table'].='<tr>';
 						$pdf_data['table'].='<td>'.$i.'</td>';
@@ -270,8 +239,6 @@ function get_tested_years_by_county($ID)
 					}
 					else
 					{
-						$errors++;
-						$count++;
 
 						$pdf_data['table'].='<tr>';
 						$pdf_data['table'].='<td>'.$i.'</td>';
@@ -288,36 +255,40 @@ function get_tested_years_by_county($ID)
 			}
 			else
 			{
-				$tests_done=0;
-				$errors=0;
-				$count=0;
-				$greater_equal_to350=0;
-				$less_than350=0;
+				$pdf_data['less_than350']=0;
+				$pdf_data['count']=0;
+				$pdf_data['valid_tests']=0;
+				$pdf_data['greater_equal_to350']=0;
+				$pdf_data['errors']=0;
 			}
 													
 		}
 
 		$pdf_data['table'].="</table>";
 
-		$pdf_data['tests_done']=$tests_done;
-		$pdf_data['less_than350']=$less_than350;
-		$pdf_data['greater_equal_to350']=$greater_equal_to350;
-		$pdf_data['errors']=$errors;
-		$pdf_data['count']=$count;
+		if($pdf_count!="")
+		{
+			foreach($pdf_count as $test_count)
+			{
+				$pdf_data['less_than350']=$test_count['failed'];
+				$pdf_data['count']=$test_count['total_tests'];
+				$pdf_data['valid_tests']=$test_count['valid_tests'];
+				$pdf_data['greater_equal_to350']=$test_count['passed'];
+				$pdf_data['errors']=$test_count['errors'];
+			}
+		}
 
-		// print_r($pdf_data);
-		// die;
 		return $pdf_data;
 
 	}
 
 	function year_quarter_report($yearQ,$quarter,$q_no,$all,$facility,$device,$from_month,$end_month,$report_type,$login_id,$county_name_value)
 	{
-		$tests_done=0;
-		$count=0;
-		$errors=0;
-		$less_than350=0;
-		$greater_equal_to350=0;
+		// $tests_done=0;
+		// $count=0;
+		// $errors=0;
+		// $less_than350=0;
+		// $greater_equal_to350=0;
 
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
@@ -330,7 +301,7 @@ function get_tested_years_by_county($ID)
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";
 		$pdf_data['table'].="<th>Facility - Device</th>";
-		$pdf_data['table'].="<th>Date</th>";
+		$pdf_data['table'].="<th>Date Run</th>";
 		$pdf_data['table'].="<th>Test Status</th>";
 		$pdf_data['table'].="<th>CD4 Count</th>";
 		$pdf_data['table'].="</tr>";
@@ -342,7 +313,9 @@ function get_tested_years_by_county($ID)
 			$all="";
 			$device="";
 
-			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id);
+			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+
+			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
 				
 		}
 
@@ -351,7 +324,9 @@ function get_tested_years_by_county($ID)
 			$facility="";
 			$all="";
 			
-			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id);
+			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+
+			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
 			
 		}
 
@@ -366,11 +341,15 @@ function get_tested_years_by_county($ID)
 
 				$county_id=$this->get_county_id($county_name_value);
 			
-				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id);
+				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
 			}
 			else
 			{
-				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id);
+				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
 			}		
 	
 		}
@@ -383,44 +362,26 @@ function get_tested_years_by_county($ID)
 					{
 						$string_unix="";
 						$string_unix=mysql_to_unix($value['date_test']);
-						
-						if($value['valid']==1)
-						{
-							$tests_done+=$value['valid'];
-							$count++;
+										
+						$pdf_data['table'].='<tr>';
+						$pdf_data['table'].='<td>'.$i.'</td>';
+						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
+						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
+						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+						$pdf_data['table'].='<td><center>Successful</center></td>';
+						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
+						$pdf_data['table'].='</tr>';
 
-							if($value['valid']==1 && $value['cd4_count']>=350)
-							{
-								$greater_equal_to350++;
-							}
-							else if($value['valid']==1 && $value['cd4_count']<350)
-							{									
-								$less_than350++;								
-							}
-							$pdf_data['table'].='<tr>';
-							$pdf_data['table'].='<td>'.$i.'</td>';
-							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
-							$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-							$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
-							$pdf_data['table'].='<td><center>Successful</center></td>';
-							$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
-							$pdf_data['table'].='</tr>';
-
-							$i++;
-						}
-						else
-						{
-							$count++;
-						}
-						
+						$i++;
 					}
 				}
 				else
 				{
-					$tests_done=0;
-					$count=0;
-					$less_than350=0;
-					$greater_equal_to350=0;
+					$pdf_data['less_than350']=0;
+					$pdf_data['count']=0;
+					$pdf_data['valid_tests']=0;
+					$pdf_data['greater_equal_to350']=0;
+					$pdf_data['errors']=0;
 				}
 
 			}
@@ -433,32 +394,25 @@ function get_tested_years_by_county($ID)
 						$string_unix="";
 						$string_unix=mysql_to_unix($value['date_test']);
 
-						if($value['valid']==0)
-						{
-							$errors++;
-							$count++;
+						$pdf_data['table'].='<tr>';
+						$pdf_data['table'].='<td>'.$i.'</td>';
+						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
+						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
+						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+						$pdf_data['table'].='<td><center>Error</center></td>';
+						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
+						$pdf_data['table'].='</tr>';
 
-							$pdf_data['table'].='<tr>';
-							$pdf_data['table'].='<td>'.$i.'</td>';
-							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
-							$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-							$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
-							$pdf_data['table'].='<td><center>Error</center></td>';
-							$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
-							$pdf_data['table'].='</tr>';
+						$i++;
 
-							$i++;
-						}
-						else
-						{
-							$count++;
-						}
-						
 					}
 				}else
 				{
-					$errors=0;
-					$count=0;
+					$pdf_data['less_than350']=0;
+					$pdf_data['count']=0;
+					$pdf_data['valid_tests']=0;
+					$pdf_data['greater_equal_to350']=0;
+					$pdf_data['errors']=0;
 					
 				}
 
@@ -474,17 +428,7 @@ function get_tested_years_by_county($ID)
 
 						if($value['valid']==1)
 						{
-							$tests_done+=$value['valid'];
-							$count++;
-
-							if($value['valid']==1 && $value['cd4_count']>=350)
-							{
-								$greater_equal_to350++;
-							}
-							else if($value['valid']==1 && $value['cd4_count']<350)
-							{
-								$less_than350++;
-							}
+							
 							$pdf_data['table'].='<tr>';
 							$pdf_data['table'].='<td>'.$i.'</td>';
 							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
@@ -497,8 +441,6 @@ function get_tested_years_by_county($ID)
 						}
 						else
 						{
-							$errors++;
-							$count++;
 
 							$pdf_data['table'].='<tr>';
 							$pdf_data['table'].='<td>'.$i.'</td>';
@@ -514,22 +456,28 @@ function get_tested_years_by_county($ID)
 				}
 				else
 				{
-					$tests_done=0;
-					$errors=0;
-					$count=0;
-					$less_than350=0;
-					$greater_equal_to350=0;
+					$pdf_data['less_than350']=0;
+					$pdf_data['count']=0;
+					$pdf_data['valid_tests']=0;
+					$pdf_data['greater_equal_to350']=0;
+					$pdf_data['errors']=0;
 				}
 		
 			}
 
 		$pdf_data['table'].="</table>";
 
-		$pdf_data['tests_done']=$tests_done;
-		$pdf_data['less_than350']=$less_than350;
-		$pdf_data['greater_equal_to350']=$greater_equal_to350;
-		$pdf_data['errors']=$errors;
-		$pdf_data['count']=$count;
+		if($pdf_count!="")
+		{
+			foreach($pdf_count as $test_count)
+			{
+				$pdf_data['less_than350']=$test_count['failed'];
+				$pdf_data['count']=$test_count['total_tests'];
+				$pdf_data['valid_tests']=$test_count['valid_tests'];
+				$pdf_data['greater_equal_to350']=$test_count['passed'];
+				$pdf_data['errors']=$test_count['errors'];
+			}
+		}
 
 		// print_r($pdf_data);
 		// die;
@@ -539,11 +487,11 @@ function get_tested_years_by_county($ID)
 
 	function year_biannual_report($yearB,$biannual,$b_no,$all,$facility,$device,$from_month,$end_month,$report_type,$login_id,$county_name_value)
 	{
-		$tests_done=0;
-		$count=0;
-		$errors=0;
-		$less_than350=0;
-		$greater_equal_to350=0;
+		// $tests_done=0;
+		// $count=0;
+		// $errors=0;
+		// $less_than350=0;
+		// $greater_equal_to350=0;
 
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
@@ -556,7 +504,7 @@ function get_tested_years_by_county($ID)
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";
 		$pdf_data['table'].="<th>Facility - Device</th>";
-		$pdf_data['table'].="<th>Date</th>";
+		$pdf_data['table'].="<th>Date Run</th>";
 		$pdf_data['table'].="<th>Test Status</th>";
 		$pdf_data['table'].="<th>CD4 Count</th>";
 		$pdf_data['table'].="</tr>";
@@ -568,7 +516,9 @@ function get_tested_years_by_county($ID)
 			$device="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id);
+			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+
+			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
 			
 		}
 
@@ -577,7 +527,9 @@ function get_tested_years_by_county($ID)
 			$facility="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id);
+			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+
+			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
 				
 		}
 
@@ -592,11 +544,15 @@ function get_tested_years_by_county($ID)
 
 				$county_id=$this->get_county_id($county_name_value);
 			
-				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id);
+				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
 			}
 			else
 			{
-				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id);
+				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
 			}
 
 		}
@@ -610,43 +566,25 @@ function get_tested_years_by_county($ID)
 						$string_unix="";
 						$string_unix=mysql_to_unix($value['date_test']);
 						
-						if($value['valid']==1)
-						{
-							$tests_done+=$value['valid'];
-							$count++;
+						$pdf_data['table'].='<tr>';
+						$pdf_data['table'].='<td>'.$i.'</td>';
+						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
+						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
+						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+						$pdf_data['table'].='<td><center>Successful</center></td>';
+						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
+						$pdf_data['table'].='</tr>';
 
-							if($value['valid']==1 && $value['cd4_count']>=350)
-							{
-								$greater_equal_to350++;
-							}
-							else if($value['valid']==1 && $value['cd4_count']<350)
-							{									
-								$less_than350++;								
-							}
-							$pdf_data['table'].='<tr>';
-							$pdf_data['table'].='<td>'.$i.'</td>';
-							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
-							$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-							$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
-							$pdf_data['table'].='<td><center>Successful</center></td>';
-							$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
-							$pdf_data['table'].='</tr>';
-
-							$i++;
-						}
-						else
-						{
-							$count++;
-						}
-						
+						$i++;
 					}
 				}
 				else
 				{
-					$tests_done=0;
-					$count=0;
-					$less_than350=0;
-					$greater_equal_to350=0;
+					$pdf_data['less_than350']=0;
+					$pdf_data['count']=0;
+					$pdf_data['greater_equal_to350']=0;
+					$pdf_data['valid_tests']=0;
+					$pdf_data['errors']=0;
 				}
 
 			}
@@ -659,32 +597,27 @@ function get_tested_years_by_county($ID)
 						$string_unix="";
 						$string_unix=mysql_to_unix($value['date_test']);
 
-						if($value['valid']==0)
-						{
-							$errors++;
-							$count++;
 
-							$pdf_data['table'].='<tr>';
-							$pdf_data['table'].='<td>'.$i.'</td>';
-							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
-							$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-							$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
-							$pdf_data['table'].='<td><center>Error</center></td>';
-							$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
-							$pdf_data['table'].='</tr>';
+						$pdf_data['table'].='<tr>';
+						$pdf_data['table'].='<td>'.$i.'</td>';
+						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
+						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
+						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+						$pdf_data['table'].='<td><center>Error</center></td>';
+						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
+						$pdf_data['table'].='</tr>';
 
-							$i++;
-						}
-						else
-						{
-							$count++;
-						}
-						
+						$i++;
+							
 					}
-				}else
+				}
+				else
 				{
-					$errors=0;
-					$count=0;
+					$pdf_data['less_than350']=0;
+					$pdf_data['count']=0;
+					$pdf_data['greater_equal_to350']=0;
+					$pdf_data['valid_tests']=0;
+					$pdf_data['errors']=0;
 					
 				}
 
@@ -700,22 +633,12 @@ function get_tested_years_by_county($ID)
 
 						if($value['valid']==1)
 						{
-							$tests_done+=$value['valid'];
-							$count++;
-
-							if($value['valid']==1 && $value['cd4_count']>=350)
-							{
-								$greater_equal_to350++;
-							}
-							else if($value['valid']==1 && $value['cd4_count']<350)
-							{
-								$less_than350++;
-							}
+							
 							$pdf_data['table'].='<tr>';
 							$pdf_data['table'].='<td>'.$i.'</td>';
 							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 							$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-							$pdf_data['table'].='<td>'./*date('d-F-Y',strtotime(*/$value['date_test']/*)).' - '.mdate($datestring,$string_unix)*/.'</td>';
+							$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
 							$pdf_data['table'].='<td><center>Successful</center></td>';
 							$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 							$pdf_data['table'].='</tr>';
@@ -723,9 +646,6 @@ function get_tested_years_by_county($ID)
 						}
 						else
 						{
-							$errors++;
-							$count++;
-
 							$pdf_data['table'].='<tr>';
 							$pdf_data['table'].='<td>'.$i.'</td>';
 							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
@@ -740,22 +660,28 @@ function get_tested_years_by_county($ID)
 				}
 				else
 				{
-					$tests_done=0;
-					$errors=0;
-					$count=0;
-					$less_than350=0;
-					$greater_equal_to350=0;
+					$pdf_data['less_than350']=0;
+					$pdf_data['count']=0;
+					$pdf_data['greater_equal_to350']=0;
+					$pdf_data['valid_tests']=0;
+					$pdf_data['errors']=0;
 				}
 		
 			}
 
 		$pdf_data['table'].="</table>";
 
-		$pdf_data['tests_done']=$tests_done;
-		$pdf_data['less_than350']=$less_than350;
-		$pdf_data['greater_equal_to350']=$greater_equal_to350;
-		$pdf_data['errors']=$errors;
-		$pdf_data['count']=$count;
+		if($pdf_count!="")
+		{
+			foreach($pdf_count as $test_count)
+			{
+				$pdf_data['less_than350']=$test_count['failed'];
+				$pdf_data['count']=$test_count['total_tests'];
+				$pdf_data['valid_tests']=$test_count['valid_tests'];
+				$pdf_data['greater_equal_to350']=$test_count['passed'];
+				$pdf_data['errors']=$test_count['errors'];
+			}
+		}
 
 		// print_r($pdf_data);
 		// die;
@@ -766,11 +692,11 @@ function get_tested_years_by_county($ID)
 
 	function year_report($yearo,$all,$facility,$device,$from_month,$end_month,$report_type,$login_id,$county_name_value)
 	{
-		$tests_done=0;
-		$count=0;
-		$errors=0;
-		$less_than350=0;
-		$greater_equal_to350=0;
+		// $tests_done=0;
+		// $count=0;
+		// $errors=0;
+		// $less_than350=0;
+		// $greater_equal_to350=0;
 
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
@@ -795,7 +721,9 @@ function get_tested_years_by_county($ID)
 			$device="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id);
+			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+
+			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
 				
 		}
 
@@ -804,7 +732,9 @@ function get_tested_years_by_county($ID)
 			$facility="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id);
+			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+
+			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
 								
 		}
 		
@@ -819,11 +749,15 @@ function get_tested_years_by_county($ID)
 
 				$county_id=$this->get_county_id($county_name_value);
 
-				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id);
+				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
 			}
 			else
 			{
-				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id);
+				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
 			}
 
 		}
@@ -837,43 +771,26 @@ function get_tested_years_by_county($ID)
 						$string_unix="";
 						$string_unix=mysql_to_unix($value['date_test']);
 						
-						if($value['valid']==1)
-						{
-							$tests_done+=$value['valid'];
-							$count++;
+						$pdf_data['table'].='<tr>';
+						$pdf_data['table'].='<td>'.$i.'</td>';
+						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
+						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
+						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+						$pdf_data['table'].='<td><center>Successful</center></td>';
+						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
+						$pdf_data['table'].='</tr>';
 
-							if($value['valid']==1 && $value['cd4_count']>=350)
-							{
-								$greater_equal_to350++;
-							}
-							else if($value['valid']==1 && $value['cd4_count']<350)
-							{									
-								$less_than350++;								
-							}
-							$pdf_data['table'].='<tr>';
-							$pdf_data['table'].='<td>'.$i.'</td>';
-							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
-							$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-							$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
-							$pdf_data['table'].='<td><center>Successful</center></td>';
-							$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
-							$pdf_data['table'].='</tr>';
+						$i++;
 
-							$i++;
-						}
-						else
-						{
-							$count++;
-						}
-						
 					}
 				}
 				else
 				{
-					$tests_done=0;
-					$count=0;
-					$less_than350=0;
-					$greater_equal_to350=0;
+					$pdf_data['less_than350']=0;
+					$pdf_data['count']=0;
+					$pdf_data['greater_equal_to350']=0;
+					$pdf_data['valid_tests']=0;
+					$pdf_data['errors']=0;
 				}
 
 			}
@@ -886,32 +803,24 @@ function get_tested_years_by_county($ID)
 						$string_unix="";
 						$string_unix=mysql_to_unix($value['date_test']);
 
-						if($value['valid']==0)
-						{
-							$errors++;
-							$count++;
+						$pdf_data['table'].='<tr>';
+						$pdf_data['table'].='<td>'.$i.'</td>';
+						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
+						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
+						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+						$pdf_data['table'].='<td><center>Error</center></td>';
+						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
+						$pdf_data['table'].='</tr>';
 
-							$pdf_data['table'].='<tr>';
-							$pdf_data['table'].='<td>'.$i.'</td>';
-							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
-							$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-							$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
-							$pdf_data['table'].='<td><center>Error</center></td>';
-							$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
-							$pdf_data['table'].='</tr>';
-
-							$i++;
-						}
-						else
-						{
-							$count++;
-						}
-						
+						$i++;
 					}
 				}else
 				{
-					$errors=0;
-					$count=0;
+					$pdf_data['less_than350']=0;
+					$pdf_data['count']=0;
+					$pdf_data['greater_equal_to350']=0;
+					$pdf_data['valid_tests']=0;
+					$pdf_data['errors']=0;
 					
 				}
 
@@ -927,17 +836,7 @@ function get_tested_years_by_county($ID)
 
 						if($value['valid']==1)
 						{
-							$tests_done+=$value['valid'];
-							$count++;
-
-							if($value['valid']==1 && $value['cd4_count']>=350)
-							{
-								$greater_equal_to350++;
-							}
-							else if($value['valid']==1 && $value['cd4_count']<350)
-							{
-								$less_than350++;
-							}
+						
 							$pdf_data['table'].='<tr>';
 							$pdf_data['table'].='<td>'.$i.'</td>';
 							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
@@ -950,8 +849,6 @@ function get_tested_years_by_county($ID)
 						}
 						else
 						{
-							$errors++;
-							$count++;
 
 							$pdf_data['table'].='<tr>';
 							$pdf_data['table'].='<td>'.$i.'</td>';
@@ -967,22 +864,28 @@ function get_tested_years_by_county($ID)
 				}
 				else
 				{
-					$tests_done=0;
-					$errors=0;
-					$count=0;
-					$less_than350=0;
-					$greater_equal_to350=0;
+					$pdf_data['less_than350']=0;
+					$pdf_data['count']=0;
+					$pdf_data['count']=0;
+					$pdf_data['greater_equal_to350']=0;
+					$pdf_data['errors']=0;
 				}
 		
 			}
 
 		$pdf_data['table'].="</table>";
 
-		$pdf_data['tests_done']=$tests_done;
-		$pdf_data['less_than350']=$less_than350;
-		$pdf_data['greater_equal_to350']=$greater_equal_to350;
-		$pdf_data['errors']=$errors;
-		$pdf_data['count']=$count;
+		if($pdf_count!="")
+		{
+			foreach($pdf_count as $test_count)
+			{
+				$pdf_data['less_than350']=$test_count['failed'];
+				$pdf_data['count']=$test_count['total_tests'];
+				$pdf_data['valid_tests']=$test_count['valid_tests'];
+				$pdf_data['greater_equal_to350']=$test_count['passed'];
+				$pdf_data['errors']=$test_count['errors'];
+			}
+		}
 
 		// print_r($pdf_data);
 		// die;
@@ -991,11 +894,11 @@ function get_tested_years_by_county($ID)
 
 	function customized_dates_report($fromdate,$todate,$all,$facility,$device,$report_type,$login_id,$county_name_value)
 	{
-		$tests_done=0;
-		$count=0;
-		$errors=0;
-		$less_than350=0;
-		$greater_equal_to350=0;
+		// $tests_done=0;
+		// $count=0;
+		// $errors=0;
+		// $less_than350=0;
+		// $greater_equal_to350=0;
 
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
@@ -1008,7 +911,7 @@ function get_tested_years_by_county($ID)
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";
 		$pdf_data['table'].="<th>Facility-Device</th>";
-		$pdf_data['table'].="<th>Date</th>";
+		$pdf_data['table'].="<th>Date Run</th>";
 		$pdf_data['table'].="<th>Test Status</th>";
 		$pdf_data['table'].="<th>CD4 Count</th>";
 		$pdf_data['table'].="</tr>";
@@ -1020,7 +923,9 @@ function get_tested_years_by_county($ID)
 			$device="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($fromdate,$todate,$facility,$device,$all,$county_id);
+			$pdf_results=$this->get_test_details($fromdate,$todate,$facility,$device,$all,$county_id,$report_type);
+
+			$pdf_count=$this->get_count_test_details($fromdate,$todate,$facility,$device,$all,$county_id);	// get summation and count
 			
 		}
 
@@ -1029,8 +934,9 @@ function get_tested_years_by_county($ID)
 			$facility="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($fromdate,$todate,$facility,$device,$all,$county_id);
-			
+			$pdf_results=$this->get_test_details($fromdate,$todate,$facility,$device,$all,$county_id,$report_type);
+
+			$pdf_count=$this->get_count_test_details($fromdate,$todate,$facility,$device,$all,$county_id);	// get summation and count
 		}
 
 		if($all==3 || $all==4 || $all==5)// By partner or all data
@@ -1044,11 +950,15 @@ function get_tested_years_by_county($ID)
 
 				$county_id=$this->get_county_id($county_name_value);
 
-				$pdf_results=$this->get_test_details($fromdate,$todate,$facility,$device,$all,$county_id);
+				$pdf_results=$this->get_test_details($fromdate,$todate,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($fromdate,$todate,$facility,$device,$all,$county_id);	// get summation and count
 			}
 			else
 			{	
-				$pdf_results=$this->get_test_details($fromdate,$todate,$facility,$device,$all,$county_id);
+				$pdf_results=$this->get_test_details($fromdate,$todate,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($fromdate,$todate,$facility,$device,$all,$county_id);	// get summation and count
 			}
 
 		}
@@ -1062,43 +972,26 @@ function get_tested_years_by_county($ID)
 						$string_unix="";
 						$string_unix=mysql_to_unix($value['date_test']);
 						
-						if($value['valid']==1)
-						{
-							$tests_done+=$value['valid'];
-							$count++;
+						$pdf_data['table'].='<tr>';
+						$pdf_data['table'].='<td>'.$i.'</td>';
+						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
+						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
+						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+						$pdf_data['table'].='<td><center>Successful</center></td>';
+						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
+						$pdf_data['table'].='</tr>';
 
-							if($value['valid']==1 && $value['cd4_count']>=350)
-							{
-								$greater_equal_to350++;
-							}
-							else if($value['valid']==1 && $value['cd4_count']<350)
-							{									
-								$less_than350++;								
-							}
-							$pdf_data['table'].='<tr>';
-							$pdf_data['table'].='<td>'.$i.'</td>';
-							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
-							$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-							$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
-							$pdf_data['table'].='<td><center>Successful</center></td>';
-							$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
-							$pdf_data['table'].='</tr>';
-
-							$i++;
-						}
-						else
-						{
-							$count++;
-						}
-						
+						$i++;
+					
 					}
 				}
 				else
 				{
-					$tests_done=0;
-					$count=0;
-					$less_than350=0;
-					$greater_equal_to350=0;
+					$pdf_data['less_than350']=0;
+					$pdf_data['count']=0;
+					$pdf_data['greater_equal_to350']=0;
+					$pdf_data['valid_tests']=0;
+					$pdf_data['errors']=0;
 				}
 
 			}
@@ -1111,32 +1004,25 @@ function get_tested_years_by_county($ID)
 						$string_unix="";
 						$string_unix=mysql_to_unix($value['date_test']);
 
-						if($value['valid']==0)
-						{
-							$errors++;
-							$count++;
+						$pdf_data['table'].='<tr>';
+						$pdf_data['table'].='<td>'.$i.'</td>';
+						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
+						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
+						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+						$pdf_data['table'].='<td><center>Error</center></td>';
+						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
+						$pdf_data['table'].='</tr>';
 
-							$pdf_data['table'].='<tr>';
-							$pdf_data['table'].='<td>'.$i.'</td>';
-							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
-							$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-							$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
-							$pdf_data['table'].='<td><center>Error</center></td>';
-							$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
-							$pdf_data['table'].='</tr>';
-
-							$i++;
-						}
-						else
-						{
-							$count++;
-						}
+						$i++;
 						
 					}
 				}else
 				{
-					$errors=0;
-					$count=0;
+					$pdf_data['less_than350']=0;
+					$pdf_data['count']=0;
+					$pdf_data['greater_equal_to350']=0;
+					$pdf_data['valid_tests']=0;
+					$pdf_data['errors']=0;
 					
 				}
 
@@ -1152,17 +1038,6 @@ function get_tested_years_by_county($ID)
 
 						if($value['valid']==1)
 						{
-							$tests_done+=$value['valid'];
-							$count++;
-
-							if($value['valid']==1 && $value['cd4_count']>=350)
-							{
-								$greater_equal_to350++;
-							}
-							else if($value['valid']==1 && $value['cd4_count']<350)
-							{
-								$less_than350++;
-							}
 							$pdf_data['table'].='<tr>';
 							$pdf_data['table'].='<td>'.$i.'</td>';
 							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
@@ -1175,8 +1050,6 @@ function get_tested_years_by_county($ID)
 						}
 						else
 						{
-							$errors++;
-							$count++;
 
 							$pdf_data['table'].='<tr>';
 							$pdf_data['table'].='<td>'.$i.'</td>';
@@ -1192,22 +1065,28 @@ function get_tested_years_by_county($ID)
 				}
 				else
 				{
-					$tests_done=0;
-					$errors=0;
-					$count=0;
-					$less_than350=0;
-					$greater_equal_to350=0;
+					$pdf_data['less_than350']=0;
+					$pdf_data['count']=0;
+					$pdf_data['greater_equal_to350']=0;
+					$pdf_data['valid_tests']=0;
+					$pdf_data['errors']=0;
 				}
 		
 			}
 
 		$pdf_data['table'].="</table>";
 
-		$pdf_data['tests_done']=$tests_done;
-		$pdf_data['less_than350']=$less_than350;
-		$pdf_data['greater_equal_to350']=$greater_equal_to350;
-		$pdf_data['errors']=$errors;
-		$pdf_data['count']=$count;
+		if($pdf_count!="")
+		{
+			foreach($pdf_count as $test_count)
+			{
+				$pdf_data['less_than350']=$test_count['failed'];
+				$pdf_data['count']=$test_count['total_tests'];
+				$pdf_data['valid_tests']=$test_count['valid_tests'];
+				$pdf_data['greater_equal_to350']=$test_count['passed'];
+				$pdf_data['errors']=$test_count['errors'];
+			}
+		}
 
 		// print_r($pdf_data);
 		// die;
@@ -1216,8 +1095,8 @@ function get_tested_years_by_county($ID)
 
 	function tests_less_than350_month($year,$monthly,$from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value)
 	{
-		$count=0;
-		$less_than350=0;
+		// $count=0;
+		// $less_than350=0;
 
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
@@ -1230,27 +1109,31 @@ function get_tested_years_by_county($ID)
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";
 		$pdf_data['table'].="<th>Facility - Device</th>";
-		$pdf_data['table'].="<th>Date</th>";
+		$pdf_data['table'].="<th>Date Run</th>";
 		$pdf_data['table'].="<th>CD4 Count</th>";
 		$pdf_data['table'].="</tr>";
 
 		$i=1;//counter
 
-		//$the_month=$this->GetMonthName($monthly);
+		$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
 
 		if($facility!="")//By facility
 		{
 			$device="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
 		}
 		if($device!="")//By device
 		{
 			$facility="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
 		}
 		if($all==3 || $all==4 || $all==5)//by partner,by county, all data
 		{
@@ -1263,11 +1146,15 @@ function get_tested_years_by_county($ID)
 
 				$county_id=$this->get_county_id($county_name_value);
 
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
 			}
 			else
 			{
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
 			}		
 		}
 		if($pdf_results!="")
@@ -1277,26 +1164,16 @@ function get_tested_years_by_county($ID)
 				$string_unix="";
 				$string_unix=mysql_to_unix($value['date_test']);
 
-				if($value['valid']==1 && $value['cd4_count']<350)
-				{
-					$less_than350++;
-					$count++;
-
-					$pdf_data['table'].='<tr>';
-					$pdf_data['table'].='<td>'.$i.'</td>';
-					$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
-					$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-					$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
-					$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
-					$pdf_data['table'].='</tr>';
+				$pdf_data['table'].='<tr>';
+				$pdf_data['table'].='<td>'.$i.'</td>';
+				$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
+				$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
+				$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+				$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
+				$pdf_data['table'].='</tr>';
 
 				$i++;
-				}
-				else
-				{
-					$count++;
-				}
-				
+
 			}
 		}
 		else
@@ -1307,8 +1184,14 @@ function get_tested_years_by_county($ID)
 
 		$pdf_data['table'].="</table>";
 
-		$pdf_data['less_than350']=$less_than350;
-		$pdf_data['count']=$count;
+		if($pdf_count!="")
+		{
+			foreach($pdf_count as $test_count)
+			{
+				$pdf_data['less_than350']=$test_count['failed'];
+				$pdf_data['count']=$test_count['total_tests'];
+			}
+		}
 
 		// print_r($pdf_data);
 		// die;
@@ -1317,8 +1200,8 @@ function get_tested_years_by_county($ID)
 
 	function tests_less_than350_quarter($year,$quarter,$q_no,$from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value)
 	{
-		$count=0;
-		$less_than350=0;
+		// $count=0;
+		// $less_than350=0;
 
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
@@ -1331,7 +1214,7 @@ function get_tested_years_by_county($ID)
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";
 		$pdf_data['table'].="<th>Facility - Device</th>";
-		$pdf_data['table'].="<th>Date</th>";
+		$pdf_data['table'].="<th>Date Run</th>";
 		$pdf_data['table'].="<th>CD4 Count</th>";
 		$pdf_data['table'].="</tr>";
 
@@ -1342,14 +1225,18 @@ function get_tested_years_by_county($ID)
 			$device="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);	
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);	
+
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
 		}
 		if($device!="")//By Device
 		{
 			$facility="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);	
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count	
 		}
 		if($all==3 || $all==4 || $all==5 )//By partner, county, all data
 		{
@@ -1362,11 +1249,15 @@ function get_tested_years_by_county($ID)
 
 				$county_id=$this->get_county_id($county_name_value);
 
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);	
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count	
 			}
 			else
 			{
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);		
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);	
+
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count	
 			}
 	
 		}
@@ -1377,25 +1268,15 @@ function get_tested_years_by_county($ID)
 				$string_unix="";
 				$string_unix=mysql_to_unix($value['date_test']);
 
-				if($value['valid']==1 && $value['cd4_count']<350)
-				{
-					$less_than350++;
-					$count++;
-
-					$pdf_data['table'].='<tr>';
-					$pdf_data['table'].='<td>'.$i.'</td>';
-					$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
-					$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-					$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
-					$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
-					$pdf_data['table'].='</tr>';
+				$pdf_data['table'].='<tr>';
+				$pdf_data['table'].='<td>'.$i.'</td>';
+				$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
+				$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
+				$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+				$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
+				$pdf_data['table'].='</tr>';
 
 				$i++;
-				}
-				else
-				{
-					$count++;
-				}
 				
 			}
 		}
@@ -1407,18 +1288,21 @@ function get_tested_years_by_county($ID)
 
 		$pdf_data['table'].="</table>";
 
-		$pdf_data['less_than350']=$less_than350;
-		$pdf_data['count']=$count;
-
-		// print_r($pdf_data);
-		// die;
-		return $pdf_data;			
+		if($pdf_count!="")
+		{
+			foreach($pdf_count as $test_count)
+			{
+				$pdf_data['less_than350']=$test_count['failed'];
+				$pdf_data['count']=$test_count['total_tests'];
+			}
+		}
+	return $pdf_data;			
 	}
 
 	function tests_less_than350_bian($year,$bian,$b_no,$from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value)
 	{
-		$count=0;
-		$less_than350=0;
+		// $count=0;
+		// $less_than350=0;
 
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
@@ -1431,25 +1315,30 @@ function get_tested_years_by_county($ID)
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";
 		$pdf_data['table'].="<th>Facility - Device</th>";
-		$pdf_data['table'].="<th>Date</th>";
+		$pdf_data['table'].="<th>Date Run</th>";
 		$pdf_data['table'].="<th>CD4 Count</th>";
 		$pdf_data['table'].="</tr>";
 
 		$i=1;//counter
-
+		
 		if($facility!="")//by facility
 		{
 			$device="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);	
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
+
 		}
 		if($device!="")//by device
 		{
 			$facility="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);	
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);	
+
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
 		}
 		if($all==3 || $all==4 || $all==5)//By partner, county, all data
 		{
@@ -1462,11 +1351,15 @@ function get_tested_years_by_county($ID)
 
 				$county_id=$this->get_county_id($county_name_value);
 
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
 			}
 			else
 			{
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
 			}
 		}
 
@@ -1477,26 +1370,15 @@ function get_tested_years_by_county($ID)
 				$string_unix="";
 				$string_unix=mysql_to_unix($value['date_test']);
 
-				if($value['valid']==1 && $value['cd4_count']<350)
-				{
-					$less_than350++;
-					$count++;
+				$pdf_data['table'].='<tr>';
+				$pdf_data['table'].='<td>'.$i.'</td>';
+				$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
+				$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
+				$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+				$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
+				$pdf_data['table'].='</tr>';
 
-					$pdf_data['table'].='<tr>';
-					$pdf_data['table'].='<td>'.$i.'</td>';
-					$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
-					$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-					$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
-					$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
-					$pdf_data['table'].='</tr>';
-
-				$i++;
-				}
-				else
-				{
-					$count++;
-				}
-				
+				$i++;	
 			}
 		}
 		else
@@ -1507,18 +1389,22 @@ function get_tested_years_by_county($ID)
 		
 		$pdf_data['table'].="</table>";
 
-		$pdf_data['less_than350']=$less_than350;
-		$pdf_data['count']=$count;
+		if($pdf_count!="")
+		{
+			foreach($pdf_count as $test_count)
+			{
+				$pdf_data['less_than350']=$test_count['failed'];
+				$pdf_data['count']=$test_count['total_tests'];
+			}
+		}
 
-		// print_r($pdf_data);
-		// die;
-		return $pdf_data;	
+	return $pdf_data;	
 	}
 
 	function tests_less_than350_yearly($yearo,$from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value)
 	{
-		$count=0;
-		$less_than350=0;
+		// $count=0;
+		// $less_than350=0;
 
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
@@ -1531,7 +1417,7 @@ function get_tested_years_by_county($ID)
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";
 		$pdf_data['table'].="<th>Facility - Device</th>";
-		$pdf_data['table'].="<th>Date</th>";
+		$pdf_data['table'].="<th>Date Run</th>";
 		$pdf_data['table'].="<th>CD4 Count</th>";
 		$pdf_data['table'].="</tr>";
 
@@ -1542,14 +1428,18 @@ function get_tested_years_by_county($ID)
 			$device="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);	
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count	
 		}
 		if($device!="")
 		{
 			$facility="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);	
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count	
 		}
 		if($all==3 || $all==4 || $all==5)
 		{
@@ -1562,11 +1452,15 @@ function get_tested_years_by_county($ID)
 
 				$county_id=$this->get_county_id($county_name_value);
 
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
 			}
 			else
 			{
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
 			}
 
 		}
@@ -1577,26 +1471,15 @@ function get_tested_years_by_county($ID)
 				$string_unix="";
 				$string_unix=mysql_to_unix($value['date_test']);
 
-				if($value['valid']==1 && $value['cd4_count']<350)
-				{
-					$less_than350++;
-					$count++;
+				$pdf_data['table'].='<tr>';
+				$pdf_data['table'].='<td>'.$i.'</td>';
+				$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
+				$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
+				$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+				$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
+				$pdf_data['table'].='</tr>';
 
-					$pdf_data['table'].='<tr>';
-					$pdf_data['table'].='<td>'.$i.'</td>';
-					$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
-					$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-					$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
-					$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
-					$pdf_data['table'].='</tr>';
-
-				$i++;
-				}
-				else
-				{
-					$count++;
-				}
-				
+				$i++;			
 			}
 		}
 		else
@@ -1607,18 +1490,22 @@ function get_tested_years_by_county($ID)
 		
 		$pdf_data['table'].="</table>";
 
-		$pdf_data['less_than350']=$less_than350;
-		$pdf_data['count']=$count;
-
-		// print_r($pdf_data);
-		// die;
-		return $pdf_data;		
+		if($pdf_count!="")
+		{
+			foreach($pdf_count as $test_count)
+			{
+				$pdf_data['less_than350']=$test_count['failed'];
+				$pdf_data['count']=$test_count['total_tests'];
+			}
+		}
+		
+	return $pdf_data;		
 	}
 
 	function tests_less_than350_customized($from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value)
 	{
-		$count=0;
-		$less_than350=0;
+		// $count=0;
+		// $less_than350=0;
 
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
@@ -1631,7 +1518,7 @@ function get_tested_years_by_county($ID)
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";
 		$pdf_data['table'].="<th>Facility - Device</th>";
-		$pdf_data['table'].="<th>Date</th>";
+		$pdf_data['table'].="<th>Date Run</th>";
 		$pdf_data['table'].="<th>CD4 Count</th>";
 		$pdf_data['table'].="</tr>";
 		
@@ -1642,14 +1529,18 @@ function get_tested_years_by_county($ID)
 			$device="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);	
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count	
 		}
 		if($device!="")//by device
 		{
 			$facility="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
 	
 		}
 		if($all==3 || $all==4 || $all==5)//by partner, county, all data
@@ -1663,11 +1554,15 @@ function get_tested_years_by_county($ID)
 
 				$county_id=$this->get_county_id($county_name_value);
 
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
 			}
 			else
 			{
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id);
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
 			}
 				
 		}
@@ -1679,25 +1574,15 @@ function get_tested_years_by_county($ID)
 				$string_unix="";
 				$string_unix=mysql_to_unix($value['date_test']);
 
-				if($value['valid']==1 && $value['cd4_count']<350)
-				{
-					$less_than350++;
-					$count++;
-
-					$pdf_data['table'].='<tr>';
-					$pdf_data['table'].='<td>'.$i.'</td>';
-					$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
-					$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-					$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
-					$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
-					$pdf_data['table'].='</tr>';
+				$pdf_data['table'].='<tr>';
+				$pdf_data['table'].='<td>'.$i.'</td>';
+				$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
+				$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
+				$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+				$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
+				$pdf_data['table'].='</tr>';
 
 				$i++;
-				}
-				else
-				{
-					$count++;
-				}
 				
 			}
 		}
@@ -1709,139 +1594,155 @@ function get_tested_years_by_county($ID)
 		
 		$pdf_data['table'].="</table>";
 
-		$pdf_data['less_than350']=$less_than350;
-		$pdf_data['count']=$count;
-
-		// print_r($pdf_data);
-		// die;
-		return $pdf_data;		
+		if($pdf_count!="")
+		{
+			foreach($pdf_count as $test_count)
+			{
+				$pdf_data['less_than350']=$test_count['failed'];
+				$pdf_data['count']=$test_count['total_tests'];
+			}
+		}
+	return $pdf_data;		
 	}
 
-	 	public function GetMonthName($month)
-		{
-			$monthname="";
+ 	public function GetMonthName($month)
+	{
+		$monthname="";
 
-			 if ($month==1)
-			 {
-			     $monthname="January";
-			 }
-			  else if ($month==2)
-			 {
-			     $monthname="February";
-			 }else if ($month==3)
-			 {
-			     $monthname="March";
-			 }else if ($month==4)
-			 {
-			     $monthname="April";
-			 }else if ($month==5)
-			 {
-			     $monthname="May";
-			 }else if ($month==6)
-			 {
-			     $monthname="June";
-			 }else if ($month==7)
-			 {
-			     $monthname="July";
-			 }else if ($month==8)
-			 {
-			     $monthname="August";
-			 }else if ($month==9)
-			 {
-			     $monthname="September";
-			 }else if ($month==10)
-			 {
-			     $monthname="October";
-			 }else if ($month==11)
-			 {
-			     $monthname="November";
-			 }
-			  else if ($month==12)
-			 {
-			     $monthname="December";
-			 }
-			  else if ($month==13)
-			 {
-			     $monthname=" Jan - Sep  ";
-			 }
-			return $monthname;
+		 if ($month==1)
+		 {
+		     $monthname="January";
+		 }
+		  else if ($month==2)
+		 {
+		     $monthname="February";
+		 }else if ($month==3)
+		 {
+		     $monthname="March";
+		 }else if ($month==4)
+		 {
+		     $monthname="April";
+		 }else if ($month==5)
+		 {
+		     $monthname="May";
+		 }else if ($month==6)
+		 {
+		     $monthname="June";
+		 }else if ($month==7)
+		 {
+		     $monthname="July";
+		 }else if ($month==8)
+		 {
+		     $monthname="August";
+		 }else if ($month==9)
+		 {
+		     $monthname="September";
+		 }else if ($month==10)
+		 {
+		     $monthname="October";
+		 }else if ($month==11)
+		 {
+		     $monthname="November";
+		 }
+		  else if ($month==12)
+		 {
+		     $monthname="December";
+		 }
+		  else if ($month==13)
+		 {
+		     $monthname=" Jan - Sep  ";
+		 }
+		return $monthname;
+	}
+
+	public function get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type)//Get all the data
+	{
+		$sql="SELECT * FROM v_pima_tests_only";
+
+		if($report_type==1)//tests only
+		{
+			$report="AND valid='1' ";
+		}
+		else if($report_type==2)//errors only
+		{
+			$report="AND valid='0' ";
+		}
+		else if($report_type==3)//tests < 350
+		{
+			$report="AND valid='1' AND cd4_count < 500";
+		}
+		else if($report_type==0)//both tests and errors
+		{
+			$report=" ";
 		}
 
-		public function get_test_details($from,$to,$facility,$device,$all,$county_id)//Get all the data
+		if(!$facility=="")
 		{
-			$this->config->load('sql');
-
-			$sql= $this->config->item("preset_sql");
+			$criteria =" AND  facility='".$facility."' ";
+		}
+		if(!$device=="")
+		{	
+			$criteria=" AND serial_num='".$device."' ";
+		}
+		if($all==3 || $all==5)// by partner 
+		{
+			$criteria =" AND 1 ";
+		}
+		else if($all==4)// by county
+		{
+			$criteria =" AND region_id= '".$county_id."' ";
+		}
 		
-			$criteria =" ";
-			$tests_sql ="";
+		$date_delimiter	=	" WHERE MONTH(date_test) BETWEEN '".date('m',strtotime($from))."' AND '".date('m',strtotime($to))."'
+								  AND YEAR(date_test) BETWEEN '".date('Y',strtotime($from))."' AND '".date('Y',strtotime($to))."' ";		
 
-			$tests_sql= $sql["pima_test_details"];
+		$test_details=R::getAll($sql.$date_delimiter.$criteria.$report);
 
-			if(!$facility=="")
-			{
-				$criteria =" AND  `facility`='".$facility."' ";
-			}
-			if(!$device=="")
-			{
-				$facility_equipment=$this->get_equipment_id($device);
+		// echo $sql.$date_delimiter.$criteria.$report;
 
-				foreach ($facility_equipment as $value) 
-				{	
-					
-					$criteria=" AND `tst_dt`.`facility_equipment_id`='".$value['facility_equipment_id']."' ";
-				}
-			}
-			if($all==3)// by partner 
-			{
-				$criteria =" AND 1 ";
-			}
-			else if($all==5)// all data
-			{
-				$criteria =" AND 1 ";			
-			}
-			else if($all==4)// by county
-			{
-				$criteria =" AND `region_id`= '".$county_id."' ";
-			}
-			
-			$date_delimiter	=	" AND `tst_dt`.`result_date` between '".$from."' and '".$to."' ";		
+		// die;
 
-			$test_details=R::getAll($tests_sql.$date_delimiter.$criteria);
+		return $test_details;
+		
 
-			// echo $tests_sql.$date_delimiter.$criteria;
-	
-			// die;
+	}
+	public function get_count_test_details($from,$to,$facility,$device,$all,$county_id)
+	{
+		$sql_count="SELECT COUNT(test_id) AS total_tests,
+						SUM(CASE WHEN valid= '1'    THEN 1 ELSE 0 END) AS valid_tests,
+						SUM(CASE WHEN valid= '0'    THEN 1 ELSE 0 END) AS `errors`,
+						SUM(CASE WHEN valid= '1'  AND  cd4_count < 500 THEN 1 ELSE 0 END) AS failed,
+						SUM(CASE WHEN valid= '1'  AND  cd4_count >= 500 THEN 1 ELSE 0 END) AS passed
+						FROM v_pima_tests_only ";		
 
-			return $test_details;
-
-		}
-
-		/*============================ Get equipment functions =====================================================*/
-
-		public function get_equipment_id($serial)
+		if(!$facility=="")
 		{
-			$sql="SELECT facility_equipment_id from facility_pima where serial_num='".$serial."' ";
-
-			$equipment=$this->db->query($sql);
-
-			$result_id="";
-			if($equipment->num_rows()>0)
-			{
-				foreach ($equipment->result_array() as $value) 
-				{
-					$result_id[]=$value;
-				}
-			}
-			else
-			{
-				$result_id="";
-			}
-			return $result_id;
+			$criteria =" AND  facility='".$facility."' ";
 		}
-		/*============================ Get equipment functions =====================================================*/
+		if(!$device=="")
+		{	
+			$criteria=" AND serial_num='".$device."' ";
+		}
+		if($all==3 || $all==5)// by partner or by all tests
+		{
+			$criteria =" AND 1 ";
+		}
+		else if($all==4)// by county
+		{
+			$criteria =" AND region_id= '".$county_id."' ";
+		}
+		
+		$date_delimiter	=	" WHERE MONTH(date_test) BETWEEN '".date('m',strtotime($from))."' AND '".date('m',strtotime($to))."'
+								  AND YEAR(date_test) BETWEEN '".date('Y',strtotime($from))."' AND '".date('Y',strtotime($to))."' ";		
 
+		$test_details=R::getAll($sql_count.$date_delimiter.$criteria);
 
+		// echo $sql_count.$date_delimiter.$criteria;
+
+		// die;
+
+		return $test_details;
+	}
 		
 }/* End of reports_model */
 ?>

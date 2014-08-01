@@ -1,6 +1,8 @@
 <?php
 
-class poc_model extends MY_Model{
+class quality_model extends MY_Model{
+
+
 	public function menus($selected){
 		$menus = array(
 						array(	'num'			=>	1,
@@ -52,7 +54,7 @@ class poc_model extends MY_Model{
 					 			 'selected'		=>	false,
 					 			 'selectedString'=>	"",							
 								 ),
-						array(	'num'			=>	7,
+						 array(	'num'			=>	7,
 								'name'			=>	'Quality Assurance & Control',
 								'url'			=>	base_url()."quality/quality",								
 								'other'			=>	"",
@@ -73,6 +75,7 @@ class poc_model extends MY_Model{
 					 			'selected'		=>	false,
 					 			'selectedString'=>	"",							
 								),
+						
 
 				);
 		$j=0;
@@ -88,6 +91,7 @@ class poc_model extends MY_Model{
 		}
 		return $menus;
 	}
+
 	public function user_devices(){
 
 		$user_delimiter 	= 	"";
@@ -225,33 +229,61 @@ class poc_model extends MY_Model{
 		return $agg;
 	}
 
-  public function get_Upload_details($user_group_id,$user_filter_used){
+	function facility_control_tests()
+	{
+		$today =  Date("Y-m-d"); //today's date
 
-		$user_delimiter =$this->sql_user_delimiter($user_group_id,$user_filter_used);
+		//begining of the year
+		$begining=date('Y')."-01-01"; 
 
-		$sql 	=	"SELECT 
-							`pima_upload_id`,
-							`upload_date`,
-							`equipment_serial_number`,
-							`facility_name`,
-							`uploader_name`,
-							COUNT(`pima_test_id`) AS `total_tests`,
-							SUM(CASE WHEN `valid`= '1'    THEN 1 ELSE 0 END) AS `valid_tests`,
-							SUM(CASE WHEN `valid`= '0'    THEN 1 ELSE 0 END) AS `errors`,
-							SUM(CASE WHEN `valid`= '1'  AND  `cd4_count` < 500 THEN 1 ELSE 0 END) AS `failed`,
-							SUM(CASE WHEN `valid`= '1'  AND  `cd4_count` >= 500 THEN 1 ELSE 0 END) AS `passed`
-						FROM `v_pima_uploads_details`
-						WHERE 1 
-						$user_delimiter 
-						GROUP BY `pima_upload_id`
-						ORDER BY `upload_date` DESC
-						LIMIT 100
-					";
-		return $res 	=	R::getAll($sql);
+		$from 	= Date("Y-m-d" 	, strtotime($begining)); // get the first day of the month
+		$to 	= Date("Y-m-t" 	, strtotime($today)); // get the last day of the month
 
 
+
+		$this->config->load('sql'); 
+
+		$preset_sql = $this->config->item("preset_sql");
+
+		$sql 	=	$preset_sql["pima_control_count_details"]; //load the pima_control_count_details preset sql
+
+		$user_delimiter 	= 	"";
+		$group_by=" GROUP BY `yearmonth` ";
+		$order=" ORDER BY `pima_control`.`result_date` DESC";
+
+		$user_group  = $this->session->userdata("user_group_id"); // the session of the user
+		$user_filter= $this->session->userdata("user_filter");
+
+		if($user_group==3 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0)
+		{
+			$user_delimiter 	= 	" AND  `p`.`ID` ='".$user_filter[0]['user_filter_id']."' ";
+			//$group_by=" GROUP BY `yearmonth` ";
+		}
+		elseif($user_group==6 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0 )
+		{
+			$user_delimiter 	= 	" AND `f`.`id` ='".$user_filter[0]['user_filter_id']."' ";
+		}
+		elseif($user_group==8 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0 )
+		{
+			$user_delimiter 	= 	" AND `d`.`id` ='".$user_filter[0]['user_filter_id']."' ";
+		}
+		elseif($user_group==9 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0 )
+		{
+			$user_delimiter 	= 	" AND `r`.`id` ='".$user_filter[0]['user_filter_id']."' ";
+			$group_by=" GROUP BY `yearmonth` ";
+		}
+
+		//concatenate the sql with the delimeiter
+		$control_sql 	=	$sql.$user_delimiter." AND MONTH(`pima_control`.`result_date`) between '".date('m',strtotime($from))."' and '".date('m',strtotime($to))."' 
+													AND YEAR(`pima_control`.`result_date`) between '".date('Y',strtotime($from))."'
+													AND '".date('Y',strtotime($to))."' ".$group_by.$order; 
+
+		$control_results 	= 	R::getAll($control_sql);
+
+		return $control_results;
 	}
 
+
 }
-/* End of file poc_model.php */
-/* Location: ./application/modules/poc/models/poc_model.php */
+
+?>
