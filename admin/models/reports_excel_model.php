@@ -2879,7 +2879,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K2:M2');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 350');
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 500');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setBold(true);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('N2:O2');
@@ -3147,7 +3147,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K2:M2');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 350');
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 500');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setBold(true);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('N2:O2');
@@ -3416,7 +3416,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K2:M2');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 350');
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 500');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setBold(true);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('N2:O2');
@@ -3689,7 +3689,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K2:M2');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 350');
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 500');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setBold(true);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('N2:O2');
@@ -3957,7 +3957,7 @@ class reports_excel_model extends MY_Model{
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('K2:M2');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('K2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
-				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 350');
+				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('N2','CD4 Count < 500');
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setSize(12);
 				$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('N2')->getFont()->setBold(true);
 				$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('N2:O2');

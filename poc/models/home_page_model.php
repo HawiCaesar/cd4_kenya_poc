@@ -192,7 +192,7 @@ class home_page_model extends MY_Model{
 		}
 		$pima_array		=	array(	
 									array(
-										'caption'	=>	"# of CD4 Tests Performed",
+										'caption'	=>	"# of CD4 Tests Performed (including errors)",
 										'data'		=>	$pima_test_res[0]['totals']
 										),
 									array(

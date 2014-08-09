@@ -2,13 +2,21 @@
 
 class reports_model extends MY_Model{
 
+/*
+	The functions(including some variables) for getting tests <500cp/ml still read tests<350. However the SQL's all fetch tests <500cp/ml
+	set by World Health Organization
+*/
+
 /*====================================== Partner Functions =========================================================*/
- function getyearsreported($partnerid)
+ function getyearsreported()
   {
-		$sql="SELECT DISTINCT YEAR( pt.result_date ) AS year
+		/*$sql="SELECT DISTINCT YEAR( pt.result_date ) AS year
 						FROM pima_test pt, partner p, partner_user pu
 						WHERE p.id = pu.partner_id
-						AND pu.user_id = '".$partnerid."' ";
+						AND pu.user_id = '".$partnerid."' ";*/
+		$sql="SELECT DISTINCT YEAR( pt.result_date ) AS year
+						FROM pima_test pt ";
+						
 		$query=$this->db->query($sql);
 
 		if($query->num_rows()>0)

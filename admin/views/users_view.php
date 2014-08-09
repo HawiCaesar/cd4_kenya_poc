@@ -1,5 +1,5 @@
 <div >
-	<div class="section-title"><center><b><strong>User Details</strong></b></center></div>
+	<div class="section-title"><center><b><strong>Active User Details</strong></b></center></div>
 	<div>
 		<table id="data-table">
 			<thead>
@@ -10,12 +10,11 @@
 					<th rowspan = "2">Phone Number</th>
 					<th rowspan = "2">Email</th>
 					<th rowspan = "2">Type</th>
-					<th rowspan = "2">Status</th>
+					<th rowspan = "2">Station</th>
 					<th colspan="4"><center>Actions</center></th>
 				</tr>
 				<tr>
 					<th>Reset Password</th>
-					<!-- <th>Activate</th> -->
 					<th>Deactivate User</th>
 					<th>Edit Details</th>
 				</tr>
@@ -31,8 +30,8 @@
 					<td><?php echo $user['name'];?></td>
 					<td><?php echo $user['phone'];?></td>
 					<td><?php echo $user['email'];?></td>	
-					<td><?php echo $user['user_group'];?></td>					
-					<td><?php echo $user['status_desc'];?></td>
+					<td><?php echo $user['user_group'];?></td>
+					<td><?php echo $user['Stationed At'];?></td>			
 					<td>
 						<center>
 							<a title =" Reset User (<?php echo $user['username'];?>) Password" href="#user_password" data-toggle="modal" data-id="<?php echo $user['user_id']; ?>" data-name="<?php echo $user['name'] ?>" style="border-radius:1px;" class="rpassword"> 
@@ -40,36 +39,16 @@
 							</a>
 						</center>
 					</td>				
-					<!-- <td> -->						
-						<?php 
-							// $id = $user["user_id"];
-							// $status = $user["status_desc"];
-
-							// echo '<a title ="'.$status.'" href="javascript:void(null);" style="border-radius:1px;" class="" onclick="rollout_toggle('.$id.')">';
-				
-							// if($user['status']==5){
-							// 	echo '<span style="font-size: 1.4em;color: #2d6ca2;" class="glyphicon glyphicon-minus-sign" ></span></a>';								
-							// }elseif($user['status']==1){
-							// 	echo '<span style="font-size: 1.4em;color: #3e8f3e;" class="glyphicon glyphicon-ok-sign"></span></a>';								
-							// }elseif($user['status']==4){
-							// 	echo '<span style="font-size: 1.4em;color: #c12e2a;" class="glyphicon glyphicon-remove-sign"></span></a>';								
-							// }else{
-							// 	echo '<span style="font-size: 1.4em;color: #eb9316;" class="glyphicon glyphicon-question-sign"></span></a>';																
-							// }						
-							// echo '</a>';
-						?>
-						
-					<!-- </td> -->
 					<td>
 						<center>
 							<a title =" Deactivate User (<?php echo $user['username'];?>) " href="#deactivate_user" data-toggle="modal" data-id="<?php echo $user['user_id']; ?>" data-name="<?php echo $user['name'] ?>" style="border-radius:1px;" class="remove_active" > 
-								<span style="font-size: 1.4em;color: #2d6ca2;" class="glyphicon glyphicon-minus-sign"></span>
+								<span style="font-size: 1.4em;color: red;" class="glyphicon glyphicon-remove-sign"></span>
 							</a>
 						</center>
 					</td>
 					<td>
 						<center>
-							<a title =" Edit User (<?php echo $user['username'];?>)" href="javascript:void(null);" style="border-radius:1px;" class="" onclick="edit_user(<?php echo $user['user_id'];?>)"> 
+							<a title =" Edit User (<?php echo $user['username'];?>)" href="#specific_profile" data-toggle="modal" data-id="<?php echo $user['user_id']; ?>" data-user_name="<?php echo $user['username'] ?>" data-name="<?php echo $user['name'] ?>" data-phone="<?php echo $user['phone'] ?>" data-email="<?php echo $user['email'] ?>" style="border-radius:1px;" class="edit_user"> 
 								<span style="font-size: 1.3em;color:#2aabd2;" class="glyphicon glyphicon-pencil"></span>
 							</a>
 						</center>
@@ -94,14 +73,15 @@
 	      		<div class="modal-body" style="padding-bottom:0px;">
 
 	      			<b><div style="width:210px;float:left;">Are you sure you want to deactivate</div><div style="width:210px;float:left;" id="user_name"></div></b>
-	      			<br />	
+	      			<br /><br />	
 	      			<form action="" method="POST" id="deactivate_form" >
+	      				<input type="hidden" name="users_name" id="users_name" value="" />
 	      				<input type="hidden" name="user_id" id="user_id" value="" /><br />
-	      				<button class="btn btn-primary" onclick="user_updates(1)" ><i class="glyphicon glyphicon-save"></i>Confim</button>
+	      				<button class="btn btn-primary" ><i class="glyphicon glyphicon-save"></i>Confim</button>
 	      				<button type="button" class="btn btn-danger" data-dismiss="modal"><i class="glyphicon glyphicon-remove"></i>Close</button>
-
 	      			</form>
-	      			<div id="response"></div>     			
+	      			<br /> 
+	      			<div id="response"></div>   			
 	      		</div>		      		
 	      		<div class="modal-footer" style="height:11px;padding-top:11px;">
 	      			<?php echo $this->config->item("copyrights");?>
@@ -122,13 +102,14 @@
 
 	      			<b><div style="width:290px;float:left; ">Are you sure you want to reset the password for </div><div style="width:150px;float:left;" id="user_name_p"></div></b>
 	      			<br /><br />		
-	      			<form action="" method="POST" id="deactivate_form" >
+	      			<form action="" method="POST" id="reset_form" >
+	      				<input type="hidden" name="users_name" id="users_name" value="" />
 	      				<input type="hidden" name="user_id" id="user_id" value="" /><br />
-	      				<button class="btn btn-primary" onclick="user_updates(2)" ><i class="glyphicon glyphicon-save"></i>Confim</button>
+	      				<button class="btn btn-primary" ><i class="glyphicon glyphicon-save"></i>Confim</button>
 	      				<button type="button" class="btn btn-danger" data-dismiss="modal"><i class="glyphicon glyphicon-remove"></i>Close</button>
-
 	      			</form>
-	      			<div id="response"></div>     			
+	      			<br /> 
+	      			<div id="response_password"></div>
 	      		</div>		      		
 	      		<div class="modal-footer" style="height:11px;padding-top:11px;">
 	      			<?php echo $this->config->item("copyrights");?>
@@ -139,17 +120,18 @@
 <!-- END reset user modal -->
 
 <!-- user profile modal -->
-	<div class="modal fade" id="user_password" >
-	  	<div class="modal-dialog" style="width:37%;margin-bottom:2px;">
+	<div class="modal fade" id="specific_profile" >
+	  	<div class="modal-dialog" style="width:37%;margin-bottom:2px;;">
 	    	<div class="modal-content" >
 	      		<div class="modal-header">
-	        		<h4>Reset User Password<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button></h4>
+	        		<h4>Update User Profile<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button></h4>
+	      			<div id="response_update"></div>
 	      		</div>
 	      		<div class="modal-body" style="padding-bottom:0px;">
-	      			<?php //$this->load->view('user_profile_view'); ?>
-	      			
-	      			<!-- <div id="response"></div> -->     			
-	      		</div>		      		
+
+	      			<?php $this->load->view('admin/users_profile_view');?>
+	      		</div>
+	      				      		
 	      		<div class="modal-footer" style="height:11px;padding-top:11px;">
 	      			<?php echo $this->config->item("copyrights");?>
 	      		</div> 
@@ -169,50 +151,12 @@
 
 <script type="text/javascript">
 
- $(document).ready(function(){
- 	$("#usercriteria").hide();
-	$('#usertype').change(function(){
-		
-		$("#usercriteria").show();
-		var val=$('#usertype').val();
-		
-		if(val==3){
-			$('#partn').show();
-			$('#subcounty').hide();
-			$('#fac').hide();
-			$('#county').hide();
-			$('#admin').hide();
-		}
-		if(val==9){
-			$('#county').show();
-			$('#fac').hide();
-			$('#partn').hide();
-			$('#admin').hide();
-		}
-		if(val==6){
-			$('#fac').show();
-			$('#subcounty').hide();
-			$('#county').hide();
-			$('#partn').hide();
-			$('#admin').hide();
-		}
-		if(val==2){
-			$('#admin').show();
-			$('#subcounty').hide();
-			$('#fac').hide();
-			$('#partn').hide();
-			$('#county').hide();
-		}
-	});
-	
- 	
-});
-
-	 $(document).on("click", ".remove_active", function () { //pick value from the table and put in bootstrap modal
+ $(document).on("click", ".remove_active", function () { //pick value from the table and put in bootstrap modal
 	     var id = $(this).data('id');
 	     var name=$(this).data('name');
 
 	     $(".modal-body #user_id").val( id );
+	     $(".modal-body #users_name").val( name );
 	     document.getElementById('user_name').innerHTML=name + " ?";
 	});
 
@@ -221,42 +165,88 @@
 	     var name=$(this).data('name');
 
 	     $(".modal-body #user_id").val( id );
+	     $(".modal-body #users_name").val( name );
 	     document.getElementById('user_name_p').innerHTML=name + " ?";
 	});
 
+	$(document).on("click", ".edit_user", function () { //pick value from the table and put in bootstrap modal
+	     var id = $(this).data('id');
+	     var name =$(this).data('name');
+	     var user_name=$(this).data('user_name');
+	     var phone=$(this).data('phone');
+	     var email=$(this).data('email');
 
-	 function user_updates(value) //deactivate function that runs as ajax 
-	 {
-	 	var formData = {
+	     $(".modal-body #user_id").val( id );
+	     $(".modal-body #name").val( name );
+	     $(".modal-body #user_name").val( user_name );
+	     $(".modal-body #phone").val( phone );
+	     $(".modal-body #email").val( email );
+
+	});
+
+	$('#reset_form').submit(function(event){ //reset password javascript, ajax
+		event.preventDefault();
+
+		var formData = {
 			'user_id' : $('input[name=user_id]').val(),
+			'users_name': $('input[name=users_name]').val()
 		};
-		var the_url='';
-
-		if(value==1)// deactivate user
-		{
-			var the_url='<?php echo base_url();?>admin/users/deactivate';
-		}
-		else if(value==2)// reset password
-		{
-			var the_url='<?php echo base_url();?>admin/users/reset_password';
-		}
-		else if(value==3)// profile update
-		{
-			var the_url='<?php echo base_url();?>admin/users/update_profile';
-		}
 
 		$.ajax({
 					type 		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
-					url 		: the_url, // the url where we want to POST
+					url 		: '<?php echo base_url();?>admin/users/reset_password', // the url where we want to POST
 					data 		: formData, // our data object
 					success: function(result) {
-	    				$('#response').html(result).fadeOut(9000);
-
+	    				$('#response_password').append(result);
+	    				setTimeout(function() { window.location=window.location;},2000);//refresh page after 2 seconds	
 	    			}
-				})
-	 }
+				});
+
+	});
+
+	$('#deactivate_form').submit(function(event){ //deactivate user javascript, ajax
+		event.preventDefault();
+
+		var formData = {
+			'user_id' : $('input[name=user_id]').val(),
+			'users_name': $('input[name=users_name]').val()
+		};
+
+		$.ajax({
+					type 		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
+					url 		: '<?php echo base_url();?>admin/users/deactivate', // the url where we want to POST
+					data 		: formData, // our data object
+					success: function(result) {
+	    				$('#response').append(result);
+	    				setTimeout(function() { window.location=window.location;},2000);//refresh page after 2 seconds	
+	    			}
+				});
+
+	});
+	$('#profile').submit(function(event){// update user profile javascipt, ajax
+		event.preventDefault();
+
+		var formData = {
+			'user_id' : $('input[name=user_id]').val(),
+			'name': $('input[name=name]').val(),
+			'phone': $('input[name=phone]').val(),
+			'email': $('input[name=email]').val()
+		};
+
+		$.ajax({
+					type 		: 'POST', // define the type of HTTP verb we want to use (POST for our form)
+					url 		: '<?php echo base_url();?>admin/users/update_profile', // the url where we want to POST
+					data 		: formData, // our data object
+					success: function(result) {
+	    				$('#response_update').append(result);
+	    				setTimeout(function() { window.location=window.location;},2000);//refresh page after 2 seconds	
+	    			}
+				});
+
+	});
+
     </script>
-			<!-- Add new -->
+			<!-- Add new user -->
 			<div class="tab-pane active" id="tabs1-add" >
 				<?php 
 				echo form_open('admin/users/save_user_details');

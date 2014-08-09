@@ -1,6 +1,9 @@
 <?php
 if (!defined('BASEPATH'))exit('No direct script access allowed');
-
+/*
+	The functions(including some variables) for getting tests <500cp/ml still read tests<350. However the SQL's all fetch tests <500cp/ml
+	set by World Health Organization
+*/
 class reports extends MY_Controller {
 
 	public function index(){
@@ -25,7 +28,7 @@ class reports extends MY_Controller {
 
 		if($user_group==3)// partner
 		{
-			$data['yearlyReports']=$this->reports_model->getyearsreported($ID);
+			$data['yearlyReports']=$this->reports_model->getyearsreported();
 
 			//$data['partner_option']=$user_group;
 
@@ -46,7 +49,7 @@ class reports extends MY_Controller {
 		}
 		else if($user_group==9)// county co-cordinator
 		{
-			$data['yearlyReports']=$this->reports_model->get_tested_years_by_county($ID);
+			$data['yearlyReports']=$this->reports_model->getyearsreported();
 			
 			$data['partner_option']=0; // to remove error on view page source
 
@@ -530,8 +533,8 @@ class reports extends MY_Controller {
 				$PDF_document.='<table border="1" align="center" width="680">';
 				$PDF_document.='<tr>';
 				$PDF_document.='<th bgcolor="#006600" style="color:#FFF;">Successful Tests Done</th>';
-				$PDF_document.='<th bgcolor="#eb9316" style="color:#FFF;">Tests < 500</th>';
-				$PDF_document.='<th bgcolor="#006600" style="color:#FFF;">Tests >= 500</th>';
+				$PDF_document.='<th bgcolor="#990000" style="color:#FFF;">Tests < 500</th>';
+				$PDF_document.='<th bgcolor="#eb9316" style="color:#FFF;">Tests >= 500</th>';
 				$PDF_document.='<th bgcolor="#000066" style="color:#FFF;">Total Number of Tests</th>';
 				$PDF_document.='</tr>';
 				$PDF_document.='<tr><td align="center">'.$pdf_data['valid_tests'].'</td>';
@@ -927,29 +930,11 @@ class reports extends MY_Controller {
 					
 				}
 
-				//http://filext.com/faq/office_mime_types.php for the header mime types
-				$dir=$this->config->item('server_root').'assets/excel_files/';
-				
-				$the_file=$this->config->item('server_root').'assets/excel_files/'.$filename;
-				// $this->excel->getSecurity()->setLockWindows(true);
-				// $this->excel->getSecurity()->setLockStructure(true);
+				header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');// *can use ms-excel2007
+				header('Content-Disposition: attachment;filename="'.$filename.'" ');
+				header('Cache-Control: max-age=0');
 				$obWrite=PHPExcel_IOFactory::createWriter($this->excel,'Excel2007');
-				
-				$obWrite->save($the_file);
-
-				if(file_exists($the_file))
-				{
-					redirect($the_file);
-					//delete_files($this->config->item('server_root').'assets/excel_files/');//delete the files
-					$files = scandir($dir);
-					foreach ($files as $object) 
-					{
-						if ($object != "." && $object != "..") {
-							unlink($dir . "/" . $object);
-						}
-					}
-					
-				}
+				$obWrite->save('php://output');
 
 
 			}/*..................................... Format: Excel is selected End ..........................................*/

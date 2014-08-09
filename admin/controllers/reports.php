@@ -1,6 +1,9 @@
 <?php
 if (!defined('BASEPATH'))exit('No direct script access allowed');
-
+/*
+	The functions(including some variables) for getting tests <500cp/ml still read tests<350. However the SQL's all fetch tests <500cp/ml
+	set by World Health Organization
+*/
 class reports extends MY_Controller {
 
 	public function index(){
@@ -22,6 +25,13 @@ class reports extends MY_Controller {
 		$data['menus']	= 	$this->admin_model->menus(5);
 
 		$data['yearlyReports'] = $this->admin_model->get_years_tested();
+
+		$users=0;
+
+		if(!$users==1)
+		{
+			$data['number_of_deactivated_users']="none";
+		}
 
 		$this -> template($data);
 	}
@@ -165,14 +175,17 @@ class reports extends MY_Controller {
 
 			$pdf_data="";
 
+			$table_style='<style>table.data-table {border: 1px solid #DDD;margin: 10px auto;border-spacing: 0px;}
+						table.data-table th {border: none;color: #036;text-align: center;border: 1px solid #DDD;border-top: none;max-width: 450px;}
+						table.data-table td, table th {padding: 4px;}
+						table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px solid #DDD;height: 30px;margin: 0px;border-bottom: 1px solid #DDD;}
+					</style>';
+
 			$PDF_document="<table width='53%' border='0' align='center'>";
 			$PDF_document.="<tr>";
 			$PDF_document.='<td><center><img style="vertical-align: top;" src="'.$img.'" /></center></td>';
 			$PDF_document.='</tr>';
 			$PDF_document.='</table>';
-
-			// $month_number_check=$this->reports_model->month_check($monthly,$YearM);//check if month exists in the database
-			// $year_number_check=$this->reports_model->year_check($monthly,$YearM);// check if year exits in the database
 
 			if($YearM!="" && $monthly!="")// Month and Year chosen
 			{
@@ -669,7 +682,7 @@ class reports extends MY_Controller {
 
 			if($report_type==1)//tests 
 			{
-				$PDF_document.='<table border="1" align="center" width="680">';
+				$PDF_document.='<table border="0" align="center" width="680" class="data-table">';
 				$PDF_document.='<tr>';
 				$PDF_document.='<th bgcolor="#006600" style="color:#FFF;">Successful Tests Done</th>';
 				$PDF_document.='<th bgcolor="#eb9316" style="color:#FFF;">Tests < 500</th>';
@@ -685,7 +698,7 @@ class reports extends MY_Controller {
 			}
 			else if($report_type==2)//errors
 			{
-				$PDF_document.='<table width="480" border="1" align="center">';
+				$PDF_document.='<table width="480" border="0" align="center" class="data-table">';
 				$PDF_document.='<tr>';
 				$PDF_document.='<th bgcolor="#CC0000" style="color:#FFF;">Tests with Errors</th>';
 				$PDF_document.='<th bgcolor="#000066" style="color:#FFF;">Total Number of Tests</th>';
@@ -697,10 +710,10 @@ class reports extends MY_Controller {
 			}
 			else if($report_type==3)//Tests < 350
 			{
-				$PDF_document.='<table width="480" border="1" align="center">';
+				$PDF_document.='<table width="480" border="0" align="center" class="data-table">';
 				$PDF_document.='<tr>';
-				$PDF_document.='<th bgcolor="#eb9316" style="color:#FFF;"># Tests < 500</th>';
-				$PDF_document.='<th bgcolor="#000066" style="color:#FFF;">Total Number of Tests</th>';
+				$PDF_document.='<th bgcolor="#eb9316" style="color:#FFF;width:50%;"># Tests < 500</th>';
+				$PDF_document.='<th bgcolor="#000066" style="color:#FFF;width:50%;">Total Number of Tests</th>';
 				$PDF_document.='</tr>';
 				$PDF_document.='<tr><td align="center">'.$pdf_data['less_than350'].'</td>';
 				$PDF_document.='<td align="center">'.$pdf_data['count'].'</td></tr></table>';
@@ -708,7 +721,7 @@ class reports extends MY_Controller {
 			}
 			else if($report_type==0)// All Tests
 			{
-				$PDF_document.='<table width="680" border="1" align="center">';
+				$PDF_document.='<table width="880" border="0" align="center" class="data-table">';
 				$PDF_document.='<tr>';
 				$PDF_document.='<th bgcolor="#006600" style="color:#FFF;">Successful Tests Done</th>';
 				$PDF_document.='<th bgcolor="#eb9316" style="color:#FFF;">Tests < 500</th>';
@@ -732,6 +745,7 @@ class reports extends MY_Controller {
 			$mpdf=new mPDF();//initialize
 
 			ini_set("memory_limit",'-1');
+			//ini_set("maximum_time_out",'');
 
 			$mpdf->SetWatermarkText('NASCOP');//Water Mark Text
 			$mpdf->watermark_size="0.2";
@@ -744,7 +758,7 @@ class reports extends MY_Controller {
 			}
 			else
 			{	
-				$PDF_document.='<br />'.$pdf_data['table']; //place details in table
+				$PDF_document.=$table_style.'<br />'.$pdf_data['table']; //place details in table
 
 				$mpdf->AddPage('L', // L - landscape, P - portrait
 						            '', '', '', '',
@@ -786,7 +800,7 @@ class reports extends MY_Controller {
 					{
 						if($report_type==3)// Tests < 350 
 						{
-							$filename="Excel_Report_less_than350_".$month_name."_".$YearM.".xlsx";
+							$filename="Excel_Report_less_than500_".$month_name."_".$YearM.".xlsx";
 
 							$PHPExcel[] = $this->reports_excel_model->excel_tests_lessthan350_month($YearM,$monthly,$Facility,$Device,$from_month,$end_month,$report_type,$all_data,$county_name_value);
 						}
@@ -821,7 +835,7 @@ class reports extends MY_Controller {
 					{
 						if($report_type==3)// Tests < 350 
 						{
-							$filename="Excel_Report_Facility_Device_less_than350_".$month_name."_".$YearM.".xlsx";
+							$filename="Excel_Report_Facility_Device_less_than500_".$month_name."_".$YearM.".xlsx";
 
 							$PHPExcel[] = $this->reports_excel_model->excel_tests_lessthan350_month($YearM,$monthly,$Facility,$Device,$from_month,$end_month,$report_type,$all_data,$county_name_value);
 						}
@@ -862,7 +876,7 @@ class reports extends MY_Controller {
 				 		{
 				 			if($report_type==3)// Tests < 350 
 							{
-								$filename="Excel_Report_less_than350_Quarter_".$quarterly."_".$yearQ.".xlsx";
+								$filename="Excel_Report_less_than500_Quarter_".$quarterly."_".$yearQ.".xlsx";
 
 								$PHPExcel[] = $this->reports_excel_model->excel_tests_lessthan350_quarter($yearQ,$quarter,$Facility,$Device,$from_month,$end_month,$report_type,$all_data,$county_name_value);
 							}
@@ -894,7 +908,7 @@ class reports extends MY_Controller {
 				 		{
 				 			if($report_type==3)// Tests < 350 
 							{
-								$filename="Excel_Report_Facility_Device_less_than350_Quarter".$quarterly."_".$yearQ.".xlsx";
+								$filename="Excel_Report_Facility_Device_less_than500_Quarter".$quarterly."_".$yearQ.".xlsx";
 
 								$PHPExcel[] = $this->reports_excel_model->excel_tests_lessthan350_quarter($yearQ,$quarter,$Facility,$Device,$from_month,$end_month,$report_type,$all_data,$county_name_value);
 							}
@@ -927,7 +941,7 @@ class reports extends MY_Controller {
 				 		{
 				 			if($report_type==3)// Tests < 350 
 							{
-								$filename="Excel_Report_less_than350_Biannual_".$biannual."_".$yearB.".xlsx";
+								$filename="Excel_Report_less_than500_Biannual_".$biannual."_".$yearB.".xlsx";
 
 								$PHPExcel[] = $this->reports_excel_model->excel_tests_lessthan350_bian($yearB,$biannual_name,$Facility,$Device,$from_month,$end_month,$report_type,$all_data,$county_name_value);
 							}
@@ -959,7 +973,7 @@ class reports extends MY_Controller {
 				 		{
 				 			if($report_type==3)// Tests < 350 
 							{
-								$filename="Excel_Report_Facility_Device_less_than350_Biannual".$biannual."_".$yearB.".xlsx";
+								$filename="Excel_Report_Facility_Device_less_than500_Biannual".$biannual."_".$yearB.".xlsx";
 
 								$PHPExcel[] = $this->reports_excel_model->excel_tests_lessthan350_bian($yearB,$biannual_name,$Facility,$Device,$from_month,$end_month,$report_type,$all_data,$county_name_value);
 							}
@@ -981,7 +995,7 @@ class reports extends MY_Controller {
 					{
 						if($report_type==3)// Tests < 350 
 						{
-							$filename="Excel_Report_less_than350_".$Yearo.".xlsx";
+							$filename="Excel_Report_less_than500_".$Yearo.".xlsx";
 
 							$PHPExcel[] = $this->reports_excel_model->excel_tests_lessthan350_yearly($Yearo,$Facility,$Device,$from_month,$end_month,$report_type,$all_data,$county_name_value);
 						}
@@ -1014,7 +1028,7 @@ class reports extends MY_Controller {
 					{
 						if($report_type==3)// Tests < 350 
 						{
-							$filename="Excel_Report_Facility_Device_less_than350_".$Yearo.".xlsx";
+							$filename="Excel_Report_Facility_Device_less_than500_".$Yearo.".xlsx";
 
 							$PHPExcel[] = $this->reports_excel_model->excel_tests_lessthan350_yearly($Yearo,$Facility,$Device,$from_month,$end_month,$report_type,$all_data,$county_name_value);
 						}
@@ -1033,7 +1047,7 @@ class reports extends MY_Controller {
 					{
 						if($report_type==3)// Tests < 350 
 						{
-							$filename="Excel_Report_less_than350_Custom_Dates_".$Fromdate."_".$Todate.".xlsx";
+							$filename="Excel_Report_less_than500_Custom_Dates_".$Fromdate."_".$Todate.".xlsx";
 
 							$PHPExcel[] = $this->reports_excel_model->excel_tests_lessthan350_customized($Facility,$Device,$Fromdate,$Todate,$report_type,$all_data,$county_name_value);
 						}
@@ -1065,7 +1079,7 @@ class reports extends MY_Controller {
 					{
 						if($report_type==3)// Tests < 350 
 						{
-							$filename="Excel_Report_Facility_Device_less_than350_Custom_Dates_".$Fromdate."_".$Todate.".xlsx";
+							$filename="Excel_Report_Facility_Device_less_than500_Custom_Dates_".$Fromdate."_".$Todate.".xlsx";
 
 							$PHPExcel[] = $this->reports_excel_model->excel_tests_lessthan350_customized($Facility,$Device,$Fromdate,$Todate,$report_type,$all_data,$login_id);
 						}
@@ -1080,30 +1094,11 @@ class reports extends MY_Controller {
 					
 				}
 
-				$the_file=$this->config->item('server_root').'assets/excel_files/'.$filename;
-				// $this->excel->getSecurity()->setLockWindows(true);
-				// $this->excel->getSecurity()->setLockStructure(true);
+				header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');// *can use ms-excel2007
+				header('Content-Disposition: attachment;filename="'.$filename.'" ');
+				header('Cache-Control: max-age=0');
 				$obWrite=PHPExcel_IOFactory::createWriter($this->excel,'Excel2007');
-
-				// header('Content-Type: application/vnd.ms-excel');// *can use ms-excel2007
-				// header('Content-Disposition: attachment;filename="'.$filename.'" ');
-				// header('Cache-Control: max-age=0');
-				
-				$obWrite->save($the_file);
-
-				if(file_exists($the_file))
-				{
-					redirect($the_file);
-					//delete_files($this->config->item('server_root').'assets/excel_files/');//delete the files
-					$files = scandir($dir);
-					foreach ($files as $object) 
-					{
-						if ($object != "." && $object != "..") {
-							unlink($dir . "/" . $object);
-						}
-					}
-					
-				}
+				$obWrite->save('php://output');
 				
 			}
 			/*..................................... Format: Excel is selected End ..........................................*/

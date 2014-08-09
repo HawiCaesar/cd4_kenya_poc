@@ -9,7 +9,7 @@ class uploads extends MY_Controller {
 		ini_set('memory_size', '2048M');
 	}
 	public function index(){
-		$this->login_reroute(array(3,6,8,9));
+		$this->login_reroute(array(3,8,9,6));
 		$data['content_view'] 	= 	"poc/uploads_view";
 		$data['title'] 			= 	"Uploads";
 		$data['sidebar']		= 	"poc/sidebar_view";
@@ -18,8 +18,8 @@ class uploads extends MY_Controller {
 		$data	=	array_merge($data,$this->load_libraries(array("dataTables", "poc_uploads")));
 
 		$this->load->model('poc_model');
-        
-		$data['uploads'] = 	$this->poc_model->get_details("pima_uploads_details",$this->session->userdata("user_filter_used"));
+
+		$data['uploads'] = 	$this->poc_model->get_details("pima_uploads_details");
 
 		$data['errors_agg'] = $this->poc_model->errors_reported();
 
@@ -30,7 +30,7 @@ class uploads extends MY_Controller {
 	}
 	public function data_upload() {//convert .slk file to xlsx for upload
 
-		$this->login_reroute(array(3,6,8,9));
+		$this->login_reroute(array(3,8,9));
 		$type = "slk";
 		$start = 1;
 		$config['upload_path'] = '././uploads/';
@@ -88,7 +88,7 @@ class uploads extends MY_Controller {
 		
 		$this->load->model('poc_model');
 
-		$data['uploads'] = 	$this->poc_model->get_details("pima_uploads_details",$this->session->userdata("user_filter_used"));
+		$data['uploads'] = 	$this->poc_model->get_details("pima_uploads_details");
 
 		$data['errors_agg'] = $this->poc_model->errors_reported();
 
@@ -393,7 +393,7 @@ class uploads extends MY_Controller {
 	}
 	public function upload_commit(){
 
-		$this->login_reroute(array(3,6,8,9));
+		$this->login_reroute(array(3,8,9));
 		
 		$data 	= 	$this->input->post('data');
 		if($data==""){
@@ -606,7 +606,7 @@ class uploads extends MY_Controller {
 		
 		$this->load->model('poc_model');
 
-		$view_data['uploads'] = 	$this->poc_model->get_details("pima_uploads_details",$this->session->userdata("user_filter_used"));
+		$view_data['uploads'] = 	$this->poc_model->get_details("pima_uploads_details");
 
 		$view_data['devices_not_reported'] = $this->poc_model->devices_not_reported();
 

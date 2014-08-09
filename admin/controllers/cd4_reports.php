@@ -21,6 +21,13 @@ class cd4_reports extends MY_Controller
 
 		//load all the facilities
 		$data['facilities'] = 	$this->admin_model->get_details("facility_details",$this->session->userdata("user_filter_used"));
+
+		// $users=0;
+
+		// if(!$users==1)
+		// {
+		// 	$data['number_of_deactivated_users']="none";
+		// }
 		
 		$this->template($data);//load template and put data on page
 	}

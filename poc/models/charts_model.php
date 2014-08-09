@@ -403,7 +403,7 @@ class charts_model extends MY_Model{
 		$json_categories		= 	array();
 		$json_category			= 	array();
 
-		$json_header['chart']['yAxisName']  = "Devices";
+		$json_header['chart']['yAxisName']  = "Nos of Tests/Errors";
 
 		
 		$json_categories		=	array(

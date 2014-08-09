@@ -3,19 +3,43 @@ if (!defined('BASEPATH'))exit('No direct script access allowed');
 
 class send_mail extends MY_Controller {
 
+function __construct()
+{
+	parent::__construct();
+
+	$this->load->config->item('email');
+	$this->load->library('email');
+	$this->load->model('send_mail_model');
+}
+
 function daemon_monthly_email()
 {
-	// $from_month=date('Y-m-01');//first day of the month
-	// //$num_days=cal_days_in_month(CAL_GREGORIAN, $monthly,$YearM);
-	// $end_month=date('Y-m-t',strtotime('0 month'));//last day of the month
-	$f="2014-07-01";
-	$e="2014-07-31";
-
-	$from_month=date('Y-m-d',strtotime($f));
-	$end_month=date('Y-m-d',strtotime($e));
+	//$this->load->config->item('email');
 
 	$month=date('m');
-	$year=date('Y');
+
+	if($month==1)
+	{
+		$year=date('Y')-1;
+		$month=12;
+
+		$from_month=$year.'-'.$month.'-01';
+		$num_days=cal_days_in_month(CAL_GREGORIAN, $month,$year);
+		$end_month=$year.'-'.$month.'-'.$num_days;
+
+	}
+	else
+	{
+		$month-=1;
+		$from_month=$year.'-'.$month.'-01';
+		$num_days=cal_days_in_month(CAL_GREGORIAN, $month,$year);
+		$end_month=$year.'-'.$month.'-'.$num_days;
+	}
+
+	// $from_month=date('Y-m-01');//first day of the month
+	// $end_month=date('Y-m-t',strtotime('0 month'));//last day of the month
+
+	// $num_days=cal_days_in_month(CAL_GREGORIAN, $monthly,$YearM);
 
 	$pdf_results="";
 	$all_data="";
@@ -30,13 +54,9 @@ function daemon_monthly_email()
 					 'skadima@clintonhealthaccess.org',
 					 'onjathi@clintonhealthaccess.org',
 					 'jlusike@clintonhealthaccess.org',
-					 'kanyonga.nicholas@gmail.com',
+					 'kanyonga.nicholas@gmail.com'
 					 );
-	// $National_team=array('jbatuka@usaid.gov',
-	// 				     'Uys0@cdc.gov',
-	// 				     'mamoumuro@gmail.com',
-	// 				     'njebungei@yahoo.com',
-	// 				     'hoy4@cdc.gov');
+	//$CHAI_team=array('brianhawi92@gmail.com','kanyonga.nicholas@gmail.com');
 
 	$img=$this->config->item('server_root').'img/nascop.jpg';// Nascop Logo
 
@@ -75,7 +95,7 @@ function daemon_monthly_email()
 			//get all the tests < 500 for the facility 
 			$pdf_results=$this->send_mail_model->tests_less_than500($from_month,$end_month,$results['facility_name']);
 
-			if(!$pdf_results['less_than350']==0)//check if facility has tests < 500 cp/ml
+			if(!$pdf_results['less_than500']==0)//check if facility has tests < 500 cp/ml
 			{
 				//make a file name with the extension .pdf
 				$title_filename=$the_month.' Report For '.$results['facility_name'].' For Patients With Outcomes Less Than 500 cp per ml';
@@ -93,7 +113,7 @@ function daemon_monthly_email()
 				$PDF_content.='<th bgcolor="#990000" style="color:#FFF;"># Tests < 500</th>';
 				$PDF_content.='<th bgcolor="#000066" style="color:#FFF;">Total Number of Tests</th>';
 				$PDF_content.='</tr>';
-				$PDF_content.='<tr><td align="center">'.$pdf_results['less_than350'].'</td>';
+				$PDF_content.='<tr><td align="center">'.$pdf_results['less_than500'].'</td>';
 				$PDF_content.='<td align="center">'.$pdf_results['count'].'</td></tr></table>';
 			
 				$PDF_content.='<br />'.$pdf_results['table']; //place details in table
@@ -126,7 +146,7 @@ function daemon_monthly_email()
 				$county_receipients=array();
 				$partner_receipients=array();
 				$email_receipients=array();
-
+				
 				$county_coordinator_email=$this->send_mail_model->get_county_email($results['region_id']);
 
 				foreach($county_coordinator_email as $cemail)
@@ -142,16 +162,10 @@ function daemon_monthly_email()
 				}
 
 				$email_receipients=array_merge($partner_receipients,$county_receipients);
-				echo "******";
-				echo "<pre>";
-				print_r($email_receipients);
-				echo "</pre>";
-				echo $results['region_name']."-----".$results['partner_name'];
-				echo "******<br />";
+
 				$this->email->from('cd4poc@gmail.com', 'CD4 PIMA Notification');
 				$this->email->to($email_receipients);//send to specific receiver
 				$this->email->bcc($CHAI_team);//CHAI team
-				//$this->email->to('tngugi@clintonhealthaccess.org');
 				
 				$this->email->subject('Tests < 500 cp/ml Monthly Report'); //subject
 				$this->email->attach($file);//attach the facility pdf document
@@ -159,9 +173,11 @@ function daemon_monthly_email()
 				$message="Hi.<br /><br />Please Find Attached the List of all patients with outcomes < 500cp/ml.
 									<br /><br />They require a Follow Up Viral Load Test & Initiation into treatment.
 									<br /><br />Many Thanks.
-									<br /><br />--
+									<br /><br /><b>NB: You can access the system by following link below</b>
+									<br /><br /><b>http://www.nascop.org/cd4Poc/login</b>
 									<br /><br />CD4 Support Team
-									<br /><br />This email was automatically generated. Please do not respond to this email address or it will be ignored.";
+									<br /><br />--
+									<br /><br />Please do NOT reply to this message as it is sent from an unattended mailbox.";
 
 				$this->email->message($message);// the message
 
@@ -187,40 +203,35 @@ function daemon_monthly_email()
 
 function daemon_weekly_email()
 {
-	$this->load->config('email');
+	ini_set('max_execution_time', 600);
 
-	$this->load->model('send_mail_model');
+	$last_monday_date=date('Y-m-d',strtotime('last monday'));//last monday
+	$last_sunday_date=date('Y-m-d',strtotime('last friday'));//last sunday
 
-	// $last_monday_date=date('Y-m-d',strtotime('last monday'));//last monday
-	// $last_sunday_date=date('Y-m-d',strtotime('last sunday'));//last sunday
-	$d="2014-07-21";
-	$e="2014-07-29";
-	$last_monday_date=date('Y-m-d',strtotime($d));//last monday
-	$last_sunday_date=date('Y-m-d',strtotime($e));//last sunday
-
-	// $last_monday=date('jS F Y',strtotime('last monday'));
-	// $last_sunday=date('jS F Y',strtotime('last sunday'));
-
-	$last_monday=date('jS F Y',strtotime($d));
-	$last_sunday=date('jS F Y',strtotime($e));
+	$last_monday=date('jS F Y',strtotime('last monday'));
+	$last_sunday=date('jS F Y',strtotime('last friday'));
 
 	$month=date('m');
 	$year=date('Y');
 
-	$email_receipients=array();
 	//CHAI team
 	$CHAI_team=array('brianhawi92@gmail.com',
 					 'tngugi@clintonhealthaccess.org',
 					 'skadima@clintonhealthaccess.org',
 					 'onjathi@clintonhealthaccess.org',
 					 'jlusike@clintonhealthaccess.org',
-					 'kanyonga.nicholas@gmail.com',
+					 'kanyonga.nicholas@gmail.com'
 					 );
 	$National_team=array('jbatuka@usaid.gov',
-					     'Uys0@cdc.gov',
-					     'mamoumuro@gmail.com',
-					     'njebungei@yahoo.com',
-					     'hoy4@cdc.gov');
+						 'Uys0@cdc.gov',
+						 'mamoumuro@gmail.com',
+						 'njebungei@yahoo.com',
+						 'hoy4@cdc.gov');
+	$table_style='<style>table.data-table {border: 1px solid #DDD;margin: 10px auto;border-spacing: 0px;}
+						table.data-table th {border: none;color: #036;text-align: center;border: 1px solid #DDD;border-top: none;max-width: 450px;}
+						table.data-table td, table th {padding: 4px;}
+						table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px solid #DDD;height: 30px;margin: 0px;border-bottom: 1px solid #DDD;}
+					</style>';
 	
 	$this->load->library('mpdf/mpdf');// Load the mpdf library
 
@@ -253,7 +264,7 @@ function daemon_weekly_email()
 			$PDF_content.='</tr>';
 			$PDF_content.='</table>';
 
-			$PDF_content.='<br />'.$pdf_data['cumulative_table'];
+			$PDF_content.=$table_style.'<br />'.$pdf_data['cumulative_table'];
 			$PDF_content.='<br />';
 
 			$PDF_content.=$pdf_data['breakdown_table'];
@@ -263,7 +274,7 @@ function daemon_weekly_email()
 			$filename='Weekly National Activity Report beginning '.$last_monday.' to '.$last_sunday;
 			$file=$this->config->item('server_root').'assets/weekly_email_national/'.$filename.'.pdf';
 
-			$mpdf->SetWatermarkText('NASCOP');//Water Mark Text
+			$mpdf->SetWatermarkText('NASCOP',0.09);//Water Mark Text
 			$mpdf ->watermark_size="0.2";
 			$mpdf->showWatermarkText = true;//Water Mark set value
 
@@ -291,16 +302,20 @@ function daemon_weekly_email()
 			$this->email->from('cd4poc@gmail.com', 'CD4 PIMA Notification');
 	
 			$this->email->to($National_team);//send to CHAI team
-			$this->email->bcc($CHAI_team);
+			$this->email->bcc($CHAI_team);//send to CHAI team
+			//$this->email->to('brianhawi92@gmail.com');
 
 			$this->email->subject('Weekly National Activty Report'); //subject
 			$this->email->attach($file);//attach the pdf document
 
 			$message="Hi.<br /><br />Please find attached the summary for PIMA Test uploads for the week ending ".$last_monday." and ".$last_sunday.".
 								<br /><br />Many Thanks.
-								<br /><br />--
+								<br /><br />NB: You can access the system by following link below
+								<br /><br /><b>http://www.nascop.org/cd4Poc/login</b>
 								<br /><br />CD4 Support Team
-								<br /><br />This email was automatically generated. Please do not respond to this email address or it will ignored.";
+								<br /><br />--
+								<br /><br />Please do NOT reply to this message as it is sent from an unattended mailbox.";
+			
 
 			$this->email->message($message);// the message
 			if($this->email->send())//send email and check if the email was sent
@@ -311,10 +326,10 @@ function daemon_weekly_email()
 			{
 				show_error($this->email->print_debugger());//show error message
 			}
-		 	break;//break to not loop again
+		  	break;//break to not loop again
 		 }
 		
-	}	
+	}
 	$uploaded_counties=$this->send_mail_model->uploads_by_county($last_monday_date,$last_sunday_date);
 
 	foreach($uploaded_counties as $results)//begin foreach loop for counties
@@ -344,7 +359,7 @@ function daemon_weekly_email()
 			$PDF_content.='</tr>';
 			$PDF_content.='</table>';
 
-			$PDF_content.='<br />'.$pdf_data['cumulative_table'];
+			$PDF_content.=$table_style.'<br />'.$pdf_data['cumulative_table'];
 			$PDF_content.='<br />';
 
 			$PDF_content.=$pdf_data['breakdown_table'].'<br />';
@@ -356,7 +371,7 @@ function daemon_weekly_email()
 			$filename='Weekly Report for '.$results['region_name'].' beginning '.$last_monday.' to '.$last_sunday;
 			$file=$this->config->item('server_root').'assets/weekly_email_county/'.$filename.'.pdf';
 
-			$mpdf->SetWatermarkText('NASCOP');//Water Mark Text
+			$mpdf->SetWatermarkText('NASCOP',0.09);//Water Mark Text
 			$mpdf ->watermark_size="0.2";
 			$mpdf->showWatermarkText = true;//Water Mark set value
 
@@ -388,17 +403,17 @@ function daemon_weekly_email()
 			{
 				$county_receipients[]=$cemail;
 			}
-			// echo "*****";
-			// echo $results['region_name'];
-			// echo "<pre>";
-			// print_r($county_receipients);
-			// echo "</pre>";
-			// echo "----------------------------------------------------------------";
+			echo "...".$results['region_name'];
+			echo "<pre>";
+			print_r($county_receipients);
+			 echo "</pre>";
+			echo "<br />";
 			$this->email->from('cd4poc@gmail.com', 'CD4 PIMA Notification');
 			
-			//$this->email->to($CHAI_team);
 			$this->email->to($county_receipients); //send to specific receiver
 			$this->email->bcc($CHAI_team); //CHAI team
+
+			//$this->email->to('brianhawi92@gmail.com');
 
 			$this->email->subject('Weekly Activity Report'); //subject
 			$this->email->attach($file);//attach the pdf document
@@ -406,9 +421,11 @@ function daemon_weekly_email()
 			$message="Hi.<br /><br />Please find attached the summary for PIMA Test uploads for the week ending ".$last_monday." and ".$last_sunday." for ".$results['region_name']." county.
 								<br /><br />These tests are for the previous week
 								<br /><br />Many Thanks.
-								<br /><br />--
+								<br /><br />NB: You can access the system by following link below
+								<br /><br /><b>http://www.nascop.org/cd4Poc/login</b>
 								<br /><br />CD4 Support Team
-								<br /><br />This email was automatically generated. Please do not respond to this email address or it will ignored.";
+								<br /><br />--
+								<br /><br />Please do NOT reply to this message as it is sent from an unattended mailbox.";
 
 			$this->email->message($message);// the message
 			if($this->email->send())//send email and check if the email was sent
@@ -452,7 +469,7 @@ function daemon_weekly_email()
 			$PDF_content.='</tr>';
 			$PDF_content.='</table>';
 
-			$PDF_content.='<br />'.$pdf_data['cumulative_table'];
+			$PDF_content.=$table_style.'<br />'.$pdf_data['cumulative_table'];
 			$PDF_content.='<br />';
 
 			$PDF_content.=$pdf_data['breakdown_table'].'<br />';
@@ -464,7 +481,7 @@ function daemon_weekly_email()
 			$filename='Weekly Report for '.$results['partner_name'].' beginning '.$last_monday.' to '.$last_sunday;
 			$file=$this->config->item('server_root').'assets/weekly_email_partner/'.$filename.'.pdf';
 
-			$mpdf->SetWatermarkText('NASCOP');//Water Mark Text
+			$mpdf->SetWatermarkText('NASCOP',0.09);//Water Mark Text
 			$mpdf ->watermark_size="0.2";
 			$mpdf->showWatermarkText = true;//Water Mark set value
 
@@ -497,25 +514,27 @@ function daemon_weekly_email()
 			{
 				$partner_receipients[]=$pemail;
 			}
-			// echo "*****";
-			// echo $results['partner_name'];
-			// echo "<pre>";
-			// print_r($partner_receipients);
-			// echo "</pre>";
-			// echo "----------------------------------------------------------------";
+			echo "...".$results['partner_name']."...";
+			echo "<pre>";
+			print_r($partner_receipients);
+			echo "</pre>";
+			echo "...<br />";
 			$this->email->from('cd4poc@gmail.com', 'CD4 PIMA Notification');
-			//$this->email->to($CHAI_team);
-			$this->email->to($partner_receipients); //send to specific receivers
-			$this->email->cc($CHAI_team); //CHAI team
+			// $this->email->to($partner_receipients); //send to specific receivers
+			// $this->email->bcc($CHAI_team); //CHAI team
+
+			$this->email->to('brianhawi92@gmail.com');
 
 			$this->email->subject('Weekly Activity Report'); //subject
 			$this->email->attach($file);//attach the pdf document
 
-			$message="Hi.<br /><br />Please find attached the summary for PIMA Test uploads for the week ending ".$last_monday." and ".$last_sunday."  for ".$results['partner_name'].".
+			$message="Hi.<br /><br />Please find attached the summary for PIMA Test uploads for the week ending ".$last_monday." and ".$last_sunday." for ".$results['partner_name'].".
 								<br /><br />Many Thanks.
-								<br /><br />--
+								<br /><br />NB: You can access the system by following link below
+								<br /><br /><b>http://www.nascop.org/cd4Poc/login</b>
 								<br /><br />CD4 Support Team
-								<br /><br />This email was automatically generated. Please do not respond to this email address or it will ignored.";
+								<br /><br />--
+								<br /><br />Please do NOT reply to this message as it is sent from an unattended mailbox.";
 
 			$this->email->message($message);// the message
 
@@ -530,11 +549,11 @@ function daemon_weekly_email()
 		}
 	}
 
-	
+	die;
 	// delete_files($this->config->item('server_root').'assets/weekly_email_national/');//delete the files
 	// delete_files($this->config->item('server_root').'assets/weekly_email_county/');//delete the files
 	// delete_files($this->config->item('server_root').'assets/weekly_email_partner/');//delete the files
-	//die;
+
 }
 	
 	

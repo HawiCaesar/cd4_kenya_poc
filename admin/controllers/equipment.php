@@ -27,6 +27,14 @@ class equipment extends MY_Controller {
 		$data['facilities'] = 	$this->admin_model->get_details("facility_details",0);
 		//$data['county']=$this->getcountydetails();
 		//$data['partner']=$this->getpartnerdetails();
+
+		$users=0;
+
+		if(!$users==1)
+		{
+			$data['number_of_deactivated_users']="none";
+		}
+		
 		$this -> template($data);
 	}
 	public function save_fac_equip(){

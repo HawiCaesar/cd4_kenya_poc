@@ -19,6 +19,14 @@ class settings extends MY_Controller {
 		$this->load->model('admin_model');
 
 		$data['menus']	= 	$this->admin_model->menus(7);
+
+		$users=0;
+
+		if(!$users==1)
+		{
+			$data['number_of_deactivated_users']="none";
+		}
+		
 		$this -> template($data);
 	}
 }

@@ -1,5 +1,3 @@
-
-</script>
 <div>
 	<div>
 		<div class="section-title" ><center>
@@ -31,15 +29,6 @@
 			<?php 
 				}
 			?>
-			<div class="notice">
-				<a href="">
-					<i class="glyphicon glyphicon-exclamation-sign"></i> 
-					<?php echo $errors_agg["error"]." Errors <b>(";if($errors_agg["total"]>0){echo (($errors_agg["error"]/$errors_agg["total"])*100);}else{ echo "0";}?>%)</b> reported out of <?php echo $errors_agg["total"];?> tests
-				</a>
-			</div>
-			<!-- <div class="success">
-				<a  href="#emailforcriticaltests" data-toggle="modal">Send Email</a>
-			</div> -->
 			
 		</div>
 	</div>
@@ -53,10 +42,8 @@
 		<div>
 			<div class="section-content">	
 				<ul class="nice-list">
-					<li><span class="quiet">1.</span> <a href="<?php echo base_url()?>user/profile">My Profile</a></li>
-					<li><span class="quiet">2.</span> <a href="#assign" data-toggle="modal">Assign Device to Facility</a></li>
-					<li><span class="quiet">3.</span> <a href="#flag" data-toggle="modal">flag Device as inactive</a></li>							
-					<li><span class="quiet">4.</span> <a href="#changePassword" data-toggle="modal">Change Password</a></li>
+					<li><span class="quiet">1.</span> <a href="<?php echo base_url()?>user/profile">My Profile</a></li>							
+					<li><span class="quiet">2.</span> <a href="#changePassword" data-toggle="modal">Change Password</a></li>
 				</ul>					
 			</div>
 		</div>
@@ -134,5 +121,6 @@
 	      		</div> 
 	   		</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
-	</div><!-- /.modal -->	
+	</div><!-- /.modal -->
+	
 </div>

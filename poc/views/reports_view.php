@@ -90,7 +90,7 @@
 							                   	<option value="1"> Tests Report Only</option>
 							                   	<option value="3"> Tests < 500 Report </option>
 							                   	<option value="2"> Errors Report Only</option>
-							                   	<option value="4"> Errors Report by % </option>								                   	                  												                   	                  					
+							                   	<!--<option value="4"> Errors Report by % </option>	-->							                   	                  												                   	                  					
 							                </select>
 						                </div>
 						                <div class="input-group" style="width: 100%;padding:4px;" id="dev">
@@ -210,7 +210,7 @@
 											<span class="input-group-addon" style="width: 40%;">Format :</span>
 											<span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>pdf.png" width="25" height="25">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="button_text()" name="format" checked value="pdf">PDF</span>
 											<span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>excel.png" width="30" height="30">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="button_text()" name="format" value="excel">Excel</span>
-											<span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>graph.png" width="25" height="25">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="button_text()" name="format" value="graph">Graph</span>
+											<!-- <span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>graph.png" width="25" height="25">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="button_text()" name="format" value="graph">Graph</span>-->
 						                </div>									
 										<div class="right" style="padding:7px 32px 7px 7px;">
 											<button id="click" type="submit" class="btn btn-primary btn-mini" ><i class="glyphicon glyphicon-save"></i>Download Report</button>

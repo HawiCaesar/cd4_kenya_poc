@@ -18,6 +18,13 @@ class facilities extends MY_Controller {
 		
 		$this->load->model('admin_model');
 
+		$users=0;
+
+		if(!$users==1)
+		{
+			$data['number_of_deactivated_users']="none";
+		}
+
 		$data['menus']	= 	$this->admin_model->menus(2);
 		$data['facilities'] = 	$this->admin_model->get_details("facility_details",$this->session->userdata("user_filter_used"));
 		$this -> template($data);

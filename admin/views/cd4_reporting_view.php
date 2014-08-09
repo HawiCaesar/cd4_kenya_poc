@@ -22,7 +22,7 @@
 					
 
 					<th><center>Results Uploaded</center></th>
-					
+					<
 					
 				</tr>
 			</thead>
@@ -36,8 +36,9 @@
 				<tr>
 					<td><?php echo $i?></td>
 					<td><?php echo $facility['facility'];?></td>
-
-					<td><center>x</center></td><!-- Dates from and to-->
+					
+                    <!-- Dates from and to-->
+					<td><center>x</center></td>
 					<td><center>x</center></td>
 
 					<!-- Icons Excel and PDF to allow for download -->
@@ -47,7 +48,8 @@
 					
                     <!-- <i class="fa fa-times-circle fa-2x" style="color: red; "></i>-->
 					<!-- PIMA Icons for Reporting,Excel and PDF -->
-					<td><center><i class="fa fa-times fa-2x" style="color: red; "></i></center></td>
+					<td><center><i class="fa fa-check-square-o fa-2x" style="color: green;"></i></center></td>
+					<!-- <td><center><i class="fa fa-times fa-2x" style="color: red; "></i></center></td>-->
 					
 					
 				</tr>

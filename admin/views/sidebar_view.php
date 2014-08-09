@@ -19,6 +19,23 @@
 					 Errors reported
 				</a>
 			</div>
+			<?php if($number_of_deactivated_users!="none"){ ?>
+			<div class="info" style="background: #5bc0de;border: 1px solid #009DCC;
+									margin-bottom: 1em;
+									padding: 0.6em 0.8em;">
+					<?php if($title=="Deactivated Users"){ ?>
+							<a href="<?php echo base_url();?>admin/users" style="color: #000;">
+								<i class="glyphicon glyphicon-exclamation-sign"></i> 
+								Back To Active Users
+							</a>
+					<?php }else{ ?>
+						<a href="<?php echo base_url();?>admin/users/deactivated_users_page" style="color: #000;">
+							<i class="glyphicon glyphicon-exclamation-sign"></i> 
+							 View Deactivated Users (<?php echo $number_of_deactivated_users;?>)
+						</a>
+			</div>
+			<?php } } ?>
+
 		</div>
 	</div>
 	<div>

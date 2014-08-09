@@ -66,6 +66,13 @@ class admin_model extends MY_Model{
 					 			'selected'		=>	false,
 					 			'selectedString'=>	"",							
 								),
+						array(	'num'			=>	10,
+								'name'			=>	'Uploads',
+								'url'			=>	base_url()."admin/uploads",								
+								'other'			=>	"",
+					 			'selected'		=>	false,
+					 			'selectedString'=>	"",							
+								),
 
 				);
 		$j=0;
@@ -88,6 +95,49 @@ class admin_model extends MY_Model{
 		// foreach ($users as $user) {
 		// 	$users[''] = 
 		// }
+	}
+	function deactivated_users_count()//get the number of deactivated users
+	{
+		$result="";
+
+		$sql="SELECT COUNT(id) as user_count from user where status='0'";
+
+		$count_result=$this->db->query($sql);
+
+		foreach($count_result->result() as $value)
+		{
+			$result=$value->user_count;
+		}
+
+		return $result;
+	}
+	function deactivated_users()//get the number of deactivated users
+	{
+		$result="";
+
+		$sql="SELECT 
+					`usr`.`id` AS `user_id`,
+					`usr`.`username`,
+					`usr`.`name`,
+					`usr`.`user_group_id`,
+					`usr_gr`.`name` AS `user_group`,
+					`usr`.`phone`,
+					`usr`.`email`,
+					`usr`.`status`,
+					CASE WHEN `usr_gr`.`name`='County Coordinator' THEN `r`.`name` ELSE `p`.`name` END AS `Stationed At`,
+					`st`.`desc` AS `status_desc` 
+					FROM `user` `usr` 
+					LEFT JOIN `user_group` `usr_gr` ON `usr`.`user_group_id` = `usr_gr`.`id`
+					LEFT JOIN `status` `st` ON `usr`.`status`=	`st`.`id`
+					LEFT JOIN `partner_user` `pu` ON `usr`.`id`=`pu`.`user_id`
+					LEFT JOIN `region_user` `ru` ON `usr`.`id`=`ru`.`user_id`
+					LEFT JOIN `partner` `p` ON `pu`.`partner_id`=`p`.`ID`
+					LEFT JOIN `region` 	`r` ON `ru`.`region_id`=`r`.`id`
+					WHERE `usr`.`status`= '0'";
+
+		$result 	= 	R::getAll($sql);
+
+		return $result;
 	}
 	function get_facilities()//get the facilities
 	{
@@ -224,7 +274,106 @@ class admin_model extends MY_Model{
 		return $reported_dev;
 	}
 
+public function errors_reported(){
 
+		$today =  Date("Y-m-d");
+
+		$from 	= Date("Y-m-1" 	, strtotime($today));
+		$to 	= Date("Y-m-t" 	, strtotime($today));
+
+		$user_group  = $this->session->userdata("user_group_id");
+		$user_filter= $this->session->userdata("user_filter");
+
+		$this->config->load('sql');
+
+		$preset_sql = $this->config->item("preset_sql");
+
+		$sql 	=	$preset_sql["tests_details"];
+
+		$user_delimiter 	= 	" ";
+
+		if($user_group==3 && sizeof($user_filter)> 0 ){
+			$user_delimiter 	= 	" AND `partner_id` ='".$user_filter[0]['user_filter_id']."' ";
+		}elseif($user_group==6 && sizeof($user_filter)> 0 ){
+			$user_delimiter 	= 	" AND `facility_id` ='".$user_filter[0]['user_filter_id']."' ";
+		}elseif($user_group==8 && sizeof($user_filter)> 0 ){
+			$user_delimiter 	= 	" AND `district_id` ='".$user_filter[0]['user_filter_id']."' ";
+		}elseif($user_group==9 && sizeof($user_filter)> 0 ){
+			$user_delimiter 	= 	" AND `region_id` ='".$user_filter[0]['user_filter_id']."' ";
+		}
+
+		$sql 	=	$sql.$user_delimiter." AND `tst`.`result_date` between '$from' and '$to' "; 
+
+		//echo $sql;
+
+		$reported_tests 	= 	R::getAll($sql);
+
+		$succ_test = 0;
+
+		$error     = 0;
+
+		foreach ($reported_tests as $test) {
+			if($test['valid']=1){
+				$succ_test++;
+			}else{
+				$error++;
+			}
+
+		}
+
+		$agg["succ_test"]	= $succ_test;
+		$agg["error"]		= $error;
+		$agg["total"]       = $succ_test	+	$error;
+
+		return $agg;
+	}
+
+  public function get_Upload_details($user_group_id,$user_filter_used){
+
+		$user_delimiter =$this->sql_user_delimiter($user_group_id,$user_filter_used);
+
+		$sql 	=	"SELECT 
+							`pima_upload_id`,
+							`upload_date`,
+							`equipment_serial_number`,
+							`facility_name`,
+							`uploader_name`,
+							COUNT(`pima_test_id`) AS `total_tests`,
+							SUM(CASE WHEN `valid`= '1'    THEN 1 ELSE 0 END) AS `valid_tests`,
+							SUM(CASE WHEN `valid`= '0'    THEN 1 ELSE 0 END) AS `errors`,
+							SUM(CASE WHEN `valid`= '1'  AND  `cd4_count` < 350 THEN 1 ELSE 0 END) AS `failed`,
+							SUM(CASE WHEN `valid`= '1'  AND  `cd4_count` >= 350 THEN 1 ELSE 0 END) AS `passed`
+						FROM `v_pima_uploads_details`
+						WHERE 1 
+						$user_delimiter 
+						GROUP BY `pima_upload_id`
+						ORDER BY `upload_date` DESC
+						LIMIT 100
+					";
+		return $res 	=	R::getAll($sql);
+
+
+	}
+  
+  public function devices_not_reported(){
+
+		$user_device_details 	= 	$this->user_devices();	
+		$devices_not_reported 	= 	$this->user_devices(); //to be trimmed
+		$reported_devices		=	$this->devices_reported();
+
+		//trim reported
+		$k 	=	0;
+		foreach ($user_device_details as $user_device) {
+			foreach ($reported_devices as $reported_dev) {
+				if($user_device["facility_equipment_id"]==$reported_dev["facility_equipment_id"]){					
+					unset($devices_not_reported[$k]);
+				}
+			}
+			$k++;
+		}
+
+		return $devices_not_reported;
+	}
 }
 /* End of file admin_model.php */
 /* Location: ./application/modules/admin/models/admin_model.php */

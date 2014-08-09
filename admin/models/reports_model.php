@@ -1,33 +1,10 @@
 <?php 
 
 class reports_model extends MY_Model{
-
-
-/*====================================== Partner Functions =========================================================*/
- function getyearsreported($partnerid)
-  {
-		$sql="SELECT DISTINCT YEAR( pt.result_date ) AS year
-						FROM pima_test pt, partner p, partner_user pu
-						WHERE p.id = pu.partner_id
-						AND pu.user_id = '".$partnerid."' ";
-		$query=$this->db->query($sql);
-
-		if($query->num_rows()>0)
-		{
-			foreach ($query->result_array() as $value) 
-			{
-				$res[]=$value;
-			}
-		}
-		else
-		{
-			$res="No data";
-		}
-		return $res;
-		
-			
- }
-/*====================================== End Partner Functions ========================================================*/
+/*
+	The functions(including some variables) for getting tests <500cp/ml still read tests<350. However the SQL's all fetch tests <500cp/ml
+	set by World Health Organization
+*/
 
 /*====================================== County Functions =============================================================*/
 
@@ -52,42 +29,12 @@ public function get_county_id($county_name_value)
 	return $result_county_id;
 }
 
-function get_tested_years_by_county($ID)
-{
-	$sql="SELECT DISTINCT YEAR( cd.result_date ) AS year
-				FROM cd4_test cd, facility f, district d, county c, region_user ru
-				WHERE cd.facility_id = f.id
-				AND f.district = d.id
-				AND d.region_id = c.id
-				AND ru.region_id = c.id
-				AND ru.user_id =  '".$ID."'";
-	$query=$this->db->query($sql);
-	if($query->num_rows()>0)
-	{
-		foreach ($query->result_array() as $value) 
-			{
-				$result_years[]=$value;
-			}
-		
-	}
-	else
-	{
-		$result_years="No years have data";
-	}
-	return $result_years;
-}
-
 /*====================================== End County Functions =========================================================*/
 
 /*...................................... Start of PDF Functions .......................................................*/
 
 	function year_month_report($Year,$Monthly,$all,$facility,$device,$from_month,$end_month,$report_type,$login_id,$county_name_value)
 	{
-		// $tests_done=0;
-		// $count=0;
-		// $errors=0;
-		// $less_than350=0;
-		// $greater_equal_to350=0;
 
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
@@ -95,7 +42,7 @@ function get_tested_years_by_county($ID)
 		$pdf_results="";
 		$pdf_data=array();
 
-		$pdf_data['table']="<table border='1' align='center' width='880'>";
+		$pdf_data['table']="<table border='0' align='center' width='880' class='data-table'>";
 		$pdf_data['table'].="<tr>";
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";
@@ -284,19 +231,13 @@ function get_tested_years_by_county($ID)
 
 	function year_quarter_report($yearQ,$quarter,$q_no,$all,$facility,$device,$from_month,$end_month,$report_type,$login_id,$county_name_value)
 	{
-		// $tests_done=0;
-		// $count=0;
-		// $errors=0;
-		// $less_than350=0;
-		// $greater_equal_to350=0;
-
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
 
 		$pdf_results="";
 		$pdf_data=array();
 
-		$pdf_data['table']="<table border='1' align='center' width='880'>";
+		$pdf_data['table']="<table border='0' align='center' width='880' class='data-table'>";
 		$pdf_data['table'].="<tr>";
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";
@@ -499,7 +440,7 @@ function get_tested_years_by_county($ID)
 		$pdf_results="";
 		$pdf_data=array();
 
-		$pdf_data['table']="<table border='1' align='center' width='880'>";
+		$pdf_data['table']="<table border='0' align='center' width='880' class='data-table'>";
 		$pdf_data['table'].="<tr>";
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";
@@ -704,7 +645,7 @@ function get_tested_years_by_county($ID)
 		$pdf_results="";
 		$pdf_data=array();
 
-		$pdf_data['table']="<table border='1' align='center' width='880'>";
+		$pdf_data['table']="<table border='0' align='center' width='880' class='data-table'>";
 		$pdf_data['table'].="<tr>";
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";
@@ -906,7 +847,7 @@ function get_tested_years_by_county($ID)
 		$pdf_results="";
 		$pdf_data=array();
 
-		$pdf_data['table']="<table border='1' align='center' width='880'>";
+		$pdf_data['table']="<table border='0' align='center' width='880' class='data-table'>";
 		$pdf_data['table'].="<tr>";
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";
@@ -1104,7 +1045,7 @@ function get_tested_years_by_county($ID)
 		$pdf_results="";
 		$pdf_data=array();
 
-		$pdf_data['table']="<table border='1' align='center' width='880'>";
+		$pdf_data['table']="<table border='0' align='center' width='880' class='data-table'>";
 		$pdf_data['table'].="<tr>";
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";
@@ -1165,11 +1106,11 @@ function get_tested_years_by_county($ID)
 				$string_unix=mysql_to_unix($value['date_test']);
 
 				$pdf_data['table'].='<tr>';
-				$pdf_data['table'].='<td>'.$i.'</td>';
-				$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
-				$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-				$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
-				$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
+				$pdf_data['table'].='<td style="width:3%">'.$i.'</td>';
+				$pdf_data['table'].='<td style="width:15%">'.$value['sample_code'].'</td>';
+				$pdf_data['table'].='<td style="width:25%"><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
+				$pdf_data['table'].='<td style="width:25%"><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
+				$pdf_data['table'].='<td style="width:10%"><center>'.$value['cd4_count'].'</center></td>';
 				$pdf_data['table'].='</tr>';
 
 				$i++;
@@ -1209,7 +1150,7 @@ function get_tested_years_by_county($ID)
 		$pdf_results="";
 		$pdf_data=array();
 
-		$pdf_data['table']="<table border='1' align='center' width='880'>";
+		$pdf_data['table']="<table border='0' align='center' width='880' class='data-table'>";
 		$pdf_data['table'].="<tr>";
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";
@@ -1310,7 +1251,7 @@ function get_tested_years_by_county($ID)
 		$pdf_results="";
 		$pdf_data=array();
 
-		$pdf_data['table']="<table border='1' align='center' width='880'>";
+		$pdf_data['table']="<table border='0' align='center' width='880' class='data-table'>";
 		$pdf_data['table'].="<tr>";
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";
@@ -1412,7 +1353,7 @@ function get_tested_years_by_county($ID)
 		$pdf_results="";
 		$pdf_data=array();
 
-		$pdf_data['table']="<table border='1' align='center' width='880'>";
+		$pdf_data['table']="<table border='0' align='center' width='880' class='data-table'>";
 		$pdf_data['table'].="<tr>";
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";
@@ -1513,7 +1454,7 @@ function get_tested_years_by_county($ID)
 		$pdf_results="";
 		$pdf_data=array();
 
-		$pdf_data['table']="<table border='1' align='center' width='880'>";
+		$pdf_data['table']="<table border='0' align='center' width='880' class='data-table'>";
 		$pdf_data['table'].="<tr>";
 		$pdf_data['table'].="<th>#</th>";
 		$pdf_data['table'].="<th>Patient ID</th>";

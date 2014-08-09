@@ -117,12 +117,47 @@ class poc_model extends MY_Model{
 
 		return $user_device_details;
 	}
+	// public function devices_currently_reported()
+	// {
+	// 	$today =  Date("Y-m-d");
+
+	// 	$from 	= Date("Y-m-1" 	, strtotime($today));
+	// 	$to 	= Date("Y-m-t" 	, strtotime($today));
+
+	// 	$user_delimiter 	= 	"";
+
+	// 	$user_group  = $this->session->userdata("user_group_id");
+	// 	$user_filter= $this->session->userdata("user_filter");
+
+	// 	$sql="SELECT fp.serial_num as serial, f.name as facility
+	// 				FROM facility_pima fp
+	// 				LEFT JOIN facility_equipment fe ON fp.facility_equipment_id=fe.id
+	// 				LEFT JOIN facility f ON fe.facility_id=f.id
+	// 				LEFT JOIN cd4_test cd4 ON f.id=cd4.facility_id
+	// 				LEFT JOIN district d ON f.district=d.id
+	// 				LEFT JOIN region r ON d.region_id=r.id
+	// 				LEFT JOIN partner p ON f.partnerID=p.ID";
+
+
+	// 	if($user_group==3 && sizeof($user_filter)> 0 ){
+	// 		$user_delimiter 	= 	" WHERE  p.id ='".$user_filter[0]['user_filter_id']."' ";
+	// 	}elseif($user_group==6 && sizeof($user_filter)> 0 ){
+	// 		$user_delimiter 	= 	" WHERE  f.id ='".$user_filter[0]['user_filter_id']."' ";
+	// 	}elseif($user_group==8 && sizeof($user_filter)> 0 ){
+	// 		$user_delimiter 	= 	" WHERE d.id ='".$user_filter[0]['user_filter_id']."' ";
+	// 	}elseif($user_group==9 && sizeof($user_filter)> 0 ){
+	// 		$user_delimiter 	= 	" WHERE  r.id ='".$user_filter[0]['user_filter_id']."' ";
+	// 	}
+
+	// 	$sql 	=	$sql.$user_delimiter." AND cd4.result_date BETWEEN '".$from."' AND '".$to."'";
+
+	// }
 
 	public function devices_reported(){
 
 		$today =  Date("Y-m-d");
 
-		$from 	= Date("Y-m-1" 	, strtotime($today));
+		$from 	= Date("Y-01-1" 	, strtotime($today));
 		$to 	= Date("Y-m-t" 	, strtotime($today));
 
 		$user_group  = $this->session->userdata("user_group_id");

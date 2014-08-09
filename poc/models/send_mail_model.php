@@ -4,13 +4,12 @@ class send_mail_model extends MY_Model{
 
 	function get_partner_email($partner_name)//get the partner email address 
 	{
-		$sql="SELECT  u.username,u.name,u.email 
-						FROM facility f,partner p,partner_user pu, v_facility_pima_details vfp, user u
-					 	WHERE vfp.partner_name=p.name
-					 	AND f.partnerID=p.ID 
-					 	AND p.ID=pu.partner_id
+		$sql="SELECT u.username,u.name,u.email 
+						FROM partner p,partner_user pu, v_facility_pima_details vfp, user u
+					 	WHERE vfp.partner_name=p.name 
+					 	AND p.id=pu.partner_id 
 					 	AND pu.user_id=u.id 
-					 	AND vfp.partner_name='".$partner_name."' AND u.status='1' GROUP BY u.username ";
+					 	AND vfp.partner_name='".$partner_name."' AND u.status='1' GROUP BY u.email ";
 
 	 	$query=$this->db->query($sql);
 
@@ -21,9 +20,9 @@ class send_mail_model extends MY_Model{
 	 			$result[]=$email['email'];
 	 		}
 	 	}
-	 	else if($query->num_rows==0)
+	 	else
 	 	{
- 			$result='tngugi@clintonhealthaccess.org';//admin email
+ 			$result[]='brianhawi92@gmail.com';//admin email
 	 	}
 
 		return $result;		
@@ -31,12 +30,12 @@ class send_mail_model extends MY_Model{
 
 	function get_county_email($county_id)//get the county coordinator email address 
 	{
-		$sql="SELECT  u.username,u.name,u.email
+		$sql="SELECT u.username,u.name,u.email
 						FROM region_user ru,region r,v_facility_pima_details vfp, user u
 						WHERE vfp.region_name=r.name
 						AND r.id=ru.region_id
 						AND ru.user_id=u.id
-						AND vfp.region_id='".$county_id."' AND u.status='1' GROUP BY u.username";
+						AND vfp.region_id='".$county_id."' AND u.status='1' GROUP BY u.email";
 
 		$query=$this->db->query($sql);
 
@@ -47,9 +46,9 @@ class send_mail_model extends MY_Model{
 	 			$result[]=$email['email'];
 	 		}
 	 	}
-	 	else if($query->num_rows==0)
+	 	else
 	 	{
- 			$result='tngugi@clintonhealthaccess.org';
+ 			$result[]='brianhawi92@gmail.com';
 	 	}
 
 		return $result;
@@ -61,7 +60,6 @@ class send_mail_model extends MY_Model{
 		$sql	=	"SELECT 
 							`pima_upload_id`,
 							`upload_date`,
-							`result_date`,
 							`equipment_serial_number`,
 							`facility_name`,
 							`uploader_name`,
@@ -81,7 +79,6 @@ class send_mail_model extends MY_Model{
 						GROUP BY `facility_name`
 						ORDER BY `facility_name` ASC ";
 		return $res 	=	R::getAll($sql);
-
 	}
 	function uploads_by_county($from,$to)//uploads by county
 	{
@@ -133,8 +130,9 @@ class send_mail_model extends MY_Model{
 		return $res 	=	R::getAll($sql);
 	}
 
-	function tests_less_than500($from,$to,$facility)//tests less than 500
+	function tests_less_than500($from,$to,$facility)//tests less than 500 per month
 	{
+
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
 
@@ -142,7 +140,7 @@ class send_mail_model extends MY_Model{
 		$pdf_data=array();
 		$i=1;//counter
 
-		$pdf_data['table']="<table border='1' align='center' width='880'>";
+		$pdf_data['table']="<table border='0' align='center' width='880' class='data-table'>";
 		$pdf_data['table'].="<tr>";
 		$pdf_data['table'].="<th style='width:3%'>#</th>";
 		$pdf_data['table'].="<th style='width:10%'>Patient ID</th>";
@@ -158,7 +156,6 @@ class send_mail_model extends MY_Model{
 			$all="";
 
 			$pdf_results=$this->get_test_details($from,$to,$facility);
-
 			$pdf_count=$this->get_count_test_details($from,$to,$facility);
 		}
 		if($pdf_results!="")
@@ -172,12 +169,12 @@ class send_mail_model extends MY_Model{
 				$pdf_data['table'].='<td style="width:3%">'.$i.'</td>';
 				$pdf_data['table'].='<td style="width:10%">'.$value['sample_code'].'</td>';
 				$pdf_data['table'].='<td style="width:25%"><center>'.$value['facility'].'</center></td>';
-				$pdf_data['table'].='<td style="width:20%"><center>'.$value['serial_num'].'</center></td>';
+				$pdf_data['table'].='<td style="width:25%"><center>'.$value['serial_num'].'</center></td>';
 				$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 				$pdf_data['table'].='<td style="width:10%"><center>'.$value['cd4_count'].'</center></td>';
 				$pdf_data['table'].='</tr>';
 
-				$i++;
+				$i++;	
 			}
 		}
 		else
@@ -202,29 +199,26 @@ class send_mail_model extends MY_Model{
 		return $pdf_data;	
 	}
 
-	public function get_test_details($from,$to,$facility)/*,$device,$all,$county_id)//Get all the data*/
+	public function get_test_details($from,$to,$facility)
 	{
 		$sql="SELECT * FROM v_pima_tests_only";
-	
-		$criteria =" ";
 
 		if(!$facility=="")
 		{
-			$criteria =" AND facility ='".$facility."' AND cd4_count < 500 AND valid='1' ";
+			$criteria =" AND facility='".$facility."' AND valid='1' AND cd4_count < 500";
 		}
 		
-		$date_delimiter	=	" WHERE date_test BETWEEN '".$from."' AND '".$to."' ";		
+		$date_delimiter	=	" WHERE date_test between '".$from."' and '".$to."' ";		
 
 		$test_details=R::getAll($sql.$date_delimiter.$criteria);
 
-		// echo $sql.$date_delimiter.$criteria;
+		// echo $tests_sql.$date_delimiter.$criteria;
 
 		// die;
 
 		return $test_details;
 
 	}
-
 	public function get_count_test_details($from,$to,$facility)
 	{
 		$sql_count="SELECT COUNT(test_id) AS total_tests,
@@ -232,14 +226,18 @@ class send_mail_model extends MY_Model{
 						SUM(CASE WHEN valid= '0'    THEN 1 ELSE 0 END) AS `errors`,
 						SUM(CASE WHEN valid= '1'  AND  cd4_count < 500 THEN 1 ELSE 0 END) AS failed,
 						SUM(CASE WHEN valid= '1'  AND  cd4_count >= 500 THEN 1 ELSE 0 END) AS passed
-						FROM v_pima_tests_only ";	
+						FROM v_pima_tests_only ";
+
+		$user_group_id = $this->session->userdata("user_group_id");
+
+		$user_filter_used=$this->session->userdata("user_filter_used");		
 
 		if(!$facility=="")
 		{
 			$criteria =" AND facility='".$facility."' ";
 		}
 		
-		$date_delimiter	=	"  WHERE date_test BETWEEN '".$from."' AND '".$to."' ";		
+		$date_delimiter	=	" WHERE date_test between '".$from."' and '".$to."' ";		
 
 		$test_details=R::getAll($sql_count.$date_delimiter.$criteria);
 
@@ -255,14 +253,14 @@ class send_mail_model extends MY_Model{
 		$total_number_of_records=0;
 		$total_tests=0;
 		$errors=0;
-		$tests_less_than350=0;
-		$tests_greater_than350=0;
+		$tests_less_than500=0;
+		$tests_greater_than500=0;
 		$percentage_errors=0;
 		$delimiter="";
 		$group_by="";
 
 		//cumulative table headings
-		$pdf_data['cumulative_table']='<table border="1" align="center" width="880">';
+		$pdf_data['cumulative_table']='<table border="0" align="center" width="880" class="data-table">';
 		$pdf_data['cumulative_table'].='<tr>';
 		$pdf_data['cumulative_table'].='<th><center># PIMAs Reported</center></th>';
 		$pdf_data['cumulative_table'].='<th bgcolor="#000066" style="color:#FFF;"><center>Total Tests</center></th>';
@@ -271,11 +269,11 @@ class send_mail_model extends MY_Model{
 		//$pdf_data['cumulative_table'].='<th bgcolor="#CC0000" style="color:#FFF;"><center>Errors by %</center></th>';
 		$pdf_data['cumulative_table'].='</tr>';
 
-		$pdf_data['breakdown_table']='<table border="1" align="center" width="880">';
+		$pdf_data['breakdown_table']='<table border="0" align="center" width="880" class="data-table">';
 		$pdf_data['breakdown_table'].='<tr>';
 		$pdf_data['breakdown_table'].='<th><center>#</center></th>';
-		$pdf_data['breakdown_table'].='<th><center>Device Serial Number</center></th>';
-		$pdf_data['breakdown_table'].='<th><center>Facility</center></th>';
+		$pdf_data['breakdown_table'].='<th style="width:25%"><center>Device Serial Number</center></th>';
+		$pdf_data['breakdown_table'].='<th style="width:25%"><center>Facility</center></th>';
 		$pdf_data['breakdown_table'].='<th bgcolor="#000066" style="color:#FFF;width:15%"><center>Total Tests</center></th>';
 		$pdf_data['breakdown_table'].='<th bgcolor="#eb9316" style="color:#FFF;width:15%"><center>Tests < 500</center></th>';
 		$pdf_data['breakdown_table'].='<th bgcolor="#CC0000" style="color:#FFF;width:15%"><center>Errors</center></th>';
@@ -347,8 +345,8 @@ class send_mail_model extends MY_Model{
 				else
 				{
 					$total_tests+=$value['total_tests'];
-					//$tests_greater_than350+=$value['passed'];
-					$tests_less_than350+=$value['failed'];
+					//$tests_greater_than500+=$value['passed'];
+					$tests_less_than500+=$value['failed'];
 					$errors+=$value['errors'];
 
 					
@@ -366,7 +364,7 @@ class send_mail_model extends MY_Model{
 			$pdf_data['cumulative_table'].='<tr>';
 			$pdf_data['cumulative_table'].='<td><center>'.$total_number_of_records.' / '.$total_pimas.'</center></td>';
 			$pdf_data['cumulative_table'].='<td><center>'.$total_tests.'</center></td>';
-			$pdf_data['cumulative_table'].='<td><center>'.$tests_less_than350.'</center></td>';
+			$pdf_data['cumulative_table'].='<td><center>'.$tests_less_than500.'</center></td>';
 			$pdf_data['cumulative_table'].='<td><center>'.$errors.'</center></td>';
 			//$pdf_data['cumulative_table'].='<td><center>'.$percentage_errors.'</center></td>';
 			$pdf_data['cumulative_table'].='</tr></table>';
