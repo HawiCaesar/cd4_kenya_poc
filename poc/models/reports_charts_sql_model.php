@@ -56,9 +56,9 @@ class reports_charts_sql_model extends MY_Model
 
 			$test_details=R::getAll($tests_sql.$user_delimiter.$criteria.$report_type.$delimiter);
 
-			/*echo $tests_sql.$user_delimiter.$criteria.$report_type.$delimiter;
+			// echo $tests_sql.$user_delimiter.$criteria.$report_type.$delimiter;
 	
-			die;*/
+			// die;
 
 			return $test_details;
 

@@ -113,7 +113,7 @@ public function get_county_id($county_name_value)
 					$pdf_data['table'].='<td>'.$i.'</td>';
 					$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 					$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-					$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+					$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 					$pdf_data['table'].='<td><center>Successful</center></td>';
 					$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 					$pdf_data['table'].='</tr>';
@@ -143,7 +143,7 @@ public function get_county_id($county_name_value)
 					$pdf_data['table'].='<td>'.$i.'</td>';
 					$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 					$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-					$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+					$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 					$pdf_data['table'].='<td><center>Error</center></td>';
 					$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 					$pdf_data['table'].='</tr>';
@@ -178,7 +178,7 @@ public function get_county_id($county_name_value)
 						$pdf_data['table'].='<td>'.$i.'</td>';
 						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+						$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 						$pdf_data['table'].='<td><center>Successful</center></td>';
 						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 						$pdf_data['table'].='</tr>';
@@ -191,7 +191,7 @@ public function get_county_id($county_name_value)
 						$pdf_data['table'].='<td>'.$i.'</td>';
 						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+						$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 						$pdf_data['table'].='<td><center>Error</center></td>';
 						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 						$pdf_data['table'].='</tr>';
@@ -308,7 +308,7 @@ public function get_county_id($county_name_value)
 						$pdf_data['table'].='<td>'.$i.'</td>';
 						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+						$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 						$pdf_data['table'].='<td><center>Successful</center></td>';
 						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 						$pdf_data['table'].='</tr>';
@@ -339,7 +339,7 @@ public function get_county_id($county_name_value)
 						$pdf_data['table'].='<td>'.$i.'</td>';
 						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+						$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 						$pdf_data['table'].='<td><center>Error</center></td>';
 						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 						$pdf_data['table'].='</tr>';
@@ -374,7 +374,7 @@ public function get_county_id($county_name_value)
 							$pdf_data['table'].='<td>'.$i.'</td>';
 							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 							$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-							$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+							$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 							$pdf_data['table'].='<td><center>Successful</center></td>';
 							$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 							$pdf_data['table'].='</tr>';
@@ -387,7 +387,7 @@ public function get_county_id($county_name_value)
 							$pdf_data['table'].='<td>'.$i.'</td>';
 							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 							$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-							$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+							$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 							$pdf_data['table'].='<td><center>Error</center></td>';
 							$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 							$pdf_data['table'].='</tr>';
@@ -511,7 +511,7 @@ public function get_county_id($county_name_value)
 						$pdf_data['table'].='<td>'.$i.'</td>';
 						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+						$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 						$pdf_data['table'].='<td><center>Successful</center></td>';
 						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 						$pdf_data['table'].='</tr>';
@@ -543,7 +543,7 @@ public function get_county_id($county_name_value)
 						$pdf_data['table'].='<td>'.$i.'</td>';
 						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+						$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 						$pdf_data['table'].='<td><center>Error</center></td>';
 						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 						$pdf_data['table'].='</tr>';
@@ -579,7 +579,7 @@ public function get_county_id($county_name_value)
 							$pdf_data['table'].='<td>'.$i.'</td>';
 							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 							$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-							$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+							$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 							$pdf_data['table'].='<td><center>Successful</center></td>';
 							$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 							$pdf_data['table'].='</tr>';
@@ -591,7 +591,7 @@ public function get_county_id($county_name_value)
 							$pdf_data['table'].='<td>'.$i.'</td>';
 							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 							$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-							$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+							$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 							$pdf_data['table'].='<td><center>Error</center></td>';
 							$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 							$pdf_data['table'].='</tr>';
@@ -716,7 +716,7 @@ public function get_county_id($county_name_value)
 						$pdf_data['table'].='<td>'.$i.'</td>';
 						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+						$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 						$pdf_data['table'].='<td><center>Successful</center></td>';
 						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 						$pdf_data['table'].='</tr>';
@@ -748,7 +748,7 @@ public function get_county_id($county_name_value)
 						$pdf_data['table'].='<td>'.$i.'</td>';
 						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+						$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 						$pdf_data['table'].='<td><center>Error</center></td>';
 						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 						$pdf_data['table'].='</tr>';
@@ -782,7 +782,7 @@ public function get_county_id($county_name_value)
 							$pdf_data['table'].='<td>'.$i.'</td>';
 							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 							$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-							$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+							$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 							$pdf_data['table'].='<td><center>Successful</center></td>';
 							$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 							$pdf_data['table'].='</tr>';
@@ -795,7 +795,7 @@ public function get_county_id($county_name_value)
 							$pdf_data['table'].='<td>'.$i.'</td>';
 							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 							$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-							$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+							$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 							$pdf_data['table'].='<td><center>Error</center></td>';
 							$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 							$pdf_data['table'].='</tr>';
@@ -917,7 +917,7 @@ public function get_county_id($county_name_value)
 						$pdf_data['table'].='<td>'.$i.'</td>';
 						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+						$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 						$pdf_data['table'].='<td><center>Successful</center></td>';
 						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 						$pdf_data['table'].='</tr>';
@@ -949,7 +949,7 @@ public function get_county_id($county_name_value)
 						$pdf_data['table'].='<td>'.$i.'</td>';
 						$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 						$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-						$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+						$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 						$pdf_data['table'].='<td><center>Error</center></td>';
 						$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 						$pdf_data['table'].='</tr>';
@@ -983,7 +983,7 @@ public function get_county_id($county_name_value)
 							$pdf_data['table'].='<td>'.$i.'</td>';
 							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 							$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-							$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+							$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 							$pdf_data['table'].='<td><center>Successful</center></td>';
 							$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 							$pdf_data['table'].='</tr>';
@@ -996,7 +996,7 @@ public function get_county_id($county_name_value)
 							$pdf_data['table'].='<td>'.$i.'</td>';
 							$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 							$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-							$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+							$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 							$pdf_data['table'].='<td><center>Error</center></td>';
 							$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 							$pdf_data['table'].='</tr>';
@@ -1213,7 +1213,7 @@ public function get_county_id($county_name_value)
 				$pdf_data['table'].='<td>'.$i.'</td>';
 				$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 				$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-				$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+				$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 				$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 				$pdf_data['table'].='</tr>';
 
@@ -1315,7 +1315,7 @@ public function get_county_id($county_name_value)
 				$pdf_data['table'].='<td>'.$i.'</td>';
 				$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 				$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-				$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+				$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 				$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 				$pdf_data['table'].='</tr>';
 
@@ -1416,7 +1416,7 @@ public function get_county_id($county_name_value)
 				$pdf_data['table'].='<td>'.$i.'</td>';
 				$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 				$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-				$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+				$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 				$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 				$pdf_data['table'].='</tr>';
 
@@ -1519,7 +1519,7 @@ public function get_county_id($county_name_value)
 				$pdf_data['table'].='<td>'.$i.'</td>';
 				$pdf_data['table'].='<td>'.$value['sample_code'].'</td>';
 				$pdf_data['table'].='<td><center>'.$value['facility'].' - '.$value['serial_num'].'</center></td>';
-				$pdf_data['table'].='<td>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</td>';
+				$pdf_data['table'].='<td><center>'.date('d-F-Y',strtotime($value['date_test'])).' - '.mdate($datestring,$string_unix).'</center></td>';
 				$pdf_data['table'].='<td><center>'.$value['cd4_count'].'</center></td>';
 				$pdf_data['table'].='</tr>';
 

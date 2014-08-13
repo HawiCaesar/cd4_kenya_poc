@@ -157,7 +157,7 @@ class poc_model extends MY_Model{
 
 		$today =  Date("Y-m-d");
 
-		$from 	= Date("Y-01-1" 	, strtotime($today));
+		$from 	= Date("Y-01-1" , strtotime($today));
 		$to 	= Date("Y-m-t" 	, strtotime($today));
 
 		$user_group  = $this->session->userdata("user_group_id");

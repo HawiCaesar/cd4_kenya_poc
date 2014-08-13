@@ -231,15 +231,13 @@ class quality_model extends MY_Model{
 
 	function facility_control_tests()
 	{
-		$today =  Date("Y-m-d"); //today's date
+		//picking control tests by week. So last monday and today
 
-		//begining of the year
-		$begining=date('Y')."-01-01"; 
+		//last monday
+		$from=date('Y-m-d',strtotime('last monday'));
 
-		$from 	= Date("Y-m-d" 	, strtotime($begining)); // get the first day of the month
-		$to 	= Date("Y-m-t" 	, strtotime($today)); // get the last day of the month
-
-
+		//today
+		$to 	= date("Y-m-d");
 
 		$this->config->load('sql'); 
 
@@ -248,8 +246,7 @@ class quality_model extends MY_Model{
 		$sql 	=	$preset_sql["pima_control_count_details"]; //load the pima_control_count_details preset sql
 
 		$user_delimiter 	= 	"";
-		$group_by=" GROUP BY `yearmonth` ";
-		$order=" ORDER BY `pima_control`.`result_date` DESC";
+		$group_by=" GROUP BY `f`.`id` ";
 
 		$user_group  = $this->session->userdata("user_group_id"); // the session of the user
 		$user_filter= $this->session->userdata("user_filter");
@@ -257,7 +254,7 @@ class quality_model extends MY_Model{
 		if($user_group==3 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0)
 		{
 			$user_delimiter 	= 	" AND  `p`.`ID` ='".$user_filter[0]['user_filter_id']."' ";
-			//$group_by=" GROUP BY `yearmonth` ";
+			$group_by=" GROUP BY `f`.`id` ";
 		}
 		elseif($user_group==6 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0 )
 		{
@@ -270,16 +267,19 @@ class quality_model extends MY_Model{
 		elseif($user_group==9 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0 )
 		{
 			$user_delimiter 	= 	" AND `r`.`id` ='".$user_filter[0]['user_filter_id']."' ";
-			$group_by=" GROUP BY `yearmonth` ";
+			$group_by=" GROUP BY `f`.`id` ";
 		}
 
 		//concatenate the sql with the delimeiter
-		$control_sql 	=	$sql.$user_delimiter." AND MONTH(`pima_control`.`result_date`) between '".date('m',strtotime($from))."' and '".date('m',strtotime($to))."' 
-													AND YEAR(`pima_control`.`result_date`) between '".date('Y',strtotime($from))."'
-													AND '".date('Y',strtotime($to))."' ".$group_by.$order; 
+	  	// $control_sql 	=	$sql.$user_delimiter." AND MONTH(`pima_control`.`result_date`) between '".date('m',strtotime($from))."' and '".date('m',strtotime($to))."' 
+				// 									AND YEAR(`pima_control`.`result_date`) between '".date('Y',strtotime($from))."'
+				// 									AND '".date('Y',strtotime($to))."' ".$group_by." ORDER BY `result_date` DESC ";
+
+		$control_sql 	=	$sql.$user_delimiter." AND `pima_control`.`result_date` BETWEEN '".$from."' AND '".$to."' ".$group_by." 
+													ORDER BY `pima_control`.`result_date` DESC ";  
 
 		$control_results 	= 	R::getAll($control_sql);
-
+		//print_r($control_sql);die;
 		return $control_results;
 	}
 

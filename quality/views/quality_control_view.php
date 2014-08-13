@@ -21,15 +21,15 @@
 	<tbody>	
 			<?php foreach($control_count_list as $count): ?>
 			<tr>
-				<td><center><?php echo date('1-m-Y',strtotime($count["result_date"])); ?></center></td>
-				<td><center><?php echo date('t-m-Y',strtotime($count["result_date"])); ?></center></td>
+				<td><center><?php echo date('d F Y',strtotime($count['result_date'])); ?></center></td>
+				<td><center><?php echo date('d F Y'); ?></center></td>
 				<td><center><?php echo $count['serial_num']." - ".$count['facility']; ?></center></td>
 				<td><center><?php if(!$count['total_tests']==0){?><i class="fa fa-check-square-o fa-2x" style="color: green;"></i>
 						<?php  }else{?><i class="fa fa-times fa-2x" style="color: red; "></i><?php }?>
 					</center>
 				</td>
 				<td><center><?php echo $count['total_tests']; ?></center></td>
-				<td><center>15</center></td>
+				<td><center>2</center></td>
 			</tr>
 			<?php endforeach ?>
 	</tbody>
@@ -37,14 +37,19 @@
 
 <?php }else if($check_value==0)
 {
-	?><p><center><div class="notice" style="width:500px;"><b>No Control Tests Have Been Run for 
+	?><p><center><div class="notice" style="width:500px;"><b>No Control Tests Have Been Run 
 		<?php
-		$user_filter = $this->session -> userdata("user_filter");
-			if($user_filter){
-					foreach ($user_filter as $filter) {
-						echo $filter["user_filter_name"];
+		$user_filter_used = $this->session -> userdata("user_filter_used");
+			if($user_filter_used==0)
+			{
+				echo " yet";		
+			}else
+			{
+				$user_filter = $this->session -> userdata("user_filter");
+				foreach ($user_filter as $filter) {
+						echo "for ".$filter["user_filter_name"];
 					}
-				}
+			}
 		?></b></div></center></p>
 	<?php
 }

@@ -21,16 +21,16 @@ class quality extends MY_Controller
 
 		$this->load->model('quality_model'); //load quality model
 
-		// $user_filter = $this->session -> userdata("user_filter");
+		$user_filter = $this->session -> userdata("user_filter");
 
-		// if($user_filter)
-		// { 
-		// 	foreach ($user_filter as $filter) 
-		// 	{
-		// 		//$data['partner_option']='<option value="3">Show All Data For '.$filter["user_filter_name"].'</option>'; 
-		// 		$this->set_user_filter($filter["user_filter_id"]);
-		// 	} 
-		// }
+		/*if($user_filter)
+		{ 
+			foreach ($user_filter as $filter) 
+			{
+				//$data['partner_option']='<option value="3">Show All Data For '.$filter["user_filter_name"].'</option>'; 
+				$this->set_user_filter($filter["user_filter_id"]);
+			} 
+		}*/
 
 		$data['control_count_list']=$this->quality_model->facility_control_tests();
 

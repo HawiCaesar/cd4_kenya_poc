@@ -109,7 +109,8 @@ class reports extends MY_Controller {
 
 	function get_reports()
 	{
-		
+		ini_set('max_execution_time', 900);
+
 		$this->load->model('reports_model');//load reports_model
 		
 		$login_id=$this->session->userdata('id');//login session
@@ -754,7 +755,7 @@ class reports extends MY_Controller {
 
 			if($all_data==5) //only for all data reporting
 			{
-				$mpdf->WriteHTML($PDF_document);//place content in pdf
+				$mpdf->WriteHTML($table_style.$PDF_document);//place content in pdf
 			}
 			else
 			{	
