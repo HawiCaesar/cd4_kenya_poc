@@ -55,8 +55,8 @@ class reports_charts_model extends MY_Model{
 			{
 				foreach ($the_total as $key => $value) 
 				{
-					$tests_results['both_results'][] = $value['data'];
-					$tests_results['tests'][] = $value['valid'];
+					$tests_results['both_results'][] = (int)$value['data'];
+					$tests_results['tests'][] = (int)$value['valid'];
 				}
 			}
 			else
@@ -77,8 +77,8 @@ class reports_charts_model extends MY_Model{
 			{
 				foreach ($the_total as $key => $value) 
 				{
-					$tests_results['both_results'][] = $value['data'];
-					$tests_results['errors'][] = $value['errors'];
+					$tests_results['both_results'][] = (int)$value['data'];
+					$tests_results['errors'][] = (int)$value['errors'];
 				}
 			}
 			else
@@ -98,9 +98,9 @@ class reports_charts_model extends MY_Model{
 			{
 				foreach ($the_total as $key => $value) 
 				{	
-					$tests_results['both_results'][] = $value['data'];
-					$tests_results['tests'][] = $value['valid'];
-					$tests_results['errors'][] = $value['errors'];
+					$tests_results['both_results'][] = (int)$value['data'];
+					$tests_results['tests'][] = (int)$value['valid'];
+					$tests_results['errors'][] = (int)$value['errors'];
 				}
 			}
 			else
@@ -121,8 +121,8 @@ class reports_charts_model extends MY_Model{
 			{
 				foreach ($the_total as $key => $value) 
 				{
-					$tests_results['both_results'][] = $value['data'];
-					$tests_results['tests'][] = $value['failed'];
+					$tests_results['both_results'][] = (int)$value['data'];
+					$tests_results['tests'][] = (int)$value['failed'];
 				}
 
 			}
@@ -223,8 +223,8 @@ class reports_charts_model extends MY_Model{
 			{	
 				foreach ($the_total as $key => $value) 
 				{
-					$my_array1[($value['mth']-1)]= $value['data'];
-					$my_array2[($value['mth']-1)]= $value['valid'];
+					$my_array1[($value['mth']-1)]= (int)$value['data'];
+					$my_array2[($value['mth']-1)]= (int)$value['valid'];
 				}
 				$tests_results['both_results']=$my_array1;
 				$tests_results['tests']=$my_array2;
@@ -246,8 +246,8 @@ class reports_charts_model extends MY_Model{
 			{	
 				foreach ($the_total as $key => $value) 
 				{
-					$my_array1[($value['mth']-1)]= $value['data'];
-					$my_array2[($value['mth']-1)]= $value['errors'];
+					$my_array1[($value['mth']-1)]= (int)$value['data'];
+					$my_array2[($value['mth']-1)]= (int)$value['errors'];
 				}
 				$tests_results['both_results']=$my_array1;
 				$tests_results['errors']=$my_array2;
@@ -268,9 +268,9 @@ class reports_charts_model extends MY_Model{
 			{
 				foreach ($the_total as $key => $value) 
 				{
-					$my_array1[($value['mth']-1)]= $value['data'];
-					$my_array2[($value['mth']-1)]= $value['valid'];
-					$my_array3[($value['mth']-1)]= $value['errors'];
+					$my_array1[($value['mth']-1)]= (int)$value['data'];
+					$my_array2[($value['mth']-1)]= (int)$value['valid'];
+					$my_array3[($value['mth']-1)]= (int)$value['errors'];
 				}
 				$tests_results['both_results']=$my_array1;
 				$tests_results['tests']=$my_array2;
@@ -294,8 +294,8 @@ class reports_charts_model extends MY_Model{
 			{
 				foreach ($the_total as $key => $value) 
 				{
-					$my_array1[($value['mth']-1)]= $value['data'];
-					$my_array2[($value['mth']-1)]= $value['failed'];
+					$my_array1[($value['mth']-1)]= (int)$value['data'];
+					$my_array2[($value['mth']-1)]= (int)$value['failed'];
 				}
 
 				$tests_results['both_results']=$my_array1;
@@ -396,8 +396,8 @@ class reports_charts_model extends MY_Model{
 			{
 				foreach ($the_total as $key => $value) 
 				{
-					$my_array1[($value['mth']-1)]= $value['data'];
-					$my_array2[($value['mth']-1)]= $value['valid'];
+					$my_array1[($value['mth']-1)]= (int)$value['data'];
+					$my_array2[($value['mth']-1)]= (int)$value['valid'];
 				}
 				$tests_results['both_results']=$my_array1;
 				$tests_results['tests']=$my_array2;
@@ -419,8 +419,8 @@ class reports_charts_model extends MY_Model{
 			{
 				foreach ($the_total as $key => $value) 
 				{
-					$my_array1[($value['mth']-1)]= $value['data'];
-					$my_array2[($value['mth']-1)]= $value['valid'];
+					$my_array1[($value['mth']-1)]= (int)$value['data'];
+					$my_array2[($value['mth']-1)]= (int)$value['valid'];
 				}
 				
 				$tests_results['both_results']=$my_array1;
@@ -442,9 +442,9 @@ class reports_charts_model extends MY_Model{
 			{
 				foreach ($the_total as $key => $value) 
 				{
-					$my_array1[($value['mth']-1)]= $value['data'];
-					$my_array2[($value['mth']-1)]= $value['valid'];
-					$my_array3[($value['mth']-1)]= $value['errors'];
+					$my_array1[($value['mth']-1)]= (int)$value['data'];
+					$my_array2[($value['mth']-1)]= (int)$value['valid'];
+					$my_array3[($value['mth']-1)]= (int)$value['errors'];
 				}
 
 				$tests_results['both_results']=$my_array1;
@@ -468,8 +468,8 @@ class reports_charts_model extends MY_Model{
 			{
 				foreach ($the_total as $key => $value) 
 				{
-					$my_array1[($value['mth']-1)]= $value['data'];
-					$my_array2[($value['mth']-1)]= $value['failed'];
+					$my_array1[($value['mth']-1)]= (int)$value['data'];
+					$my_array2[($value['mth']-1)]= (int)$value['failed'];
 				}
 
 				$tests_results['both_results']=$my_array1;
@@ -562,8 +562,8 @@ class reports_charts_model extends MY_Model{
 			{
 				foreach ($the_total as $key => $value) 
 				{
-					$my_array1[($value['mth']-1)]= $value['data'];
-					$my_array2[($value['mth']-1)]= $value['valid'];
+					$my_array1[($value['mth']-1)]= (int)$value['data'];
+					$my_array2[($value['mth']-1)]= (int)$value['valid'];
 				}
 
 				$tests_results['both_results']=$my_array;
@@ -586,8 +586,8 @@ class reports_charts_model extends MY_Model{
 			{
 				foreach ($the_total as $key => $value) 
 				{
-					$my_array1[($value['mth']-1)]= $value['data'];
-					$my_array2[($value['mth']-1)]= $value['errors'];
+					$my_array1[($value['mth']-1)]= (int)$value['data'];
+					$my_array2[($value['mth']-1)]= (int)$value['errors'];
 				}
 
 				$tests_results['both_results']=$my_array1;
@@ -609,9 +609,9 @@ class reports_charts_model extends MY_Model{
 			{
 				foreach ($the_total as $key => $value) 
 				{
-					$my_array1[($value['mth']-1)]= $value['data'];
-					$my_array2[($value['mth']-1)]= $value['valid'];
-					$my_array3[($value['mth']-1)]= $value['errors'];
+					$my_array1[($value['mth']-1)]= (int)$value['data'];
+					$my_array2[($value['mth']-1)]= (int)$value['valid'];
+					$my_array3[($value['mth']-1)]= (int)$value['errors'];
 				}
 
 				$tests_results['both_results']=$my_array1;
@@ -635,8 +635,8 @@ class reports_charts_model extends MY_Model{
 			{
 				foreach ($the_total as $key => $value) 
 				{
-					$my_array1[($value['mth']-1)]= $value['data'];
-					$my_array2[($value['mth']-1)]= $value['failed'];
+					$my_array1[($value['mth']-1)]= (int)$value['data'];
+					$my_array2[($value['mth']-1)]= (int)$value['failed'];
 				}
 				$tests_results['both_results']=$my_array1;
 				$tests_results['tests']=$my_array2;
@@ -726,8 +726,8 @@ class reports_charts_model extends MY_Model{
 			{
 				foreach ($the_total as $key => $value) 
 				{
-					$total+=$value['data'];
-					$tests+=$value['valid'];
+					$total+=(int)$value['data'];
+					$tests+=(int)$value['valid'];
 				}
 				$tests_results['both_results'][]=$total;
 				$tests_results['tests'][]=$tests;
@@ -749,8 +749,8 @@ class reports_charts_model extends MY_Model{
 			{
 				foreach ($the_total as $key => $value) 
 				{
-					$total+=$value['data'];
-					$errors+=$value['errors'];
+					$total+=(int)$value['data'];
+					$errors+=(int)$value['errors'];
 				}
 				$tests_results['both_results'][]=$total;
 				$tests_results['errors'][]=$errors;
@@ -771,9 +771,9 @@ class reports_charts_model extends MY_Model{
 			{
 				foreach ($the_total as $key => $value) 
 				{
-					$total+=$value['data'];
-					$tests+=$value['valid'];
-					$errors+=$value['errors'];
+					$total+=(int)$value['data'];
+					$tests+=(int)$value['valid'];
+					$errors+=(int)$value['errors'];
 				}
 
 				$tests_results['both_results'][]=$total;
@@ -797,8 +797,8 @@ class reports_charts_model extends MY_Model{
 			{
 				foreach ($the_total as $key => $value) 
 				{
-					$total+=$value['data'];
-					$tests+=$value['failed'];
+					$total+=(int)$value['data'];
+					$tests+=(int)$value['failed'];
 				}
 				$tests_results['both_results'][]=$total;
 				$tests_results['tests'][]=$tests;

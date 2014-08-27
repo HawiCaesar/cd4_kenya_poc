@@ -65,7 +65,8 @@ $(document).ready(function(){ //this function calls the facilities that have rep
 		<li id ="tabEquipRepo"><a href="#tabs1-equipRepo" data-toggle="tab">Equipment Reporting</a></li>
 		<li id ="tabCountyRepo"><a href="#tabs1-countyRepo" data-toggle="tab">County Reporting</a></li>
 		<li id ="tabAllRepo"><a href="#tabs1-allRepo" data-toggle="tab">All Data Reporting</a></li>
-		<!-- <li id ="tabLogs" ><a href="#tabs1-logs" data-toggle="tab">User Logs</a></li> -->
+		<li id="tabPimaReported"><a href="#tab-pimas" data-toggle="tab">Summary Of Pima's Reported</a><li>
+		<li id ="tab_map" ><a href="#tabs_maps" data-toggle="tab">Reported Pimas (Map)</a></li>
 	</ul>
 	<div class="tab-content">
 		<!-- Facility reporting -->
@@ -190,7 +191,7 @@ $(document).ready(function(){ //this function calls the facilities that have rep
 											<span class="input-group-addon" style="width: 40%;">Format :</span>
 											<span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>pdf.png" width="25" height="25">&nbsp;&nbsp;&nbsp;<input type="radio" name="format_facility" onclick="facility_pdf()" checked value="pdf">PDF</span>
 											<span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>/excel.png" width="30" height="30">&nbsp;&nbsp;&nbsp;<input type="radio" name="format_facility" onclick="facility_excel()" value="excel">Excel</span>
-						                	<!-- <span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>graph.png" width="25" height="25">&nbsp;&nbsp;&nbsp;<input type="radio" name="format_facility" onclick="facility_graph()" value="graph">Graph</span> -->
+						                	 <span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>graph.png" width="25" height="25">&nbsp;&nbsp;&nbsp;<input type="radio" name="format_facility" onclick="facility_graph()" value="graph">Graph</span>
 						                	<input type="hidden" name="tab_name" value="facility_tab" />
 						                </div>									
 										<div class="right" style="padding:7px 32px 7px 7px;">
@@ -326,7 +327,7 @@ $(document).ready(function(){ //this function calls the facilities that have rep
 									<span class="input-group-addon" style="width: 40%;">Format :</span>
 									<span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>pdf.png" width="25" height="25">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="equipment_pdf()" name="format_equipment" checked value="pdf">PDF</span>
 									<span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>/excel.png" width="30" height="30">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="equipment_excel()" name="format_equipment" value="excel">Excel</span>
-				               		<!-- <span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>graph.png" width="25" height="25">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="equipment_graph()" name="format_equipment" value="graph">Graph</span> -->
+				               		<span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>graph.png" width="25" height="25">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="equipment_graph()" name="format_equipment" value="graph">Graph</span>
 				                	<input type="hidden" name="tab_name" value="equipment_tab" />
 				                </div>									
 								<div class="right" style="padding:7px 32px 7px 7px;">
@@ -463,7 +464,7 @@ $(document).ready(function(){ //this function calls the facilities that have rep
 									<span class="input-group-addon" style="width: 40%;">Format :</span>
 									<span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>pdf.png" width="25" height="25">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="county_pdf()" name="format_county" checked value="pdf">PDF</span>
 									<span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>/excel.png" width="30" height="30">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="county_excel()" name="format_county" value="excel">Excel</span>
-				                	<!-- <span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>graph.png" width="25" height="25">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="county_graph()" name="format_county" value="graph">Graph</span> -->
+				                	<span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>graph.png" width="25" height="25">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="county_graph()" name="format_county" value="graph">Graph</span>
 				                	<input type="hidden" name="tab_name" value="county_tab" />
 				                </div>									
 								<div class="right" style="padding:7px 32px 7px 7px;">
@@ -592,7 +593,7 @@ $(document).ready(function(){ //this function calls the facilities that have rep
 									<span class="input-group-addon" style="width: 40%;">Format :</span>
 									<span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>pdf.png" width="25" height="25">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="all_pdf()"  name="format_all" checked value="pdf">PDF</span>
 									<span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>/excel.png" width="30" height="30">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="all_excel()"  name="format_all" value="excel">Excel</span>
-				                <!--	<span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>graph.png" width="25" height="25">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="all_graph()" name="format_all" value="graph">Graph</span> -->
+				                	<span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>graph.png" width="25" height="25">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="all_graph()" name="format_all" value="graph">Graph</span>
 				                	<input type="hidden" name="tab_name" value="all_tab" />
 				                </div>									
 								<div class="right" style="padding:7px 32px 7px 7px;">
@@ -606,10 +607,131 @@ $(document).ready(function(){ //this function calls the facilities that have rep
 				</table>
 			</form>
 		</div>
-		<!-- logs -->
-		<!-- <div class="tab-pane " id="tabs1-logs" >
-			This is usage logs
-		</div> -->
+		<!-- pimas reported -->
+		<div class="tab-pane " id="tab-pimas" >
+			<form method="post" action="<?php echo base_url();?>admin/pima_report/pima_summary" id="form-report">
+				<table>
+					<tr>
+						<td style="width:50%">
+							<div class="mycontainer" id="full">
+								<div class="input-group" style="width: 100%;padding:4px;">
+										<span class="input-group-addon" style="width: 40%;border-radius:5px 5px 5px 5px;">Fields marked with <b style="color:red;">*</b> are required to download a report
+								</div>
+				                <div class="input-group" style="width: 100%;padding:4px;" >
+									<span class="input-group-addon" style="width: 40%;"><b style="color:red;">*</b> Duration :</span>
+									<select  class="textfield form-control" id="duration_pima" name="Duration" >
+					                   	<option value="-1">*Select Duration*</option>
+					                   	 <option value="1">Monthly</option>
+					                     <option value="2">Quartely</option>
+						                 <option value="3">Bi-Annually</option>
+						                 <option value="4">Yearly</option>
+						                 <option value="5">Customize Dates</option>                   					
+					                </select>
+					            </div>
+					            <div class="input-group" style="width: 100%;padding:4px;" id="monthly_pima">
+									<span class="input-group-addon" style="width: 40%;"><b style="color:red;">*</b> Monthly :</span>
+									<select class="textfield form-control" style='border-radius:0px 5px 5px 0px;' name="FieldM">
+					                   	<option value="">*Select Month*</option>
+					                   	<option value="1">January</option>
+			                            <option value="2">February</option>
+			                          	<option value="3">March</option>
+			                          	<option value="4">April</option>
+			                          	<option value="5">May</option>
+			                          	<option value="6">June</option>
+			                          	<option value="7">July</option>
+			                          	<option value="8">August</option>
+			                          	<option value="9">September</option>
+			                          	<option value="10">October</option>
+			                          	<option value="11">November</option>
+			                          	<option value="12">December</option>                 					
+					                </select>
+					                <select  class="textfield form-control" style='border-radius:0px 5px 5px 0px;' name="YearM" onchange="">
+					                   	<option value="">*Select Year*</option>
+					                   	<?php foreach($yearlyReports as $Year){?>
+			                            <option value="<?php echo $Year['year']; ?>"><?php echo $Year['year']; ?></option>
+			                            <?php } ?>                 					
+					                </select>
+				                </div>
+				                <div class="input-group" style="width: 100%;padding:4px;" id="quarterly_pima">
+									<span class="input-group-addon" style="width: 40%;"><b style="color:red;">*</b> Quarterly :</span>
+									<select  class="textfield form-control" style='border-radius:0px 5px 5px 0px;' name="quarterly" >
+					                   	<option value="">*Select a Quarter*</option>
+					                   	<option value="1">January - April</option>
+                      					<option value="2">May - August</option>
+                      					<option value="3">September - December</option>                 					
+					                </select>
+					                <select  class="textfield form-control" name="YearQ" >
+					                   	<option value="">*Select Year*</option>
+					                   	<?php foreach($yearlyReports as $Year){?>
+                      					<option value="<?php echo $Year['year']; ?>"><?php echo $Year['year']; ?></option>
+                      					<?php } ?>                 					
+					                </select>
+				                </div>	
+				                <div class="input-group" style="width: 100%;padding:4px;" id="biannual_pima">
+									<span class="input-group-addon" style="width: 40%;"><b style="color:red;">*</b> Bi-Annually :</span>
+									<select  class="textfield form-control" style='border-radius:0px 5px 5px 0px;' name="bian">
+					                   	<option value="">*Select a bi-annual*</option>
+					                   	<option value="1">January - June</option>
+                      					<option value="2">July - December</option>                  					
+					                </select>
+					                <select  class="textfield form-control" name="YearB" >
+					                   	<option value="">*Select Year*</option>
+					                   	<?php foreach($yearlyReports as $Year){?>
+			                            <option value="<?php echo $Year['year']; ?>"><?php echo $Year['year']; ?></option>
+			                            <?php } ?>                 					
+					                </select>
+				                </div>
+				                <div class="input-group" style="width: 100%;padding:4px;" id="year_pima">
+									<span class="input-group-addon" style="width: 40%;"><b style="color:red;">*</b> Yearly :</span>
+									<select  class="textfield form-control" name="YearO">
+					                   	<option value="">*Select a Year*</option>
+					                   	<?php foreach($yearlyReports as $Year){?>
+			                            <option value="<?php echo $Year['year']; ?>"><?php echo $Year['year']; ?></option>
+			                            <?php } ?>                 					
+					                </select>
+				                </div>
+				                <div class="input-group" style="width: 100%;padding:4px;" id="CustDates_pima">
+									<span class="input-group-addon" style="width: 40%;"><b style="color:red;">*</b> Custom Dates :</span>
+									<div class="input-group" style="width: 100%;">
+										<span class="input-group-addon" style="width: 40%;">From :</span>
+										<input type="text" id="datepickerFrom_all" placeholder="From" name="FromDate" style="width:150px;">
+									</div> 
+									<div class="input-group" style="width: 100%;">
+										<span class="input-group-addon" style="width: 40%;">to :</span>
+										<input type="text" id="datepickerTo_all" placeholder="To" name="ToDate" style="width:150px;">
+									</div>
+				                </div>
+
+							</div>
+						</td>
+						<td>
+							<div class="mycontainer" id="full">
+								<div class="input-group" style="width: 100%;padding:4px;">
+									<span class="input-group-addon" style="width: 40%;">Format :</span>
+									<span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>pdf.png" width="25" height="25">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="pima_pdf()"  name="format_pima" checked value="pdf">PDF</span>
+									<!-- <span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>/excel.png" width="30" height="30">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="all_excel()"  name="format_pima" value="excel">Excel</span> -->
+				                	<span class="input-group-addon" style="width: 30%;"><img src="<?php echo img_url();?>graph.png" width="25" height="25">&nbsp;&nbsp;&nbsp;<input type="radio" onclick="pima_graph()" name="format_pima" value="graph">Graph</span>
+				                	<input type="hidden" name="tab_name" value="all_tab" />
+				                </div>									
+								<div class="right" style="padding:7px 32px 7px 7px;">
+									<button id="click_all" type="submit" onclick="" class="btn btn-primary btn-mini"><i class="glyphicon glyphicon-save"></i>Download Report</button>
+									<button name="reset" type="reset" onclick="hide_divs_pima()"  class="btn btn-default btn-minii"><i class="glyphicon glyphicon-remove"></i> Reset</button>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+
+		<div class="tab-pane" id="tabs_maps">
+			<div id='mapDiv' style="margin-left:200px;"></div>
+				<script type="text/javascript">										
+					var map = new FusionMaps("<?php echo base_url();?>assets/plugins/Fusion/FusionMaps/FCMap_KenyaCounty.swf", "Kenya","500","550","0","0");
+					//map.setDataURL("xml/commoditymap.php");
+					map.render("mapDiv");
+				</script>
+		</div>
 		
 	</div>
 </div>

@@ -37,6 +37,7 @@ public function get_county_id($county_name_value)
 	{
 
 		$county_id="";
+		$custom="";
 		$datestring = "%h:%i %a";//set the timestamp
 
 		$pdf_results="";
@@ -59,9 +60,9 @@ public function get_county_id($county_name_value)
 			$device="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type,$custom);
 
-			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
+			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			
 		}
 
@@ -70,9 +71,9 @@ public function get_county_id($county_name_value)
 			$facility="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type,$custom);
 
-			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
+			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			
 		}
 
@@ -87,15 +88,15 @@ public function get_county_id($county_name_value)
 
 				$county_id=$this->get_county_id($county_name_value);
 			
-				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
+				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			}
 			else
 			{
-				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
+				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			}
 			
 		}
@@ -231,6 +232,7 @@ public function get_county_id($county_name_value)
 
 	function year_quarter_report($yearQ,$quarter,$q_no,$all,$facility,$device,$from_month,$end_month,$report_type,$login_id,$county_name_value)
 	{
+		$custom="";
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
 
@@ -254,9 +256,9 @@ public function get_county_id($county_name_value)
 			$all="";
 			$device="";
 
-			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type,$custom);
 
-			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
+			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$custom);	// get summation and count
 				
 		}
 
@@ -265,9 +267,9 @@ public function get_county_id($county_name_value)
 			$facility="";
 			$all="";
 			
-			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type,$custom);
 
-			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
+			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			
 		}
 
@@ -282,15 +284,15 @@ public function get_county_id($county_name_value)
 
 				$county_id=$this->get_county_id($county_name_value);
 			
-				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
+				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			}
 			else
 			{
-				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
+				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			}		
 	
 		}
@@ -428,12 +430,7 @@ public function get_county_id($county_name_value)
 
 	function year_biannual_report($yearB,$biannual,$b_no,$all,$facility,$device,$from_month,$end_month,$report_type,$login_id,$county_name_value)
 	{
-		// $tests_done=0;
-		// $count=0;
-		// $errors=0;
-		// $less_than350=0;
-		// $greater_equal_to350=0;
-
+		$custom="";
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
 
@@ -457,9 +454,9 @@ public function get_county_id($county_name_value)
 			$device="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type,$custom);
 
-			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
+			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			
 		}
 
@@ -468,9 +465,9 @@ public function get_county_id($county_name_value)
 			$facility="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type,$custom);
 
-			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
+			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$custom);	// get summation and count
 				
 		}
 
@@ -485,15 +482,15 @@ public function get_county_id($county_name_value)
 
 				$county_id=$this->get_county_id($county_name_value);
 			
-				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
+				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			}
 			else
 			{
-				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
+				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			}
 
 		}
@@ -633,12 +630,7 @@ public function get_county_id($county_name_value)
 
 	function year_report($yearo,$all,$facility,$device,$from_month,$end_month,$report_type,$login_id,$county_name_value)
 	{
-		// $tests_done=0;
-		// $count=0;
-		// $errors=0;
-		// $less_than350=0;
-		// $greater_equal_to350=0;
-
+		$custom="";
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
 
@@ -662,9 +654,9 @@ public function get_county_id($county_name_value)
 			$device="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type,$custom);
 
-			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
+			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$custom);	// get summation and count
 				
 		}
 
@@ -673,9 +665,9 @@ public function get_county_id($county_name_value)
 			$facility="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+			$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type,$custom);
 
-			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
+			$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$custom);	// get summation and count
 								
 		}
 		
@@ -690,15 +682,15 @@ public function get_county_id($county_name_value)
 
 				$county_id=$this->get_county_id($county_name_value);
 
-				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
+				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			}
 			else
 			{
-				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id);	// get summation and count
+				$pdf_count=$this->get_count_test_details($from_month,$end_month,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			}
 
 		}
@@ -833,14 +825,8 @@ public function get_county_id($county_name_value)
 		return $pdf_data;
 	}
 
-	function customized_dates_report($fromdate,$todate,$all,$facility,$device,$report_type,$login_id,$county_name_value)
+	function customized_dates_report($fromdate,$todate,$all,$facility,$device,$report_type,$login_id,$county_name_value,$custom)
 	{
-		// $tests_done=0;
-		// $count=0;
-		// $errors=0;
-		// $less_than350=0;
-		// $greater_equal_to350=0;
-
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
 
@@ -864,9 +850,9 @@ public function get_county_id($county_name_value)
 			$device="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($fromdate,$todate,$facility,$device,$all,$county_id,$report_type);
+			$pdf_results=$this->get_test_details($fromdate,$todate,$facility,$device,$all,$county_id,$report_type,$custom);
 
-			$pdf_count=$this->get_count_test_details($fromdate,$todate,$facility,$device,$all,$county_id);	// get summation and count
+			$pdf_count=$this->get_count_test_details($fromdate,$todate,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			
 		}
 
@@ -875,9 +861,9 @@ public function get_county_id($county_name_value)
 			$facility="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($fromdate,$todate,$facility,$device,$all,$county_id,$report_type);
+			$pdf_results=$this->get_test_details($fromdate,$todate,$facility,$device,$all,$county_id,$report_type,$custom);
 
-			$pdf_count=$this->get_count_test_details($fromdate,$todate,$facility,$device,$all,$county_id);	// get summation and count
+			$pdf_count=$this->get_count_test_details($fromdate,$todate,$facility,$device,$all,$county_id,$custom);	// get summation and count
 		}
 
 		if($all==3 || $all==4 || $all==5)// By partner or all data
@@ -891,15 +877,15 @@ public function get_county_id($county_name_value)
 
 				$county_id=$this->get_county_id($county_name_value);
 
-				$pdf_results=$this->get_test_details($fromdate,$todate,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($fromdate,$todate,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($fromdate,$todate,$facility,$device,$all,$county_id);	// get summation and count
+				$pdf_count=$this->get_count_test_details($fromdate,$todate,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			}
 			else
 			{	
-				$pdf_results=$this->get_test_details($fromdate,$todate,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($fromdate,$todate,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($fromdate,$todate,$facility,$device,$all,$county_id);	// get summation and count
+				$pdf_count=$this->get_count_test_details($fromdate,$todate,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			}
 
 		}
@@ -1036,9 +1022,7 @@ public function get_county_id($county_name_value)
 
 	function tests_less_than350_month($year,$monthly,$from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value)
 	{
-		// $count=0;
-		// $less_than350=0;
-
+		$custom="";
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
 
@@ -1056,25 +1040,23 @@ public function get_county_id($county_name_value)
 
 		$i=1;//counter
 
-		$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
-
 		if($facility!="")//By facility
 		{
 			$device="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);
 
-			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count
 		}
 		if($device!="")//By device
 		{
 			$facility="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);
 
-			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count
 		}
 		if($all==3 || $all==4 || $all==5)//by partner,by county, all data
 		{
@@ -1087,15 +1069,15 @@ public function get_county_id($county_name_value)
 
 				$county_id=$this->get_county_id($county_name_value);
 
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			}
 			else
 			{
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			}		
 		}
 		if($pdf_results!="")
@@ -1119,8 +1101,8 @@ public function get_county_id($county_name_value)
 		}
 		else
 		{
-			$less_than350=0;
-			$count=0;
+			$pdf_data['less_than350']=0;
+			$pdf_data['count']=0;
 		}
 
 		$pdf_data['table'].="</table>";
@@ -1141,9 +1123,7 @@ public function get_county_id($county_name_value)
 
 	function tests_less_than350_quarter($year,$quarter,$q_no,$from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value)
 	{
-		// $count=0;
-		// $less_than350=0;
-
+		$custom="";
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
 
@@ -1166,18 +1146,18 @@ public function get_county_id($county_name_value)
 			$device="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);	
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);	
 
-			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count
 		}
 		if($device!="")//By Device
 		{
 			$facility="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);
 
-			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count	
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count	
 		}
 		if($all==3 || $all==4 || $all==5 )//By partner, county, all data
 		{
@@ -1190,15 +1170,15 @@ public function get_county_id($county_name_value)
 
 				$county_id=$this->get_county_id($county_name_value);
 
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count	
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count	
 			}
 			else
 			{
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);	
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);	
 
-				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count	
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count	
 			}
 	
 		}
@@ -1223,8 +1203,8 @@ public function get_county_id($county_name_value)
 		}
 		else
 		{
-			$less_than350=0;
-			$count=0;
+			$pdf_data['less_than350']=0;
+			$pdf_data['count']=0;
 		}
 
 		$pdf_data['table'].="</table>";
@@ -1242,9 +1222,7 @@ public function get_county_id($county_name_value)
 
 	function tests_less_than350_bian($year,$bian,$b_no,$from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value)
 	{
-		// $count=0;
-		// $less_than350=0;
-
+		$custom="";
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
 
@@ -1267,9 +1245,9 @@ public function get_county_id($county_name_value)
 			$device="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);
 
-			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count
 
 		}
 		if($device!="")//by device
@@ -1277,9 +1255,9 @@ public function get_county_id($county_name_value)
 			$facility="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);	
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);	
 
-			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count
 		}
 		if($all==3 || $all==4 || $all==5)//By partner, county, all data
 		{
@@ -1292,15 +1270,15 @@ public function get_county_id($county_name_value)
 
 				$county_id=$this->get_county_id($county_name_value);
 
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			}
 			else
 			{
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			}
 		}
 
@@ -1324,8 +1302,8 @@ public function get_county_id($county_name_value)
 		}
 		else
 		{
-			$less_than350=0;
-			$count=0;
+			$pdf_data['less_than350']=0;
+			$pdf_data['count']=0;
 		}
 		
 		$pdf_data['table'].="</table>";
@@ -1344,9 +1322,7 @@ public function get_county_id($county_name_value)
 
 	function tests_less_than350_yearly($yearo,$from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value)
 	{
-		// $count=0;
-		// $less_than350=0;
-
+		$custom="";
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
 
@@ -1369,18 +1345,18 @@ public function get_county_id($county_name_value)
 			$device="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);
 
-			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count	
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count	
 		}
 		if($device!="")
 		{
 			$facility="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);
 
-			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count	
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count	
 		}
 		if($all==3 || $all==4 || $all==5)
 		{
@@ -1393,15 +1369,15 @@ public function get_county_id($county_name_value)
 
 				$county_id=$this->get_county_id($county_name_value);
 
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			}
 			else
 			{
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			}
 
 		}
@@ -1425,8 +1401,8 @@ public function get_county_id($county_name_value)
 		}
 		else
 		{
-			$less_than350=0;
-			$count=0;
+			$pdf_data['less_than350']=0;
+			$pdf_data['count']=0;
 		}
 		
 		$pdf_data['table'].="</table>";
@@ -1443,11 +1419,8 @@ public function get_county_id($county_name_value)
 	return $pdf_data;		
 	}
 
-	function tests_less_than350_customized($from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value)
+	function tests_less_than350_customized($from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value,$custom)
 	{
-		// $count=0;
-		// $less_than350=0;
-
 		$county_id="";
 		$datestring = "%h:%i %a";//set the timestamp
 
@@ -1470,18 +1443,18 @@ public function get_county_id($county_name_value)
 			$device="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);
 
-			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count	
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count	
 		}
 		if($device!="")//by device
 		{
 			$facility="";
 			$all="";
 
-			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+			$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);
 
-			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
+			$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count
 	
 		}
 		if($all==3 || $all==4 || $all==5)//by partner, county, all data
@@ -1495,15 +1468,15 @@ public function get_county_id($county_name_value)
 
 				$county_id=$this->get_county_id($county_name_value);
 
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			}
 			else
 			{
-				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type);
+				$pdf_results=$this->get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom);
 
-				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id);	// get summation and count
+				$pdf_count=$this->get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom);	// get summation and count
 			}
 				
 		}
@@ -1529,8 +1502,8 @@ public function get_county_id($county_name_value)
 		}
 		else
 		{
-			$less_than350=0;
-			$count=0;
+			$pdf_data['less_than350']=0;
+			$pdf_data['count']=0;
 		}
 		
 		$pdf_data['table'].="</table>";
@@ -1596,7 +1569,7 @@ public function get_county_id($county_name_value)
 		return $monthname;
 	}
 
-	public function get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type)//Get all the data
+	public function get_test_details($from,$to,$facility,$device,$all,$county_id,$report_type,$custom)//Get all the data
 	{
 		$sql="SELECT * FROM v_pima_tests_only";
 
@@ -1633,10 +1606,16 @@ public function get_county_id($county_name_value)
 		{
 			$criteria =" AND region_id= '".$county_id."' ";
 		}
-		
-		$date_delimiter	=	" WHERE MONTH(date_test) BETWEEN '".date('m',strtotime($from))."' AND '".date('m',strtotime($to))."'
-								  AND YEAR(date_test) BETWEEN '".date('Y',strtotime($from))."' AND '".date('Y',strtotime($to))."' ";		
-
+		if($custom==1)//custom dates chosen by user
+		{
+			$date_delimiter	=	" WHERE date_test BETWEEN '".$from."' AND '".$to."' ";
+		}
+		else if($custom==0)//other user filters
+		{
+			$date_delimiter	=	" WHERE MONTH(date_test) BETWEEN '".date('m',strtotime($from))."' AND '".date('m',strtotime($to))."'
+								  AND YEAR(date_test) BETWEEN '".date('Y',strtotime($from))."' AND '".date('Y',strtotime($to))."' ";	
+		}
+				
 		$test_details=R::getAll($sql.$date_delimiter.$criteria.$report);
 
 		// echo $sql.$date_delimiter.$criteria.$report;
@@ -1647,7 +1626,7 @@ public function get_county_id($county_name_value)
 		
 
 	}
-	public function get_count_test_details($from,$to,$facility,$device,$all,$county_id)
+	public function get_count_test_details($from,$to,$facility,$device,$all,$county_id,$custom)
 	{
 		$sql_count="SELECT COUNT(test_id) AS total_tests,
 						SUM(CASE WHEN valid= '1'    THEN 1 ELSE 0 END) AS valid_tests,
@@ -1673,8 +1652,15 @@ public function get_county_id($county_name_value)
 			$criteria =" AND region_id= '".$county_id."' ";
 		}
 		
-		$date_delimiter	=	" WHERE MONTH(date_test) BETWEEN '".date('m',strtotime($from))."' AND '".date('m',strtotime($to))."'
-								  AND YEAR(date_test) BETWEEN '".date('Y',strtotime($from))."' AND '".date('Y',strtotime($to))."' ";		
+		if($custom==1)//custom dates chosen by user
+		{
+			$date_delimiter	=	" WHERE date_test BETWEEN '".$from."' AND '".$to."' ";
+		}
+		else if($custom==0)//other user filters
+		{
+			$date_delimiter	=	" WHERE MONTH(date_test) BETWEEN '".date('m',strtotime($from))."' AND '".date('m',strtotime($to))."'
+								  AND YEAR(date_test) BETWEEN '".date('Y',strtotime($from))."' AND '".date('Y',strtotime($to))."' ";	
+		}		
 
 		$test_details=R::getAll($sql_count.$date_delimiter.$criteria);
 

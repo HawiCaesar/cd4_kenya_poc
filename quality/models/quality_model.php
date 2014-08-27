@@ -229,7 +229,7 @@ class quality_model extends MY_Model{
 		return $agg;
 	}
 
-	function facility_control_tests()
+	function actual_facility_control_tests()
 	{
 		//picking control tests by week. So last monday and today
 
@@ -281,6 +281,45 @@ class quality_model extends MY_Model{
 		$control_results 	= 	R::getAll($control_sql);
 		//print_r($control_sql);die;
 		return $control_results;
+	}
+
+	function expected_facility_control_test()
+	{
+		//picking control tests by week. So last monday and today
+
+		//last monday
+		$from=date('Y-m-d',strtotime('last monday'));
+
+		//today
+		$to 	= date("Y-m-d");
+
+		$sql="SELECT 
+				COUNT(DISTINCT CAST(`tst`.`result_date` AS DATE)) as 'no_days_with_tests',
+				`f`.`name` as `facility`,
+				`fp`.`serial_num`
+				FROM `pima_test` 
+				LEFT JOIN `cd4_test` `tst`
+				ON `tst`.`id`=`pima_test`.`cd4_test_id`
+				LEFT JOIN `pima_upload` `pu` ON `pima_test`.`pima_upload_id`=`pu`.`id`
+				LEFT JOIN `facility_pima` `fp` ON `pu`.`facility_pima_id`=`fp`.`id`
+				LEFT JOIN `facility_equipment` `fe` ON `fp`.`facility_equipment_id`=`fe`.`id`
+				LEFT JOIN `facility` `f` ON `fe`.`facility_id`=`f`.`id`
+				LEFT JOIN `district` `d` ON `f`.`district`=`d`.`id`
+				LEFT JOIN `region` `r` ON `d`.`region_id`=`r`.`id`
+				LEFT JOIN `partner` `p` ON `f`.`partnerID`=`p`.`ID`
+
+				WHERE `error_id`>= 0 
+				AND `pima_test`.`sample_code`!='NORMAL' 
+				AND `pima_test`.`sample_code` !='QC NORMAL' 
+				AND `pima_test`.`sample_code`!='LOW' 
+				AND `pima_test`.`sample_code` !='QC LOW'
+				AND  1  AND `tst`.`result_date` BETWEEN '".$from."' AND '".$to."' GROUP BY `f`.`id`
+				ORDER BY `tst`.`result_date` DESC";
+
+		$expected_results 	= 	R::getAll($sql);
+		//print_r($sql);die;
+		return $expected_results;
+
 	}
 
 

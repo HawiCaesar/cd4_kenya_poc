@@ -33,7 +33,7 @@
                 yAxis: {
                     min: 0
                 },
-                series:  <?php echo json_encode($graph_data,JSON_NUMERIC_CHECK); ?> 
+                series:  <?php echo json_encode($graph_data); ?> 
             });
         });
 </script>

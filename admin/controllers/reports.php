@@ -17,7 +17,7 @@ class reports extends MY_Controller {
 		$data['title'] = "Reports";
 		$data['sidebar']	= "admin/sidebar_view";
 		$data['filter']	=	false;
-		$data	=array_merge($data,$this->load_libraries(array('admin_reports')));
+		$data	=array_merge($data,$this->load_libraries(array('admin_reports','FusionCharts')));
 		
 		$this->load->model('admin_model');
 		$this->load->model('reports_model');
@@ -49,7 +49,7 @@ class reports extends MY_Controller {
 
 			foreach($facilities_list as $facility)
 			{
-				echo '<option value="'.$facility['name'].'">'.$facility['name'].'</option>';
+				echo '<option value="'.$facility['facility_name'].'">'.$facility['facility_name'].'</option>';
 				echo '<optgroup></optgroup label="">';// space out
 			}
 		}
@@ -599,18 +599,16 @@ class reports extends MY_Controller {
 
 
 			if($Fromdate!="" && $Todate!="")// Custom dates chosen
-			{
+			{	
+				$custom=1;
+
 				if($report_type==3)// Tests < 350 
 				{
-					$pdf_data=$this->reports_model->tests_less_than350_customized($Fromdate,$Todate,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value);
-				}
-				if($report_type==4)
-				{
-					$this->reports_model->percentage_errors_customized_dates($Fromdate,$Todate,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value);
+					$pdf_data=$this->reports_model->tests_less_than350_customized($Fromdate,$Todate,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value,$custom);
 				}
 				else if($report_type==1 || $report_type==2 || $report_type==0)// Tests or Errors or Both Tests and Errors
 				{
-					$pdf_data=$this->reports_model->customized_dates_report($Fromdate,$Todate,$all_data,$Facility,$Device,$report_type,$login_id,$county_name_value);
+					$pdf_data=$this->reports_model->customized_dates_report($Fromdate,$Todate,$all_data,$Facility,$Device,$report_type,$login_id,$county_name_value,$custom);
 				}
 
 				if($Facility!="")//check if facility was selected
@@ -748,7 +746,7 @@ class reports extends MY_Controller {
 			ini_set("memory_limit",'-1');
 			//ini_set("maximum_time_out",'');
 
-			$mpdf->SetWatermarkText('NASCOP');//Water Mark Text
+			$mpdf->SetWatermarkText('NASCOP',0.09);//Water Mark Text
 			$mpdf->watermark_size="0.2";
 			$mpdf->showWatermarkText = true;//Water Mark set value
 			$mpdf->simpleTables = true;
@@ -1312,7 +1310,6 @@ class reports extends MY_Controller {
 			 		array_push($result,$series_percentage_successful);
 		 			array_push($result,$series_percentage_errors);
 			 	}
-
 				$data['graph_data']=$result;
 				$data['categories']=$category;
 
@@ -1322,6 +1319,13 @@ class reports extends MY_Controller {
 				$data['sidebar']	= "admin/sidebar_view";
 				$data['filter']	=	false;
 				$data	=array_merge($data,$this->load_libraries(array('highcharts')));
+
+				$users=0;
+
+				if(!$users==1)
+				{
+					$data['number_of_deactivated_users']="none";
+				}
 				
 				$this->load->model('admin_model');
 

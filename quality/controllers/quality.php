@@ -32,7 +32,8 @@ class quality extends MY_Controller
 			} 
 		}*/
 
-		$data['control_count_list']=$this->quality_model->facility_control_tests();
+		$data['control_count_list']=$this->quality_model->actual_facility_control_tests();
+		$data['expected_count_lists']=$this->quality_model->expected_facility_control_test();
 
 		if($data['control_count_list'])
 		{
@@ -46,6 +47,7 @@ class quality extends MY_Controller
 		$data['menus']	= 	$this->quality_model->menus(7);
 		$this -> template($data);
 	}
+
 }
 
 

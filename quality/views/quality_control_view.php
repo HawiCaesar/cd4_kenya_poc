@@ -1,39 +1,67 @@
 <div class="section-title" ><center>Facilites Running Control Tests</center></div>
 
-<?php if($check_value==1)
+<?php if($check_value==1)//check if there are any controls
 {
-?>
 
-<table id="data-table_quality">
-	<thead>
-		<tr>
-			<th colspan = "2"><center>Period</center></th>
-			<th rowspan = "2"><center>PIMA Device - Facility</center></th>
-			<th rowspan = "2"><center>Has Run Control Tests?</center></th>
-			<th rowspan = "2"><center>Total Control Tests Run</center></th>
-			<th rowspan = "2"><center>Recommened Controls</center></th>
-		</tr>
-		<tr>
-			<th><center>From</center></th>
-			<th><center>To</center></th>
-		</tr>
-	</thead>
-	<tbody>	
-			<?php foreach($control_count_list as $count): ?>
+	$expected_array=array(); //set an expected array
+
+	foreach ($control_count_list as $value) {
+		 $r[$value['facility']]=$value['facility'];
+		 $r[$value['serial_num']]=$value['serial_num'];
+		 $r[]=$value['total_tests'];
+	}
+
+	foreach($expected_count_lists as $key => $value2) //loop through expected to see if facility exists
+	{
+		if(array_key_exists($value2['facility'], $r))
+		{
+
+			$expected_array[$value2['facility']]=$value2['no_days_with_tests']; //fetch the working days 
+		}
+		else
+		{
+			$expected_array[$value2['facility']]="-";
+		}
+	}
+?>
+<div id="one" style="position:relative;height:870px;">
+	<table id="data-table_quality" style="height:100px;">
+		<thead>
 			<tr>
-				<td><center><?php echo date('d F Y',strtotime($count['result_date'])); ?></center></td>
-				<td><center><?php echo date('d F Y'); ?></center></td>
-				<td><center><?php echo $count['serial_num']." - ".$count['facility']; ?></center></td>
-				<td><center><?php if(!$count['total_tests']==0){?><i class="fa fa-check-square-o fa-2x" style="color: green;"></i>
-						<?php  }else{?><i class="fa fa-times fa-2x" style="color: red; "></i><?php }?>
-					</center>
-				</td>
-				<td><center><?php echo $count['total_tests']; ?></center></td>
-				<td><center>2</center></td>
+				<th colspan = "2"><center>Period</center></th>
+				<th rowspan = "2"><center>PIMA Device - Facility</center></th>
+				<th rowspan = "2"><center>Actual Control Tests Run</center></th>
+				<th rowspan = "2"><center>Working Days</center></th>
+				<th rowspan = "2"><center>Expected Controls To Be Run</center></th>
 			</tr>
-			<?php endforeach ?>
-	</tbody>
-</table>
+			<tr>
+				<th><center>From</center></th>
+				<th><center>To</center></th>
+			</tr>
+		</thead>
+		<tbody>	
+				<?php $i=0; foreach($control_count_list as $count): ?>
+				<tr>
+					<td><center><?php echo date('d F Y',strtotime('last monday')); ?></center></td>
+					<td><center><?php echo date('d F Y'); ?></center></td>
+					<td><center><?php echo $count['serial_num'].' - '.$count['facility']; ?></center></td>
+					<td><center><?php echo $count['total_tests']; ?>
+					<?php if(array_key_exists($count['facility'], $expected_array)) //check if facility exists in expected array
+		 					{
+		 						print '<td><center>'.$expected_array[$count['facility']].'</center></td>';
+		 						print '<td><center>'.($expected_array[$count['facility']]*2).'</center></td>';
+		 					}else
+		 					{
+		 						echo "<td><center>-</center></td>";
+		 						echo "<td><center>-</center></td>";
+		 					}
+ 					?>
+					 
+				</tr>
+				<?php endforeach ?>
+		</tbody>
+	</table>
+</div>
 
 <?php }else if($check_value==0)
 {
