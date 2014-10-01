@@ -1,6 +1,17 @@
-<div class="section-title" ><center>Facilites Running Control Tests</center></div>
+<div class="section-title" ><center>Facilites Running Control Tests - 
+<?php if($this->session->userdata('quality_filter_desc'))
+		{
+			echo $this->session->userdata('quality_filter_desc');
+		}
+		else
+		{
+			echo "This Week";
+		}
 
-<?php if($check_value==1)//check if there are any controls
+ ?>
+</center></div>
+<?php $this->load->view('quality/quality_filter_view'); ?>
+<?php if($check_value==1)//check if there are any controls 
 {
 
 	$expected_array=array(); //set an expected array
@@ -22,6 +33,7 @@
 		{
 			$expected_array[$value2['facility']]="-";
 		}
+
 	}
 ?>
 <div id="one" style="position:relative;height:870px;">
@@ -42,8 +54,15 @@
 		<tbody>	
 				<?php $i=0; foreach($control_count_list as $count): ?>
 				<tr>
-					<td><center><?php echo date('d F Y',strtotime('last monday')); ?></center></td>
-					<td><center><?php echo date('d F Y'); ?></center></td>
+					<td><center><?php if($this->session->userdata('quality_date_filter_start'))
+										{
+											echo date('jS F Y',strtotime($this->session->userdata('quality_date_filter_start')));
+										}else { echo date('jS F Y',strtotime('last monday'));} ?></center></td>
+					<td><center><?php if($this->session->userdata('quality_date_filter_stop'))
+										{
+											echo date('jS F Y',strtotime($this->session->userdata('quality_date_filter_stop')));
+										}else{ echo date('jS F Y',strtotime('this friday'));} ?></center></td>
+
 					<td><center><?php echo $count['serial_num'].' - '.$count['facility']; ?></center></td>
 					<td><center><?php echo $count['total_tests']; ?>
 					<?php if(array_key_exists($count['facility'], $expected_array)) //check if facility exists in expected array

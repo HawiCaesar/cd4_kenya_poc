@@ -12,15 +12,14 @@ class reports_charts_model extends MY_Model{
 		$tests_results=array();
 
 		$the_total[]=array();
-		$the_tests[]=array();
-		$the_error[]=array();
+		
     }
 
 	/*------------------------ month graph--------------------------------------------------------*/
 
 	function month_graph_view($year,$monthly,$facility,$device,$all,$county_name_value,$report_type)
 	{
-
+		$custom=0;
 		if(!$facility=="")//By Facility
 		{
 			$device="";
@@ -49,7 +48,7 @@ class reports_charts_model extends MY_Model{
 		if($report_type==1)//Tests only
 		{
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type,$custom);
 			
 			if(!empty($the_total))
 			{
@@ -71,7 +70,7 @@ class reports_charts_model extends MY_Model{
 		else if($report_type==2)//Errors Only
 		{
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type,$custom);
 
 			if(!empty($the_total))
 			{
@@ -92,7 +91,7 @@ class reports_charts_model extends MY_Model{
 		else if($report_type==0)//Tests and Errors
 		{	
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type,$custom);
 
 			if(!empty($the_total))
 			{
@@ -115,7 +114,7 @@ class reports_charts_model extends MY_Model{
 		else if($report_type==3)// Tests Less than 350
 		{
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type,$custom);
 
 			if(!empty($the_total))
 			{
@@ -140,7 +139,7 @@ class reports_charts_model extends MY_Model{
 			$percentage_error=0;
 
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$monthly,$monthly,$year,$year,$report_type,$custom);
 			
 			if(!empty($the_total))
 			{				
@@ -172,6 +171,8 @@ class reports_charts_model extends MY_Model{
 		$my_array1= array(0,0,0,0);
 		$my_array2= array(0,0,0,0);
 		$my_array3= array(0,0,0,0);
+
+		$custom=0;
 
 		if(!$facility=="")//By Facility
 		{
@@ -217,7 +218,7 @@ class reports_charts_model extends MY_Model{
 		if($report_type==1)//Tests only
 		{
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type,$custom);
 
 			if(!empty($the_total))
 			{	
@@ -240,7 +241,7 @@ class reports_charts_model extends MY_Model{
 		else if($report_type==2)//Errors only
 		{
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type,$custom);
 			
 			if(!empty($the_total))
 			{	
@@ -262,7 +263,7 @@ class reports_charts_model extends MY_Model{
 		else if($report_type==0)//Both Tests and Errors
 		{
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type,$custom);
 			
 			if(!empty($the_total))
 			{
@@ -288,7 +289,7 @@ class reports_charts_model extends MY_Model{
 		else if($report_type==3)//Tests < 350
 		{
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type,$custom);
 
 			if(!empty($the_total))
 			{
@@ -314,7 +315,7 @@ class reports_charts_model extends MY_Model{
 			$percentage_error=0;
 
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type,$custom);
 
 			if(!empty($the_total))
 			{
@@ -350,6 +351,8 @@ class reports_charts_model extends MY_Model{
 		$my_array1= array(0,0,0,0,0,0);
 		$my_array2= array(0,0,0,0,0,0);
 		$my_array3= array(0,0,0,0,0,0);
+
+		$custom=0;
 
 		if(!$facility=="")//By Facility
 		{
@@ -390,7 +393,7 @@ class reports_charts_model extends MY_Model{
 		if($report_type==1)//Tests only
 		{
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type,$custom);
 			
 			if(!empty($the_total))
 			{
@@ -413,7 +416,7 @@ class reports_charts_model extends MY_Model{
 		else if($report_type==2)//Errors only
 		{
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type,$custom);
 
 			if(!empty($the_total))
 			{
@@ -436,7 +439,7 @@ class reports_charts_model extends MY_Model{
 		else if($report_type==0)//Both Tests and Errors
 		{
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type,$custom);
 
 			if(!empty($the_total))
 			{
@@ -462,7 +465,7 @@ class reports_charts_model extends MY_Model{
 		else if($report_type==3)
 		{
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type,$custom);
 
 			if(!empty($the_total))
 			{
@@ -488,7 +491,7 @@ class reports_charts_model extends MY_Model{
 			$percentage_error=0;
 
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type,$custom);
 
 			if(!empty($the_total))
 			{
@@ -525,6 +528,8 @@ class reports_charts_model extends MY_Model{
 		$my_array2 = array(0,0,0,0,0,0,0,0,0,0,0,0);
 		$my_array3 = array(0,0,0,0,0,0,0,0,0,0,0,0);
 
+		$custom=0;
+
 		if(!$facility=="")//By Facility
 		{
 			$device="";
@@ -556,7 +561,7 @@ class reports_charts_model extends MY_Model{
 		if($report_type==1)//Tests only
 		{
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type,$custom);
 
 			if(!empty($the_total))
 			{
@@ -580,7 +585,7 @@ class reports_charts_model extends MY_Model{
 		else if($report_type==2)//Errors only
 		{
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type,$custom);
 
 			if(!empty($the_total))
 			{
@@ -603,7 +608,7 @@ class reports_charts_model extends MY_Model{
 		else if($report_type==0)//Both Tests and Errors
 		{
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type,$custom);
 			
 			if(!empty($the_total))
 			{
@@ -629,7 +634,7 @@ class reports_charts_model extends MY_Model{
 		else if($report_type==3)//Tests < 350
 		{
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type,$custom);
 
 			if(!empty($the_total))
 			{
@@ -654,7 +659,7 @@ class reports_charts_model extends MY_Model{
 			$percentage_error=0;
 
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$start_limit,$end_limit,$year,$year,$report_type,$custom);
 
 			if(!empty($the_total))
 			{
@@ -685,11 +690,14 @@ class reports_charts_model extends MY_Model{
 
 	/*----------------------- Customized graph --------------------------------------------------------*/
 
-	function customized_graph_view($from,$to,$year,$year_end,$facility,$device,$all,$county_name_value,$report_type)
+	function customized_graph_view($from,$to,$facility,$device,$all,$county_name_value,$report_type)
 	{
+		$custom=1;
 		$total=0;
 		$tests=0;
 		$errors=0;
+		$year=0;
+		$year_end=0;
 
 		if(!$facility=="")//By Facility
 		{
@@ -720,7 +728,7 @@ class reports_charts_model extends MY_Model{
 		{
 			$report_type= " ";
 			
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type,$custom);
 
 			if(!empty($the_total))
 			{
@@ -743,7 +751,7 @@ class reports_charts_model extends MY_Model{
 		else if($report_type==2)//Errors only
 		{
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type,$custom);
 
 			if(!empty($the_total))
 			{
@@ -765,7 +773,7 @@ class reports_charts_model extends MY_Model{
 		else if($report_type==0)//Both Tests and Errors
 		{
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type,$custom);
 
 			if(!empty($the_total))
 			{
@@ -791,7 +799,7 @@ class reports_charts_model extends MY_Model{
 		else if($report_type==3)// Tests <350
 		{
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type,$custom);
 
 			if(!empty($the_total))
 			{
@@ -819,7 +827,7 @@ class reports_charts_model extends MY_Model{
 			$grand_total=0;
 
 			$report_type= " ";
-			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type);
+			$the_total=$this->reports_charts_sql_model->get_test_details($facility,$device,$all,$county_id,$from,$to,$year,$year_end,$report_type,$custom);
 			if(!empty($the_total))
 			{
 				foreach($the_total as $key => $value)

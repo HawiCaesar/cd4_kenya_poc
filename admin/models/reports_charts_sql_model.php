@@ -3,7 +3,7 @@
 class reports_charts_sql_model extends CI_Model
 {
 		
-	function get_test_details($facility,$device,$all,$county_id,$limit,$limit_end,$year,$year_end,$report_type)//Get all the data
+	function get_test_details($facility,$device,$all,$county_id,$limit,$limit_end,$year,$year_end,$report_type,$custom)//Get all the data
 	{
 		$this->config->load('sql');
 
@@ -36,13 +36,19 @@ class reports_charts_sql_model extends CI_Model
 		{
 			$criteria =" AND `r`.`id`= '".$county_id."' ";
 		}
-		
-		$delimiter=" AND MONTH( `tst`.`result_date` ) 
+		if($custom==0)// if customized dates are not chosen
+		{
+			$delimiter=" AND MONTH( `tst`.`result_date` ) 
 					BETWEEN  '$limit'
 					AND  '$limit_end'
 					AND YEAR( `tst`.`result_date` ) BETWEEN '".$year."' AND '".$year_end."'
 					GROUP BY mth ";	
-
+		}
+		else if($custom==1)// if customized dates are chosen
+		{
+			$delimiter=" AND `tst`.`result_date` BETWEEN '".$limit."' AND  '".$limit_end."' GROUP BY mth ";	
+		}
+		
 		$test_details=R::getAll($tests_sql.$user_delimiter.$criteria.$report_type.$delimiter);
 
 		// echo $tests_sql.$user_delimiter.$criteria.$report_type.$delimiter;

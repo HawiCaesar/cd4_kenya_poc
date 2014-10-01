@@ -229,15 +229,8 @@ class quality_model extends MY_Model{
 		return $agg;
 	}
 
-	function actual_facility_control_tests()
+	function actual_facility_control_tests($from,$to)
 	{
-		//picking control tests by week. So last monday and today
-
-		//last monday
-		$from=date('Y-m-d',strtotime('last monday'));
-
-		//today
-		$to 	= date("Y-m-d");
 
 		$this->config->load('sql'); 
 
@@ -283,15 +276,8 @@ class quality_model extends MY_Model{
 		return $control_results;
 	}
 
-	function expected_facility_control_test()
+	function expected_facility_control_test($from,$to)
 	{
-		//picking control tests by week. So last monday and today
-
-		//last monday
-		$from=date('Y-m-d',strtotime('last monday'));
-
-		//today
-		$to 	= date("Y-m-d");
 
 		$sql="SELECT 
 				COUNT(DISTINCT CAST(`tst`.`result_date` AS DATE)) as 'no_days_with_tests',

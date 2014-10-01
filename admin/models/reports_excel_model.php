@@ -6,6 +6,7 @@ class reports_excel_model extends MY_Model{
 	function excel_year_month($YearM,$monthly,$facility,$device,$from_month,$end_month,$report_type)
 	{
 		$this->load->library('excel');
+		$custom=0;
 
 		$Month=$this->GetMonthName($monthly);
 
@@ -29,7 +30,7 @@ class reports_excel_model extends MY_Model{
 		if($facility!="")
 		{	
 			$device="";
-			$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type);
+			$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type,$custom);
 			
 			$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$facility.' - '.$Month.', '.$YearM.' ' );
@@ -50,7 +51,7 @@ class reports_excel_model extends MY_Model{
 		if($device!="")
 	 	{
 	 		$facility="";
-	 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type);// get the data
+	 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type,$custom);// get the data
 
 			$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$device.' - '.$Month.','.$YearM.'');
@@ -287,6 +288,7 @@ class reports_excel_model extends MY_Model{
 	function excel_year_quarter_report($yearQ,$quarter,$facility,$device,$from_month,$end_month,$report_type)
 	{
 		$this->load->library('excel');
+		$custom=0;
 
 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(20);
 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
@@ -308,7 +310,7 @@ class reports_excel_model extends MY_Model{
 		if($facility!="")//by Facility
 		{	
 			$device="";
-			$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type);
+			$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type,$custom);
 
 			$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$facility.' - '.$quarter.','.$yearQ.' ');
@@ -328,7 +330,7 @@ class reports_excel_model extends MY_Model{
 		if($device!="")// by Device
 		{
 			$facility="";
-			$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type);// get the data
+			$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type,$custom);// get the data
 
 			$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$device.' - '.$quarter.','.$yearQ.'');
@@ -570,6 +572,8 @@ class reports_excel_model extends MY_Model{
 	{
 		$this->load->library('excel');
 
+		$custom=0;
+
 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(20);
 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
 		$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('A1:P1');
@@ -590,7 +594,7 @@ class reports_excel_model extends MY_Model{
 		if($facility!="")//by Facility
 		{
 			$device="";
-			$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type);
+			$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type,$custom);
 			
 			$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$facility.' - '.$biannual_name.','.$yearB.'');
@@ -611,7 +615,7 @@ class reports_excel_model extends MY_Model{
 		if($device!="")//by Device
 		{
 			$facility="";
-			$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type);// get the data
+			$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type,$custom);// get the data
 
 			$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$device.' - '.$biannual_name.','.$yearB.'');
@@ -850,7 +854,7 @@ class reports_excel_model extends MY_Model{
 	 function excel_year_report($YearO,$facility,$device,$from_month,$end_month,$report_type)
 	 {
 	 	$this->load->library('excel');
-	 	//$this->load->model('reports_model');
+	 	$custom=0;
 
 	 	$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(20);
 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
@@ -872,7 +876,7 @@ class reports_excel_model extends MY_Model{
 	 	if($facility!="")
 	 	{	
 	 		$device="";
-	 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type);
+	 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type,$custom);
 
 	 		$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$facility.' - '.$YearO.' ');
@@ -894,7 +898,7 @@ class reports_excel_model extends MY_Model{
 	 	if($device!="")
 	 	{
 	 		$facility="";
-	 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type);// get the data
+	 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type,$custom);// get the data
 
 	 		$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$device.' - '.$YearO.'');
@@ -1132,6 +1136,8 @@ class reports_excel_model extends MY_Model{
 	 {
 	 	$this->load->library('excel');
 
+	 	$custom=1;
+
 	 	$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(20);
 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
 		$PHPExcel[]=$this->excel->getActiveSheet()->mergeCells('A1:P1');
@@ -1152,7 +1158,7 @@ class reports_excel_model extends MY_Model{
 	 	if($facility!="")
 	 	{
 	 		$device="";
-	 		$sql_data=$this->excel_tests_details($Fromdate,$Todate,$facility,$device,$report_type);// get the data
+	 		$sql_data=$this->excel_tests_details($Fromdate,$Todate,$facility,$device,$report_type,$custom);// get the data
 
 			$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$facility.' - Between '.$Fromdate.' and '.$Todate.'');
@@ -1174,7 +1180,7 @@ class reports_excel_model extends MY_Model{
 	 	if($device!="")
 	 	{
 	 		$facility="";
-	 		$sql_data=$this->excel_tests_details($Fromdate,$Todate,$facility,$device,$report_type);// get the data
+	 		$sql_data=$this->excel_tests_details($Fromdate,$Todate,$facility,$device,$report_type,$custom);// get the data
 
 			$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$device.' - Between '.$Fromdate.' and '.$Todate.' ');
@@ -1413,6 +1419,7 @@ class reports_excel_model extends MY_Model{
 	 	$this->load->library('excel');//load excel library
 
 	 	$county_id="";
+	 	$custom=0;
 	 	$Month=$this->GetMonthName($monthly);// get the month name
 	 	
 	 	$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(20);
@@ -1558,7 +1565,7 @@ class reports_excel_model extends MY_Model{
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('W2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		}
 
-		$sql_data=$this->excel_tests_details_all($from_month,$end_month,$all,$report_type,$county_id);//get the data
+		$sql_data=$this->excel_tests_details_all($from_month,$end_month,$all,$report_type,$county_id,$custom);//get the data
 
 		$num=3;// row count
 		$count=1;// record count
@@ -1698,6 +1705,7 @@ class reports_excel_model extends MY_Model{
 	 	$this->load->library('excel');//load excel library
 
 	 	$county_id="";
+	 	$custom=0;
 
 	 	$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(20);
 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
@@ -1844,7 +1852,7 @@ class reports_excel_model extends MY_Model{
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('W2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		}
 
-		$sql_data=$this->excel_tests_details_all($from_month,$end_month,$all,$report_type,$county_id);// get the data
+		$sql_data=$this->excel_tests_details_all($from_month,$end_month,$all,$report_type,$county_id,$custom);// get the data
 
 		$num=3;// row count
 		$count=1;// record count
@@ -1985,6 +1993,7 @@ class reports_excel_model extends MY_Model{
 	 	$this->load->library('excel');//load excel library
 	 	$this->load->model('reports_model');
 	 	$county_id="";
+	 	$custom=0;
 
 	 	$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(20);
 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
@@ -2130,7 +2139,7 @@ class reports_excel_model extends MY_Model{
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('W2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		}
 
-		$sql_data=$this->excel_tests_details_all($from_month,$end_month,$all,$report_type,$county_id);// get the data
+		$sql_data=$this->excel_tests_details_all($from_month,$end_month,$all,$report_type,$county_id,$custom);// get the data
 
 		$num=3;// row count
 		$count=1;// record count
@@ -2274,6 +2283,7 @@ class reports_excel_model extends MY_Model{
 	 {
 	 	$this->load->library('excel');//load excel library
 	 	$county_id="";
+	 	$custom=0;
 
  		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(20);
 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
@@ -2417,7 +2427,7 @@ class reports_excel_model extends MY_Model{
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('W2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		}
 
-		$sql_data=$this->excel_tests_details_all($from_month,$end_month,$all,$report_type,$county_id);
+		$sql_data=$this->excel_tests_details_all($from_month,$end_month,$all,$report_type,$county_id,$custom);
 
 		$num=3;// row count
 		$count=1;// record count
@@ -2557,6 +2567,7 @@ class reports_excel_model extends MY_Model{
 	 {
 	 	$this->load->library('excel');//load excel library
 	 	$county_id="";
+	 	$custom=1;
 
 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(20);
 		$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
@@ -2700,7 +2711,7 @@ class reports_excel_model extends MY_Model{
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('W2')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 		}
 
-		$sql_data=$this->excel_tests_details_all($from_month,$end_month,$all,$report_type,$county_id);
+		$sql_data=$this->excel_tests_details_all($from_month,$end_month,$all,$report_type,$county_id,$custom);
 
 		$num=3;// row count
 		$count=1;// record count
@@ -2840,6 +2851,7 @@ class reports_excel_model extends MY_Model{
 	
 			$sql_data="";
 			$county_id="";
+			$custom=0;
 			$Month=$this->GetMonthName($monthly);
 		
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(20);
@@ -2916,7 +2928,7 @@ class reports_excel_model extends MY_Model{
 			{	
 				$device="";
 
-		 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type);
+		 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type,$custom);
 
 				$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$facility.' - '.$Month.', '.$YearM.' ' );
@@ -2972,7 +2984,7 @@ class reports_excel_model extends MY_Model{
 		 	{
 		 		$facility="";
 
-		 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type);
+		 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type,$custom);
 
 		 		$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$device.' - '.$Month.', '.$YearM.' ' );
@@ -3050,7 +3062,7 @@ class reports_excel_model extends MY_Model{
 		 			$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for all tests - '.$Month.', '.$YearM.' ' );
 		 		}
 
-		 		$sql_data=$this->excel_tests_details_all($from_month,$end_month,$all,$report_type,$county_id);
+		 		$sql_data=$this->excel_tests_details_all($from_month,$end_month,$all,$report_type,$county_id,$custom);
 
 				$num=3;//row count
 				$count=1;//record count
@@ -3109,6 +3121,7 @@ class reports_excel_model extends MY_Model{
 			
 			$sql_data="";
 			$county_id="";
+			$custom=0;
 			
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(20);
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
@@ -3184,7 +3197,7 @@ class reports_excel_model extends MY_Model{
 			{	
 				$device="";
 
-		 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type);
+		 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type,$custom);
 
 				$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$facility.' - '.$quarter.', '.$yearQ.' ' );
@@ -3240,7 +3253,7 @@ class reports_excel_model extends MY_Model{
 		 	{
 		 		$facility="";
 
-		 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type);
+		 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type,$custom);
 
 		 		$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$device.' - '.$quarter.', '.$yearQ.' ' );
@@ -3318,7 +3331,7 @@ class reports_excel_model extends MY_Model{
 					$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for all tests - '.$quarter.', '.$yearQ.' ' );
 				}
 
-				$sql_data=$this->excel_tests_details_all($from_month,$end_month,$all,$report_type,$county_id);
+				$sql_data=$this->excel_tests_details_all($from_month,$end_month,$all,$report_type,$county_id,$custom);
 
 				$num=3;//row count
 				$count=1;// record count
@@ -3378,6 +3391,7 @@ class reports_excel_model extends MY_Model{
 			
 			$sql_data="";
 			$county_id="";
+			$custom=0;
 			
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(20);
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
@@ -3454,7 +3468,7 @@ class reports_excel_model extends MY_Model{
 			{	
 				$device="";
 
-		 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type);
+		 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type,$custom);
 
 				$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$facility.' - '.$biannual_name.','.$yearB.' ' );
@@ -3510,7 +3524,7 @@ class reports_excel_model extends MY_Model{
 		 	{
 		 		$facility="";
 
-		 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type);
+		 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type,$custom);
 
 		 		$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$device.' - '.$biannual_name.','.$yearB.' ' );
@@ -3591,7 +3605,7 @@ class reports_excel_model extends MY_Model{
 					$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for all tests - '.$biannual_name.','.$yearB.' ' );
 				}
 
-				$sql_data=$this->excel_tests_details_all($from_month,$end_month,$all,$report_type,$county_id);
+				$sql_data=$this->excel_tests_details_all($from_month,$end_month,$all,$report_type,$county_id,$custom);
 
 		 		$num=3;//row count
 		 		$count=1;//record count
@@ -3651,6 +3665,7 @@ class reports_excel_model extends MY_Model{
 			
 			$sql_data="";
 			$county_id="";
+			$custom=0;
 			
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(20);
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
@@ -3726,7 +3741,7 @@ class reports_excel_model extends MY_Model{
 			{	
 				$device="";
 
-		 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type);
+		 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type,$custom);
 
 				$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$facility.' - '.$YearO.' ' );
@@ -3782,7 +3797,7 @@ class reports_excel_model extends MY_Model{
 		 	{
 		 		$facility="";
 
-		 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type);
+		 		$sql_data=$this->excel_tests_details($from_month,$end_month,$facility,$device,$report_type,$custom);
 
 		 		$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$device.' - '.$YearO.' ' );
@@ -3861,7 +3876,7 @@ class reports_excel_model extends MY_Model{
 					$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for all tests - '.$YearO.' ' );
 				}
 
-				$sql_data=$this->excel_tests_details_all($from_month,$end_month,$all,$report_type,$county_id);
+				$sql_data=$this->excel_tests_details_all($from_month,$end_month,$all,$report_type,$county_id,$custom);
 	
 		 		$num=3;$count=1;
 			 		foreach ($sql_data as $value) 
@@ -3919,6 +3934,7 @@ class reports_excel_model extends MY_Model{
 			
 			$sql_data="";
 			$county_id="";
+			$custom=1;
 			
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setSize(20);
 			$PHPExcel[]=$this->excel->getActiveSheet()->getStyle('A1')->getFont()->setBold(true);
@@ -3994,7 +4010,7 @@ class reports_excel_model extends MY_Model{
 			{	
 				$device="";
 
-		 		$sql_data=$this->excel_tests_details($Fromdate,$Todate,$facility,$device,$report_type);
+		 		$sql_data=$this->excel_tests_details($Fromdate,$Todate,$facility,$device,$report_type,$custom);
 
 				$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$facility.' -  Between '.$Fromdate.' and '.$Todate.' ' );
@@ -4049,7 +4065,7 @@ class reports_excel_model extends MY_Model{
 		 	{
 		 		$facility="";
 
-		 		$sql_data=$this->excel_tests_details($Fromdate,$Todate,$facility,$device,$report_type);
+		 		$sql_data=$this->excel_tests_details($Fromdate,$Todate,$facility,$device,$report_type,$custom);
 
 		 		$PHPExcel[]=$this->excel->getActiveSheet()->setTitle('REPORT FOR CD4 SAMPLES TESTED');
 				$PHPExcel[]=$this->excel->getActiveSheet()->setCellValue('A1','Report for '.$device.' -  Between '.$Fromdate.' and '.$Todate.' ' );
@@ -4179,7 +4195,7 @@ class reports_excel_model extends MY_Model{
 
 		/*=================== Excel: Sql functions =====================================================================*/
 
-	 	public function excel_tests_details($from,$to,$facility,$device,$report_type)//Get all the data by facility or device
+	 	public function excel_tests_details($from,$to,$facility,$device,$report_type,$custom)//Get all the data by facility or device
 		{
 			$this->load->config("sql");
 
@@ -4239,9 +4255,16 @@ class reports_excel_model extends MY_Model{
 				}
 					
 			}
-
-			$date_delimiter	=	" AND MONTH(`tst`.`result_date`) BETWEEN '".date('m',strtotime($from))."' AND '".date('m',strtotime($to))."'
+			if($custom==0)
+			{
+				$date_delimiter	=	" AND MONTH(`tst`.`result_date`) BETWEEN '".date('m',strtotime($from))."' AND '".date('m',strtotime($to))."'
 								  AND YEAR(`tst`.`result_date`) BETWEEN '".date('Y',strtotime($from))."' AND '".date('Y',strtotime($to))."' ";
+			}
+			else if($custom==1)
+			{
+				$date_delimiter	=	" AND `tst`.`result_date` BETWEEN '".$from."' AND '".$to."' ";
+			}
+			
 								  
 			$test_details=R::getAll($tests_sql.$criteria.$date_delimiter.$report_type);
 
@@ -4252,7 +4275,7 @@ class reports_excel_model extends MY_Model{
 			return $test_details;
 
 		}
-		public function excel_tests_details_all($from,$to,$all,$report_type,$county_id)//Get all the data or by county
+		public function excel_tests_details_all($from,$to,$all,$report_type,$county_id,$custom)//Get all the data or by county
 		{
 
 			$this->load->config("sql");
@@ -4333,8 +4356,15 @@ class reports_excel_model extends MY_Model{
 				}
 			}
 
-			$date_delimiter	=	" AND MONTH(`tst`.`result_date`) BETWEEN '".date('m',strtotime($from))."' AND '".date('m',strtotime($to))."'
+			if($custom==0)
+			{
+				$date_delimiter	=	" AND MONTH(`tst`.`result_date`) BETWEEN '".date('m',strtotime($from))."' AND '".date('m',strtotime($to))."'
 								  AND YEAR(`tst`.`result_date`) BETWEEN '".date('Y',strtotime($from))."' AND '".date('Y',strtotime($to))."' ";
+			}
+			else if($custom==1)
+			{
+				$date_delimiter	=	" AND `tst`.`result_date` BETWEEN '".$from."' AND '".$to."' ";
+			}
 
 			$test_details=R::getAll($tests_sql.$date_delimiter.$delimiter.$report_type);
 	

@@ -1040,7 +1040,6 @@ class reports extends MY_Controller {
 					}
 				}
 				if($Fromdate!="" && $Todate!="")
-
 				{
 					if($all_data>2)
 					{
@@ -1234,12 +1233,6 @@ class reports extends MY_Controller {
 
 				if($Fromdate!="" && $Todate!="")// Custom dates Graph
 				{
-					$month_limit_begin=date('m',strtotime($Fromdate));//month limit
-					$month_limit_end=date('m',strtotime($Todate));
-
-					$year_begin=date('Y',strtotime($Fromdate));//year limit
-					$year_end=date('Y',strtotime($Todate));
-
 					$new_from_date=date('d-F-Y',strtotime($Fromdate));
 					$new_to_date=date('d-F-Y',strtotime($Todate));
 
@@ -1247,7 +1240,7 @@ class reports extends MY_Controller {
 					$category[]=$new_to_date;
 					$c="Customized_Dates";
 
-					$test_results=$this->reports_charts_model->customized_graph_view($month_limit_begin,$month_limit_end,$year_begin,$year_end,$Facility,$Device,$all_data,$county_name_value,$report_type);
+					$test_results=$this->reports_charts_model->customized_graph_view($Fromdate,$Todate,$Facility,$Device,$all_data,$county_name_value,$report_type);
 					
 					$data['customized']=1;//set a subtitle
 					$data['customized_value']=$new_from_date;

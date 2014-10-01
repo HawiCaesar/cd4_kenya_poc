@@ -3,13 +3,13 @@
 class admin_model extends MY_Model{
 	public function menus($selected){
 		$menus = array(
-						array(	'num'			=>	1,
+						/*array(	'num'			=>	1,
 								'name'			=>	'Home Page',
 								'url'			=>	base_url()."admin",
 								'other'			=>	"",
 					 			'selected'		=>	false,
 					 			'selectedString'=>	"",							
-								),
+								),*/
 						array(	'num'			=>	2,
 								'name'			=>	'Facilities',
 								'url'			=>	base_url()."admin/facilities",
@@ -45,9 +45,16 @@ class admin_model extends MY_Model{
 					 			'selected'		=>	false,
 					 			'selectedString'=>	"",							
 								),
-						array(	'num'			=>	7,
+						/*array(	'num'			=>	7,
 								'name'			=>	'Settings',
 								'url'			=>	base_url()."admin/settings",
+								'other'			=>	"",
+					 			'selected'		=>	false,
+					 			'selectedString'=>	"",							
+								),*/
+						array(	'num'			=>	7,
+								'name'			=>	'Uploads',
+								'url'			=>	base_url()."admin/upload",								
 								'other'			=>	"",
 					 			'selected'		=>	false,
 					 			'selectedString'=>	"",							
@@ -65,14 +72,8 @@ class admin_model extends MY_Model{
 								'other'			=>	"  target='_blank' ",
 					 			'selected'		=>	false,
 					 			'selectedString'=>	"",							
-								),
-						array(	'num'			=>	10,
-								'name'			=>	'Uploads',
-								'url'			=>	base_url()."admin/uploads",								
-								'other'			=>	"",
-					 			'selected'		=>	false,
-					 			'selectedString'=>	"",							
-								),
+								)
+						
 
 				);
 		$j=0;
@@ -141,7 +142,7 @@ class admin_model extends MY_Model{
 	}
 	function get_facilities()//get the facilities
 	{
-		$sql="SELECT name FROM facility ";
+		$sql="SELECT facility_name FROM v_facility_pima_details ";
 
 		$query=$this->db->query($sql);
 

@@ -16,172 +16,65 @@ class cd4_reports extends MY_Controller
 		$data	=array_merge($data,$this->load_libraries(array('dataTables','admin_cd4_reports','fortawesome'))); //load the dataTables plugin, fortawesome and admin_cd4_reports.js
 
 		$this->load->model('admin_model'); //load admin_model
+		$this->load->model('cd4_reports_model');
 
 		$data['menus']	= 	$this->admin_model->menus(6);
 
-		//load all the facilities
-		$data['facilities'] = 	$this->admin_model->get_details("facility_details",$this->session->userdata("user_filter_used"));
+		$facility_results = $this->cd4_reports_model->facility_list();
+		$poc_facility_list = $this->cd4_reports_model->poc_facility_list();
 
-		// $users=0;
+		if($this->get_start())
+		{
+			$start=$this->get_start();
+			$stop=$this->get_stop();
+		}else
+		{	
+			$start = date('Y-m-d', strtotime("first day of -1 months"));
+			$stop = $stop=date('Y-m-d',strtotime('last day of -1 months'));
+		}
 
-		// if(!$users==1)
-		// {
-		// 	$data['number_of_deactivated_users']="none";
-		// }
+		$cd4_results = $this->cd4_reports_model->cd4_reporting($start,$stop);
+		$cd4poc_results = $this->cd4_reports_model->cd4poc_reporting($start,$stop);
+
+		if(!$cd4_results)
+		{
+			$data['percentage_cd4_reported']=0;
+		}
+		else
+		{
+			$fcdrr_reported=sizeof($cd4_results);
+			$all_facilities=sizeof($facility_results);
+
+			$data['percentage_cd4_reported']=floor(($fcdrr_reported/$all_facilities)*100);
+		}
+		if(!$cd4poc_results)
+		{
+			$data['percentage_cd4poc_reported']=0;
+		}
+		else
+		{
+			foreach($cd4poc_results as $key => $cd4poc)
+			{
+				if(!$cd4poc['cd4_test_id']==NULL)
+				{
+					$poc[$cd4poc['poc_name']]=$cd4poc['cd4_test_id'];
+				}
+			}
+			$poc_reported=sizeof($poc);
+			$all_poc_facilities=sizeof($poc_facility_list);
+
+			$data['percentage_cd4poc_reported']=floor(($poc_reported/$all_poc_facilities)*100);	
+		}
 		
+		$data['facility_results']=$facility_results;
+		$data['poc_facility_list']=$poc_facility_list;
+
+		$data['cd4_results']=$cd4_results;
+		$data['cd4poc_results']=$cd4poc_results;
+
 		$this->template($data);//load template and put data on page
 	}
-
-	function get_pima_report()
-	{
-		$format=$this->input->post('format');
-		$facility=$this->input->post('facility_name');
-
-		//check the format of the submit button
-
-		/*.......................... PDF function ................................*/
-		if($format=='pdf')
-		{
-			$pdf_data="";
-			$results="";
-			$empty=array();
-			$datestring = "%h:%i %a";//set the timestamp
-
-			$filename="Pima_PDF_Tests_results_".$facility.".pdf"; //file_name
-
-			$img=base_url().'img/nascop.jpg';// Nascop Logo
-
-			$this->load->model('cd4_reports_model'); //load the model
-
-			$results=$this->cd4_reports_model->get_facility_details($facility);//get the data
-
-			if($results!=$empty)
-			{
-				$pdf_data.="<table width='53%' border='0' align='center'>
-								<tr>
-									<td><center><img style='vertical-align: top;' src='$img'/></center></td>
-								</tr>
-						</table>";
-
-				//column headings
-				$pdf_data.='<table border="1" style="width:100%">';
-				$pdf_data.='<tr>';				
-				$pdf_data.='<td>#</td>';
-				$pdf_data.='<td><center>Date Uploaded</center></td>';
-				$pdf_data.='<td style="width:25%"><center>Facility</center></td>';
-				$pdf_data.='<td><center>Uploaded by</center></td>';
-				$pdf_data.='<td style="color: #2d6ca2;" ><center># of total tests</center></td>';
-				$pdf_data.='<td style="color: #2aabd2;" ><center># of valid tests</center></td>';
-				$pdf_data.='<td style="color: #3e8f3e; width:15%;"><center># of tests >= 350 cells/mm3</center></td>';
-				$pdf_data.='<td style="color: #eb9316; width:15%;"><center># of tests < 350 cells/mm3</center></td>';
-				$pdf_data.='<td style="color: #c12e2a;" ><center># of errors</center></td>';
-				$pdf_data.='</tr>';
-				$pdf_data.='<tbody>';
-				
-				$i=1;//counter
-				$grand_total_tests=0;
-
-				foreach($results as $result)
-				{
-					$string_unix="";
-					$string_unix=mysql_to_unix($result['upload_date']);
-
-					$pdf_data.='<tr>';
-
-					$pdf_data.='<td>'.$i.'</td>';
-					$pdf_data.='<td><center>'.date('d-F-Y',strtotime($result['upload_date'])).' - '.mdate($datestring,$string_unix).'</center></td>';
-					$pdf_data.='<td style="width:25%"><center>'.$result['facility'].'</center></td>';
-					$pdf_data.='<td><center>'.$result['uploaded_by_name'].'</center></td>';
-					$pdf_data.='<td><center>'.$result['total_tests'].'</center></td>';
-					$pdf_data.='<td><center>'.$result['valid_tests'].'</center></td>';
-					$pdf_data.='<td><center>'.$result['passed'].'</center></td>';
-					$pdf_data.='<td><center>'.$result['failed'].'</center></td>';
-					$pdf_data.='<td><center>'.$result['errors'].'</center></td>';
-
-					$pdf_data.='</tr>';
-
-					$grand_total_tests+=$result['total_tests'];
-					$i++;
-				}
-				$pdf_data.='</tbody>';
-				$pdf_data.='</table>';
-
-				$pdf_data.='<p>Grand Total Number of Tests Done <b>'.$grand_total_tests.'</b></p>';
-
-				$this->load->library('mpdf/mpdf');// Load the mpdf library
-
-				$this->mpdf->AddPage('L', // L - landscape, P - portrait
-							            '', '', '', '',
-							            30, // margin_left
-							            30, // margin right
-							            10, // margin top
-							            30, // margin bottom
-							            18, // margin header
-							            12); // margin footer
-
-				$this->mpdf->SetWatermarkText('NASCOP');//Water Mark Text
-				$this->mpdf->showWatermarkText = true;//Water Mark set value
-
-				$this->mpdf->simpleTables = true; 
-
-				$this->mpdf->WriteHTML($pdf_data);//place content in pdf
-
-				$this->mpdf->Output($filename,'D'); //bring up "Save as Dialog" box
-			}
-			else
-			{
-				$pdf_data.="<table width='53%' border='0' align='center'>";
-				$pdf_data.="<tr>";
-				$pdf_data.="<td><center><img style='vertical-align: top;' src='$img'/></center></td>";
-				$pdf_data.="</tr>";
-				$pdf_data.="</table>";
-				$pdf_data.="<p style='text-align:center;'>The facility has not reported its PIMA Tests Yet</p>";
-
-				$filename="NO_PIMA_TESTS.pdf";
-				$this->load->library('mpdf/mpdf');// Load the mpdf library
-
-				$this->mpdf->WriteHTML($pdf_data);//place content in pdf
-
-				$this->mpdf->Output($filename,'D'); //Opens PDF in Browser
-			}
-			
-
-		}
-		/*........................ End PDF function ..............................*/
-
-		/*........................ Excel function ................................*/
-		else if($format=='excel')
-		{
-			$this->load->model('cd4_reports_model');
-
-			$year=date('Y');
-			$month=date('m');
-			$month=$month-1;
-
-			//set the beginning date
-			$begin_date='-01';
-			$begin_month='-0'.$month;
-			$begin_year=$year;
-
-			$from_date=$begin_year.$begin_month.$begin_date;
-
-			//set the end date
-			$end_date=date('Y-m-d',mktime(0,0,0,$month,31,$year));
-
-			$PHPEXcel[]=$this->cd4_reports_model->get_excel_pima_details($facility,$from_date,$end_date,$month,$year);
-
-			$filename="Excel_PIMA_Report_".$facility.".xls";
-
-			header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');// *can use ms-excel2007
-			header('Content-Disposition: attachment;filename="'.$filename.'" ');
-			header('Cache-Control: max-age=0');
-			$obWrite=PHPExcel_IOFactory::createWriter($this->excel,'Excel5');
-			$obWrite->save('php://output');
-
-		}
-		/*........................ End Excel function ............................*/
-	}
- public function getfacilitiesreportingpima(){
+ 	public function getfacilitiesreportingpima(){
 		
 		$sql 	= "SELECT * 
 							FROM  `v_facility_pima_details` 
@@ -191,4 +84,118 @@ class cd4_reports extends MY_Controller
 		return $data;
 	    }
 
+	function get_start()
+	{
+		if($this-> session-> userdata('cd4_start_date')){
+			return date("Y-m-d",strtotime($this-> session-> userdata('cd4_start_date')));
+		}else{
+				//		
+			return 0;
+		}
+	}
+	function get_stop()
+	{
+		if($this-> session-> userdata('cd4_stop_date')){
+			return date("Y-m-d",strtotime($this-> session-> userdata('cd4_stop_date')));
+		}else{
+			return 0;
+		}
+	}
+	public function cd4poc_date_filter_post(){
+		$type 	= 	$this->input->post('type');
+		$value 	=	$this->input->post('value');
+		$this->cd4_poc_date_filter($type,$value);
+	}
+	public function cd4_poc_date_filter($type,$value){		
+		$today = date('Y-m-d');
+
+		$start;
+		$stop;
+		$filter_desc;
+		$filter_used;
+		if($type=="Default"){
+			$filter_used ="Default";
+			$year 	=	date('Y',strtotime($today));
+			$start	=	date('Y-m-d',strtotime("$year-01-01"));
+			$stop	=	$today;
+			$filter_desc= "this Year";
+
+		}elseif ($type=="All") {
+			$filter_used 	=	"All";
+			$year 	=	$this->config->item('starting_year');
+			$start	=	date('Y-m-d',strtotime("$year-01-01"));
+			$stop	=	$today;
+			$filter_desc= "All Results";
+		}elseif ($type=="Periodic") {
+			$filter_used 	=	"Periodic";
+			$year 	=	date('Y',strtotime($today));
+			$month 	=	date('m',strtotime($today));
+
+			$period=0;
+
+			if(!$value || $value==1 || $value==0){
+				$period="-0 months";
+				$filter_desc= "This Month";
+			}elseif($value==3){
+				$period="-2 months";
+				$filter_desc= "The Last 3 Calendar Months";
+			}elseif($value==6){
+				$period="-5 months";
+				$filter_desc= "The Last 6 Calendar Months";
+			}	
+
+			$start	=	date('Y-m-1',strtotime($period));
+			$stop	=	$today;
+
+			
+		}elseif ($type=="Custom") {
+			$filter_used 	=	"Custom";
+			$dates=json_decode($value,true);
+			if($dates["from"]){
+				$start 	= 	$dates["from"];
+				$stop 	= 	$dates["to"];
+				$filter_desc= "From $start to $stop";
+			}else{
+				$this->cd4_poc_date_filter("Default",NULL);
+			}
+			
+		}elseif ($type=="Yearly") {
+			$filter_used 	=	"Yearly";
+			if($value>=1990 && $value <= 3000){
+				$start	=	date('Y-m-d',strtotime("$value-01-01"));
+				$stop	=	date('Y-m-d',strtotime("$value-12-31"));
+
+				$filter_desc= "The Year $value";
+
+				// if($value==$this->get_date_filter_year()){
+				// 	$stop= $today;
+				// }
+			}else{
+				$this->cd4_poc_date_filter("Default",NULL);
+			}
+		}elseif ($type=="Monthly") {
+			$filter_used 	=	"Monthly";
+			if($value>=1 && $value <= 12){	
+				$year 	= 	$this->cd4_poc_get_date_filter_year();		
+				$start	=	date('Y-m-d',strtotime("$year-$value-01"));
+				$stop	=	$this->get_last_day_of_month($start);
+
+				$month_desc =	$this->get_month_name($value);
+				
+				$filter_desc= 	"$month_desc , $year";
+			}
+		}
+
+		$this -> session -> set_userdata('cd4_filter_used', $filter_used);	
+		$this -> session -> set_userdata('cd4_start_date', $start);			
+		$this -> session -> set_userdata('cd4_stop_date', $stop);				
+		$this -> session -> set_userdata('cd4_filter_desc', $filter_desc);
+	}
+	public function cd4_poc_get_date_filter_year(){
+		if($this-> session-> userdata('cd4_start_date')){
+			return date("Y",strtotime($this-> session-> userdata('cd4_start_date')));
+		}else{
+			return $today=date('Y');
+		}
+	}
 }//end of cd4_reports.php
