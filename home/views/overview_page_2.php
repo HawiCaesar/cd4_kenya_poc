@@ -13,8 +13,9 @@
 				<table>
 					<tr>
 						<td><br/>
-							<div id="legend" style="background-color:#e9e9e9;height:16px;">
-								<!-- <div style="width:60px;border-radius:-15px;color:#000;float:left;margin-left:20px;"><center>% REPORTING</center></div> -->
+							<div style="width:400px;border-radius:-15px;color:#088A29;float:left;margin-left:-20px;"><center><b>% REPORTING (Hover On Map To View Statistics)<br /><?php  echo $date_filter_desc;?></b></center></div>
+							<br />
+							<div id="legend" style="background-color:#e9e9e9;height:40px;padding:10px;margin-left:-13px;">
 								<div style="width:50px;border-radius:-15px;background-color:#F7F7F7;color:#000;float:left;margin-left:50px;"><center>NO PIMA</center></div>
 								<div style="width:50px;border-radius:-15px;background-color:#FFCC99;color:#000;float:left;"><center>< 25%</center></div>
 								<div style="width:50px;border-radius:-15px;background-color:#FFCCCC;color:#000;float:left;"><center>25-50%</center></div>
@@ -23,30 +24,41 @@
 								<div style="width:50px;border-radius:-15px;background-color:#B3D7FF;color:#000;float:left;"><center>100%</center></div>
 								<br style="clear: left;" />
 							</div>
-							<div id='mapDiv'></div>
-							
-									<script type="text/javascript">
-										var map = new FusionMaps("<?php echo base_url();?>assets/plugins/Fusion/FusionMaps/FCMap_KenyaCounty.swf", "Kenya","400","450","0","0");
-											$.ajax({
-											          type:"POST",        
-											          url:"<?php echo base_url('home/home/get_json_map_data');?>",
-											          success:function(data) {
-									            			mapdata = jQuery.parseJSON(data);									
-															map.setJSONData(mapdata);
-															map.render("mapDiv");
-													}
-												});
-									</script>
+								<script type="text/javascript">
+									var map = new FusionMaps("<?php echo base_url();?>assets/plugins/Fusion/FusionMaps/FCMap_KenyaCounty.swf", "Kenya","400","410","0","0");
+										$.ajax({
+										          type:"POST",        
+										          url:"<?php echo base_url('home/home_2/get_json_map_data');?>",
+										          success:function(data) {
+									           		mapdata = jQuery.parseJSON(data);									
+														map.setJSONData(mapdata);
+														map.render("mapDiv");
+												}
+											});
+									// $(function () {
+
+									//     // Initiate the chart
+									// 	    $('#mapDiv').highcharts('Map', 
+									// 	    {
+									// 	        credits: {
+									// 	                    enabled: false
+									// 	                },
+									//         	series: 
+									//         	[{
+									//         		// mapData: Highcharts.maps['countries/ke-all']		
+									// 		        	}]
+											    
+									// 	});
+									// });
+
+								</script>
+								<div id='mapDiv' style="margin-left:-13px;"></div>
 						</td>
 						<td style="height:130px;width:30%;vertical-align: top;">
 							<center>
 								<!-- <div class="section-title" ><center>% CD4 Tests for Year <?php //echo $date_filter_year;?></center></div>
 								<div id="yearlyTestReportingRates" style="align:center;"></div> -->
 								<script type="text/javascript">
-								    // FusionCharts.setCurrentRenderer('javascript');
-								    // var myChart = new FusionCharts( "FusionCharts/MSLine.swf", "chartyearlyTestReportingRates","400", "220", "0", "0");
-								    // myChart.setJSONUrl(" <?php //echo base_url()?>poc/charts/yearly_test_reporting_rates");
-								    // myChart.render("yearlyTestReportingRates");
 								    $(function () {
 							            $('#cd4_tests_year').highcharts({
 							                title: {
@@ -81,7 +93,7 @@
 							            });
 							        });							    
 							    </script>
-							    <div id="cd4_tests_year" style="min-width: 400px; height: 250px; margin: 0 auto"></div>
+							    <div id="cd4_tests_year" style="min-width: 500px; height: 250px; margin: 0 auto"></div>
 						    </center>  
 						   <!--  <center> -->
 								<div class="section-title" ><center>Statistics for : <?php  echo $date_filter_desc;?></center></div>
@@ -105,10 +117,6 @@
 						    <!-- <div class="section-title" ><center>Device Errors For: <?php  //echo $date_filter_desc;?></center></div>
 								<div id="periodicTestErrorPerc" style="align:center;"></div> -->
 								<script type="text/javascript">
-								    // FusionCharts.setCurrentRenderer('javascript');
-								    // var myChart = new FusionCharts( "FusionCharts/Pie2D.swf", "chartperiodicTestErrorPerc","400", "220", "0", "0");
-								    // myChart.setJSONUrl(" <?php //echo base_url()?>poc/charts/periodic_test_error_perc");
-								    // myChart.render("periodicTestErrorPerc");
 								    $(function () {
 									    $('#pie_tests_errors').highcharts({
 									        chart: {
@@ -147,12 +155,12 @@
 									    });
 									});				    
 							    </script>  
-							    <div id="pie_tests_errors" style="min-width: 400px; height: 250px; margin: 0 auto"></div>
+							    <div id="pie_tests_errors" style="min-width: 300px; height: 250px; margin: 0 auto"></div>
 							<center>
 								<script type="text/javascript">
 										$.ajax({
 											          type:"POST",        
-											          url:"<?php echo base_url('home/home/national_progress_bar_reported');?>",
+											          url:"<?php echo base_url('home/home_2/national_progress_bar_reported');?>",
 											          success:function(data) {
 									            			$('#reported').append(data);
 													}
@@ -165,7 +173,7 @@
 								<script type="text/javascript">
 										$.ajax({
 											          type:"POST",        
-											          url:"<?php echo base_url('home/home/national_progress_bar_not_reported');?>",
+											          url:"<?php echo base_url('home/home_2/national_progress_bar_not_reported');?>",
 											          success:function(data) {
 									            			$('#notreported').append(data);
 													}
@@ -196,10 +204,6 @@
 				<div class="section-title" ><center>Errors encountered For: <?php echo $date_filter_desc;?></center></div>
 								<div id="chartTestDataColumn" style="align:center;"></div>
 								<script type="text/javascript">
-								    // FusionCharts.setCurrentRenderer('javascript');
-								    // var myChart = new FusionCharts( "FusionCharts/Column2D.swf", "chartchartTestDataColumn","1245", "220", "0", "0");
-								    // myChart.setJSONUrl(" <?php //echo base_url()?>poc/charts/periodic_facility_pima_errors");
-								    // myChart.render("chartTestDataColumn");
 								     $(function () {
 								      $('#errorscolumn').highcharts({
 								     		chart: {
@@ -214,7 +218,7 @@
 							            },
 							            xAxis: {
 							                categories: [
-							                    'Error Reported'
+							                    'Errors Reported'
 							                ]
 							            },            
 							            yAxis: {
@@ -252,7 +256,7 @@
 			<script type="text/javascript">
 					$.ajax({
 						          type:"POST",        
-						          url:"<?php echo base_url('home/home/national_breakdown_not_reported');?>",
+						          url:"<?php echo base_url('home/home_2/national_breakdown_not_reported');?>",
 						          success:function(data) {
 				            			$('#response').append(data);
 								}

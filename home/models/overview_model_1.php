@@ -1,6 +1,6 @@
 <?php
 
-class overview_model extends MY_Model{
+class overview_model_1 extends MY_Model{
 
 		public function menus($selected){
 			$menus = array(
@@ -265,20 +265,26 @@ class overview_model extends MY_Model{
 	{
 		$sql="SELECT vfp.region_id,vfp.region_name as region_name,
 					COUNT(DISTINCT(vfp.facility_pima_serial_num)) as number_of_devices,
-					COUNT(DISTINCT(cd4t.facility_equipment_id)) as reported_devices,
-					(COUNT(DISTINCT(cd4t.facility_equipment_id))/COUNT(DISTINCT(vfp.facility_pima_serial_num))*100) as percentage_reported,
+					COUNT(DISTINCT(cd4t.facility_id)) as reported_devices,
+					(COUNT(DISTINCT(cd4t.facility_id))/COUNT(DISTINCT(vfp.facility_pima_serial_num))*100) as percentage_reported,
 					COUNT(cd4t.id)as total_tests,
 					SUM(CASE WHEN `p_t`.`error_id`= '0' THEN 1 ELSE 0 END) AS `valid`,
 					SUM(CASE WHEN `p_t`.`error_id`> '0' THEN 1 ELSE 0 END) AS `errors`,
 					SUM(CASE WHEN `cd4t`.`cd4_count` < 500 AND `p_t`.`error_id`= '0' THEN 1 ELSE 0 END) AS `failed`,
 					SUM(CASE WHEN `cd4t`.`cd4_count` >= 500 AND `p_t`.`error_id`= '0' THEN 1 ELSE 0 END) AS `passed`
 					from v_facility_pima_details vfp
-										LEFT JOIN (SELECT cd4.id,cd4.facility_equipment_id,cd4.facility_id,cd4.cd4_count,cd4.valid
+										LEFT JOIN (SELECT cd4.id,cd4.facility_id,cd4.cd4_count,cd4.valid
 													FROM cd4_test cd4 
 													WHERE `cd4`.`result_date` BETWEEN '".$from."' AND '".$to."' ) 
 										as `cd4t` ON vfp.facility_id=`cd4t`.facility_id
-										LEFT JOIN(SELECT pt.cd4_test_id,pt.error_id from pima_test pt) as p_t
+										LEFT JOIN(SELECT pt.cd4_test_id,pt.error_id from pima_test pt
+													WHERE `pt`.`sample_code`!='NORMAL' 
+													AND `pt`.`sample_code` !='QC NORMAL' 
+													AND `pt`.`sample_code`!='LOW' 
+													AND `pt`.`sample_code` !='QC LOW'
+													) as p_t
 										ON cd4t.id=p_t.cd4_test_id
+					WHERE vfp.facility_equipment_status='Functional' AND p_t.error_id>=0
 					GROUP BY vfp.region_name";
 		//$sql="call map_procedure('".$from."','".$to."')";
 
@@ -288,18 +294,23 @@ class overview_model extends MY_Model{
 	function national_view_data_summary($from,$to)
 	{
 		$sql_summary="SELECT
-				COUNT(DISTINCT(vfp.facility_pima_serial_num)) as number_of_devices,
-				COUNT(DISTINCT(cd4t.facility_equipment_id)) as reported_devices,
-				(COUNT(DISTINCT(vfp.facility_pima_serial_num))-COUNT(DISTINCT(cd4t.facility_equipment_id))) as not_reported,
-				(COUNT(DISTINCT(cd4t.facility_equipment_id))/COUNT(DISTINCT(vfp.facility_pima_serial_num))*100) as percentage_reported,
-				(100-COUNT(DISTINCT(cd4t.facility_equipment_id))/COUNT(DISTINCT(vfp.facility_pima_serial_num))*100) as percentage_not
-				from v_facility_pima_details vfp
-									LEFT JOIN (SELECT cd4.id,cd4.facility_equipment_id,cd4.facility_id,cd4.cd4_count,cd4.valid
-												FROM cd4_test cd4 
-												WHERE `cd4`.`result_date` BETWEEN '".$from."' AND '".$to."' ) 
-									as `cd4t` ON vfp.facility_id=`cd4t`.facility_id
-									LEFT JOIN(SELECT pt.cd4_test_id,pt.error_id from pima_test pt) as p_t
-									ON cd4t.id=p_t.cd4_test_id";
+						COUNT(DISTINCT(vfp.facility_pima_serial_num)) as number_of_devices,
+						COUNT(DISTINCT(cd4t.facility_id)) as reported_devices,
+						(COUNT(DISTINCT(vfp.facility_pima_serial_num))-COUNT(DISTINCT(cd4t.facility_id))) as not_reported,
+						(COUNT(DISTINCT(cd4t.facility_id))/COUNT(DISTINCT(vfp.facility_pima_serial_num))*100) as percentage_reported,
+						(100-COUNT(DISTINCT(cd4t.facility_id))/COUNT(DISTINCT(vfp.facility_pima_serial_num))*100) as percentage_not
+						from v_facility_pima_details vfp
+											LEFT JOIN (SELECT cd4.id,cd4.facility_id,cd4.cd4_count,cd4.valid
+														FROM cd4_test cd4 
+														WHERE `cd4`.`result_date` BETWEEN '".$from."' AND '".$to."' ) 
+											as `cd4t` ON vfp.facility_id=`cd4t`.facility_id
+											LEFT JOIN(SELECT pt.cd4_test_id,pt.error_id from pima_test pt
+															WHERE pt.sample_code!='NORMAL' 
+															AND pt.sample_code !='QC NORMAL' 
+															AND pt.sample_code!='LOW' 
+															AND pt.sample_code !='QC LOW') as p_t
+											ON cd4t.id=p_t.cd4_test_id
+						WHERE vfp.facility_equipment_status='Functional'";
 
 		return $summary=R::getAll($sql_summary);
 	}
@@ -452,7 +463,7 @@ class overview_model extends MY_Model{
 		$finalMap = array('map' => $map, 'data' => $datas, 'styles' => $styles);
 		$finalMap = json_encode($finalMap);
         
-        return $finalMap;
+       echo $finalMap;die;
 	}
 
 
@@ -476,43 +487,30 @@ class overview_model extends MY_Model{
 			$user_delimiter 	= 	" `region_id` ='".$user_filter[0]['user_filter_id']."' ";
 		}
 
-		// $sql = "SELECT 
-		// 				CONCAT(YEAR(`cd4_test`.`result_date`),'-',MONTH(`cd4_test`.`result_date`)) AS `yearmonth`, 
-		// 				`cd4_test`.`result_date`, 
-		// 				MONTH(`cd4_test`.`result_date`) AS `month`, 
-		// 				COUNT(*) AS `reported` 
-		// 			FROM `pima_test` 
-		// 			RIGHT JOIN `cd4_test`
-		// 				ON `pima_test`.`cd4_test_id`=`cd4_test`.`id`
-		// 			WHERE `error_id`= 0 
-		// 			AND YEAR(`cd4_test`.`result_date`) = $year
-		// 			AND `pima_test`.`sample_code`!='NORMAL' 
-		// 			AND `pima_test`.`sample_code` !='QC NORMAL' 
-		// 			AND `pima_test`.`sample_code`!='LOW' 
-		// 			AND `pima_test`.`sample_code` !='QC LOW'
-		// 			AND  1
-		// 			$user_delimiter  
-		// 			GROUP BY `yearmonth`
-		// 			ORDER BY MONTH(`cd4_test`.`result_date`)";
-
 		if(!$user_delimiter)
 		{
-			$user_delimiter=1;
+			$user_delimiter='1';
 		}
+	
 		$sql="call yearly_pima_result_trend($year,'".$user_delimiter."')";
 
-		$tests_assoc	=	R::getAll($sql);
+		$tests_assoc	=	$this->db->query($sql);
 
 		$tests_array	= array(0,0,0,0,0,0,0,0,0,0,0,0);
 		
 		$data = array();
 
-		foreach ($tests_assoc as $test) {
-			$tests_array[($test['month']-1)]	= (int)$test['reported'];			
+		if($tests_assoc->num_rows()>0)
+		{
+			foreach ($tests_assoc->result_array() as $test) {
+				$tests_array[($test['month']-1)] = (int)$test['reported'];			
+			}
 		}
+
 		$data['valid']=$tests_array;
-		
-		
+
+		$tests_assoc->next_result();
+		$tests_assoc->free_result();
 		return $data;
 	}
 	function yearly_pima_errors_trend($year){
@@ -533,41 +531,29 @@ class overview_model extends MY_Model{
 			$user_delimiter 	= 	" `region_id` ='".$user_filter[0]['user_filter_id']."' ";
 		}
 
-		// $sql = "SELECT 
-		// 				CONCAT(YEAR(`cd4_test`.`result_date`),'-',MONTH(`cd4_test`.`result_date`)) AS `yearmonth`, 
-		// 				`cd4_test`.`result_date`, 
-		// 				MONTH(`cd4_test`.`result_date`) AS `month`, 
-		// 				COUNT(*) AS `errors` 
-		// 			FROM `pima_test` 
-		// 				LEFT JOIN `cd4_test`
-		// 				ON `pima_test`.`cd4_test_id`=`cd4_test`.`id` 
-		// 			WHERE `error_id`> 0 
-		// 			AND YEAR(`cd4_test`.`result_date`) = $year
-		// 			AND `pima_test`.`sample_code`!='NORMAL' 
-		// 			AND `pima_test`.`sample_code` !='QC NORMAL' 
-		// 			AND `pima_test`.`sample_code`!='LOW' 
-		// 			AND `pima_test`.`sample_code` !='QC LOW'
-		// 			AND  1 
-		// 			$user_delimiter
-		// 			GROUP BY `yearmonth`
-		// 			ORDER BY MONTH(`cd4_test`.`result_date`)";
-
 		if(!$user_delimiter)
 		{
-			$user_delimiter=1;
+			$user_delimiter='1';
 		}
 
 		$sql="call yearly_pima_errors_trend($year,'".$user_delimiter."')";
 
-		$errors_assoc	=	R::getAll($sql);
+		$errors_assoc	=	$this->db->query($sql);
 
 		$errors_array	= array(0,0,0,0,0,0,0,0,0,0,0,0);
-		
 		$data = array();
-		foreach ($errors_assoc as $error) {
-			$errors_array[($error['month']-1)] = (int)$error['errors'];	
+
+		if($errors_assoc->num_rows()>0)
+		{
+			foreach ($errors_assoc->result_array() as $error) {
+				$errors_array[($error['month']-1)] = (int)$error['errors'];	
+			}
 		}
+
 		$data['errors']=$errors_array;
+
+		$errors_assoc->next_result();
+		$errors_assoc->free_result();
 
 		return $data;
 	}
@@ -578,38 +564,18 @@ class overview_model extends MY_Model{
 
 			$sql="call periodic_test_error_perc('$from','$to')";
 		}
-		// $sql		=	"SELECT 
-		// 					`test`.`total` AS `test_total`, 
-		// 					`error`.`total` AS `error_total` 
-		// 					FROM (SELECT 
-		// 					count(*) AS `total` 
-		// 					FROM `pima_test` 
-		// 					RIGHT JOIN `cd4_test`
-		// 					ON `pima_test`.`cd4_test_id`=`cd4_test`.`id` 
-		// 					WHERE `error_id` = 0 
-		// 					AND `pima_test`.`sample_code`!='NORMAL' 
-		// 					AND `pima_test`.`sample_code` !='QC NORMAL' 
-		// 					AND `pima_test`.`sample_code`!='LOW' 
-		// 					AND `pima_test`.`sample_code` !='QC LOW'
-		// 					AND  1 AND $date_delimiter
-		// 					) AS `test`, 
-		// 					(SELECT 
-		// 					count(*) AS `total` 
-		// 					FROM `pima_test` 
-		// 					RIGHT JOIN `cd4_test`
-		// 					ON `pima_test`.`cd4_test_id`=`cd4_test`.`id` 
-		// 					WHERE `error_id` > 0 
-		// 					AND `pima_test`.`sample_code`!='NORMAL' 
-		// 					AND `pima_test`.`sample_code` !='QC NORMAL' 
-		// 					AND `pima_test`.`sample_code`!='LOW' 
-		// 					AND `pima_test`.`sample_code` !='QC LOW'
-		// 					AND  1 AND $date_delimiter        
-		// 					) AS `error`	
-		// 				";
-		
-		$tests 	=		R::getAll($sql);
 
-		return $tests;
+		$tests=$this->db->query($sql);
+
+		$tests_results=$tests->row_array();
+
+		$tests->next_result();
+		$tests->free_result();
+
+		return $tests_results;
+		// $tests 	=		R::getAll($sql);
+
+		//print_r($tests);die;
 
 	}
 	public function periodic_facility_pima_errors($from,$to){
@@ -629,25 +595,6 @@ class overview_model extends MY_Model{
 		}elseif($user_group==9 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
 			$user_delimiter 	= 	" `region_id` ='".$user_filter[0]['user_filter_id']."' ";
 		}
-       
-		// $sql =	"SELECT 
-		// 				`pima_error`.`error_code`, 
-		// 				`pima_error`.`error_detail`, 
-		// 				COUNT(`pima_test`.`error_id`) as `total` 
-		// 			FROM `pima_error` 
-		// 			LEFT JOIN `pima_test` 
-		// 			ON `pima_test`.`error_id`=`pima_error`.`id`
-		// 			AND `pima_test`.`sample_code`!='NORMAL' 
-		// 				AND `pima_test`.`sample_code` !='QC NORMAL' 
-		// 				AND `pima_test`.`sample_code`!='LOW' 
-		// 				AND `pima_test`.`sample_code` !='QC LOW'
-		// 				AND  1 	
-		// 				LEFT JOIN `cd4_test`
-		// 				ON `pima_test`.`cd4_test_id`=`cd4_test`.`id`
-						  
-		// 				WHERE `cd4_test`.`result_date` between '$from' and '$to' 
-		// 				AND $user_delimiter 
-		// 			GROUP BY `error_code`";
 
 		if(!$from==""||!$from==0||!$from==null){
 
@@ -660,13 +607,19 @@ class overview_model extends MY_Model{
 			}
 			
 		}
-		$errors_reported_assoc 	=	R::getAll($sql);
+		$errors_reported_assoc 	=	$this->db->query($sql);
 
-		foreach($errors_reported_assoc as $key => $error_reported)
+		if($errors_reported_assoc->num_rows()>0)
 		{
-			$error_results[$key]["name"][0]=$error_reported['error_detail'].'(Code '.$error_reported['error_code'].')';
-			$error_results[$key]["data"][0]=(int)$error_reported['total'];
+			foreach($errors_reported_assoc->result_array() as $key => $error_reported)
+			{
+				$error_results[$key]["name"][0]=$error_reported['error_detail'].'(Code '.$error_reported['error_code'].')';
+				$error_results[$key]["data"][0]=(int)$error_reported['total'];
+			}
 		}
+		
+		$errors_reported_assoc->next_result();
+		$errors_reported_assoc->free_result();
 
 		return $error_results;
 	}

@@ -263,27 +263,19 @@ class overview_model extends MY_Model{
 	/* This function brings the sql results broken down by county */
 	function national_view_data_detailed($from,$to)
 	{
-		$sql="SELECT vfp.region_id,vfp.region_name as region_name,
-					COUNT(DISTINCT(vfp.facility_pima_serial_num)) as number_of_devices,
-					COUNT(DISTINCT(cd4t.facility_equipment_id)) as reported_devices,
-					(COUNT(DISTINCT(cd4t.facility_equipment_id))/COUNT(DISTINCT(vfp.facility_pima_serial_num))*100) as percentage_reported,
-					COUNT(cd4t.id)as total_tests,
-					SUM(CASE WHEN `p_t`.`error_id`= '0' THEN 1 ELSE 0 END) AS `valid`,
-					SUM(CASE WHEN `p_t`.`error_id`> '0' THEN 1 ELSE 0 END) AS `errors`,
-					SUM(CASE WHEN `cd4t`.`cd4_count` < 500 AND `p_t`.`error_id`= '0' THEN 1 ELSE 0 END) AS `failed`,
-					SUM(CASE WHEN `cd4t`.`cd4_count` >= 500 AND `p_t`.`error_id`= '0' THEN 1 ELSE 0 END) AS `passed`
-					from v_facility_pima_details vfp
-										LEFT JOIN (SELECT cd4.id,cd4.facility_equipment_id,cd4.facility_id,cd4.cd4_count,cd4.valid
-													FROM cd4_test cd4 
-													WHERE `cd4`.`result_date` BETWEEN '".$from."' AND '".$to."' ) 
-										as `cd4t` ON vfp.facility_id=`cd4t`.facility_id
-										LEFT JOIN(SELECT pt.cd4_test_id,pt.error_id from pima_test pt) as p_t
-										ON cd4t.id=p_t.cd4_test_id
-					GROUP BY vfp.region_name";
-		//$sql="call map_procedure('".$from."','".$to."')";
+		$sql="call reported_data('".$from."','".$to."')";
 
 		return $results=R::getAll($sql);
 	}
+
+	/* This function brings the number of devices by county*/
+	function devices_per_county()
+	{
+		$sql_devices="select COUNT(facility_pima_serial_num),region_name from v_facility_pima_details group by region_id";
+
+		return $sql_device_results=R::getAll($sql_devices);
+	}
+
 	/* This function brings sql results as a summary */
 	function national_view_data_summary($from,$to)
 	{
@@ -299,7 +291,9 @@ class overview_model extends MY_Model{
 												WHERE `cd4`.`result_date` BETWEEN '".$from."' AND '".$to."' ) 
 									as `cd4t` ON vfp.facility_id=`cd4t`.facility_id
 									LEFT JOIN(SELECT pt.cd4_test_id,pt.error_id from pima_test pt) as p_t
-									ON cd4t.id=p_t.cd4_test_id";
+									ON cd4t.id=p_t.cd4_test_id
+				LEFT JOIN `facility_equipment` `fe` ON `cd4t`.`facility_equipment_id`=`fe`.`id`
+				LEFT JOIN `facility_pima` `fp` ON `fe`.`id`=`fp`.`facility_equipment_id`";
 
 		return $summary=R::getAll($sql_summary);
 	}
@@ -364,7 +358,7 @@ class overview_model extends MY_Model{
 			}
 		}
 		$not_reported_counties.="</tbody></table>";
-		return $not_reported_counties;
+		//return $not_reported_counties;
 	}
 	/* This is a progress bar function to show percentage not reported */
 	function national_view_progress_bar_not_reported($from,$to)
@@ -388,9 +382,15 @@ class overview_model extends MY_Model{
 		$map = array();
         $datas = array();
 
-		$national_results=$this->national_view_data_detailed($from,$to); //fetch map data
+        $national_results=$this->national_view_data_detailed($from,$to); //fetch map data
 
-		foreach($national_results as $row)
+        foreach($national_results as $nat_results)
+        {
+        	$national_reported_data[$nat_results[]]
+        }
+        $national_view_devices=$this->devices_per_county();
+		
+		foreach($national_view_devices as $row)
 		{
 			$region_id	=	(int)$row["region_id"];
 			$region_name=	$row["region_name"];
@@ -403,23 +403,23 @@ class overview_model extends MY_Model{
 			$reported_devices=(int)$row['reported_devices'];
 
 			switch ($percentage) {
-                case ($percentage < 25):
-                    $status = '#FFCC99';
+                case ($percentage > 0 && $percentage < 49):
+                    $status = /*'#4A8E20';*/'#bfe2df';
                     break;
 
-                case ($percentage ==25 || $percentage < 49):
-                    $status = '#FFCCCC';
+                case ($percentage == 50):
+                    $status = '#D0DFA3';
                     break;
 
-                case ($percentage == 50 || $percentage < 75):
-                    $status = '#FFFFCC';
+                case ($percentage > 50 && $percentage < 100):
+                    $status = '#A9FF8D';
                     break;
 
-                case ($percentage ==75 || $percentage < 99):
-                    $status = '#CBCB96';
+                case ($percentage ==100):
+                    $status = '#80DC61';
                     break;
-               case ($percentage == 100):
-                    $status = '#B3D7FF';
+               case ($percentage == 0):
+                    $status = '#ffffff';
                     break;
              }
 
@@ -431,7 +431,7 @@ class overview_model extends MY_Model{
 		$map[]=array("showBevel" => "0",
 					 "showLegend"=>"1",
 					 "showMarkerLabels" => "1",
-					 "fillColor"=> "F7F7F7",
+					 "fillColor"=> "D98B1F",
 					 "baseFontColor"=>"000000",
 					 "borderColor"=> "000000",
 					 "toolTipBgColor"=>"FEFEFE",/*21232E*/
@@ -453,229 +453,6 @@ class overview_model extends MY_Model{
 		$finalMap = json_encode($finalMap);
         
         return $finalMap;
-	}
-
-
-	 function yearly_pima_result_trend($year){
-		//USER FILTER
-		//$user_delimiter=$this->get_user_sql_where_delimiter();
-		
-		$user_delimiter ="";
-		
-		
-		$user_group  = $this->session->userdata("user_group_id");
-		$user_filter= $this->session->userdata("user_filter");
-		
-		if($user_group==3 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
-			$user_delimiter 	= 	" `partner_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==6 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
-			$user_delimiter 	= 	" `facility_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==8 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
-			$user_delimiter 	= 	" `district_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==9 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
-			$user_delimiter 	= 	" `region_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}
-
-		// $sql = "SELECT 
-		// 				CONCAT(YEAR(`cd4_test`.`result_date`),'-',MONTH(`cd4_test`.`result_date`)) AS `yearmonth`, 
-		// 				`cd4_test`.`result_date`, 
-		// 				MONTH(`cd4_test`.`result_date`) AS `month`, 
-		// 				COUNT(*) AS `reported` 
-		// 			FROM `pima_test` 
-		// 			RIGHT JOIN `cd4_test`
-		// 				ON `pima_test`.`cd4_test_id`=`cd4_test`.`id`
-		// 			WHERE `error_id`= 0 
-		// 			AND YEAR(`cd4_test`.`result_date`) = $year
-		// 			AND `pima_test`.`sample_code`!='NORMAL' 
-		// 			AND `pima_test`.`sample_code` !='QC NORMAL' 
-		// 			AND `pima_test`.`sample_code`!='LOW' 
-		// 			AND `pima_test`.`sample_code` !='QC LOW'
-		// 			AND  1
-		// 			$user_delimiter  
-		// 			GROUP BY `yearmonth`
-		// 			ORDER BY MONTH(`cd4_test`.`result_date`)";
-
-		if(!$user_delimiter)
-		{
-			$user_delimiter=1;
-		}
-		$sql="call yearly_pima_result_trend($year,'".$user_delimiter."')";
-
-		$tests_assoc	=	R::getAll($sql);
-
-		$tests_array	= array(0,0,0,0,0,0,0,0,0,0,0,0);
-		
-		$data = array();
-
-		foreach ($tests_assoc as $test) {
-			$tests_array[($test['month']-1)]	= (int)$test['reported'];			
-		}
-		$data['valid']=$tests_array;
-		
-		
-		return $data;
-	}
-	function yearly_pima_errors_trend($year){
-			
-		$user_delimiter ="";
-		
-		
-		$user_group  = $this->session->userdata("user_group_id");
-		$user_filter= $this->session->userdata("user_filter");
-		
-		if($user_group==3 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
-			$user_delimiter 	= 	" `partner_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==6 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
-			$user_delimiter 	= 	" `facility_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==8 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
-			$user_delimiter 	= 	" `district_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==9 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
-			$user_delimiter 	= 	" `region_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}
-
-		// $sql = "SELECT 
-		// 				CONCAT(YEAR(`cd4_test`.`result_date`),'-',MONTH(`cd4_test`.`result_date`)) AS `yearmonth`, 
-		// 				`cd4_test`.`result_date`, 
-		// 				MONTH(`cd4_test`.`result_date`) AS `month`, 
-		// 				COUNT(*) AS `errors` 
-		// 			FROM `pima_test` 
-		// 				LEFT JOIN `cd4_test`
-		// 				ON `pima_test`.`cd4_test_id`=`cd4_test`.`id` 
-		// 			WHERE `error_id`> 0 
-		// 			AND YEAR(`cd4_test`.`result_date`) = $year
-		// 			AND `pima_test`.`sample_code`!='NORMAL' 
-		// 			AND `pima_test`.`sample_code` !='QC NORMAL' 
-		// 			AND `pima_test`.`sample_code`!='LOW' 
-		// 			AND `pima_test`.`sample_code` !='QC LOW'
-		// 			AND  1 
-		// 			$user_delimiter
-		// 			GROUP BY `yearmonth`
-		// 			ORDER BY MONTH(`cd4_test`.`result_date`)";
-
-		if(!$user_delimiter)
-		{
-			$user_delimiter=1;
-		}
-
-		$sql="call yearly_pima_errors_trend($year,'".$user_delimiter."')";
-
-		$errors_assoc	=	R::getAll($sql);
-
-		$errors_array	= array(0,0,0,0,0,0,0,0,0,0,0,0);
-		
-		$data = array();
-		foreach ($errors_assoc as $error) {
-			$errors_array[($error['month']-1)] = (int)$error['errors'];	
-		}
-		$data['errors']=$errors_array;
-
-		return $data;
-	}
-	public function periodic_test_error_perc($from,$to){
-		$date_delimiter	 	=	"";
-		
-		if(!$from==""||!$from==0||!$from==null){
-
-			$sql="call periodic_test_error_perc('$from','$to')";
-		}
-		// $sql		=	"SELECT 
-		// 					`test`.`total` AS `test_total`, 
-		// 					`error`.`total` AS `error_total` 
-		// 					FROM (SELECT 
-		// 					count(*) AS `total` 
-		// 					FROM `pima_test` 
-		// 					RIGHT JOIN `cd4_test`
-		// 					ON `pima_test`.`cd4_test_id`=`cd4_test`.`id` 
-		// 					WHERE `error_id` = 0 
-		// 					AND `pima_test`.`sample_code`!='NORMAL' 
-		// 					AND `pima_test`.`sample_code` !='QC NORMAL' 
-		// 					AND `pima_test`.`sample_code`!='LOW' 
-		// 					AND `pima_test`.`sample_code` !='QC LOW'
-		// 					AND  1 AND $date_delimiter
-		// 					) AS `test`, 
-		// 					(SELECT 
-		// 					count(*) AS `total` 
-		// 					FROM `pima_test` 
-		// 					RIGHT JOIN `cd4_test`
-		// 					ON `pima_test`.`cd4_test_id`=`cd4_test`.`id` 
-		// 					WHERE `error_id` > 0 
-		// 					AND `pima_test`.`sample_code`!='NORMAL' 
-		// 					AND `pima_test`.`sample_code` !='QC NORMAL' 
-		// 					AND `pima_test`.`sample_code`!='LOW' 
-		// 					AND `pima_test`.`sample_code` !='QC LOW'
-		// 					AND  1 AND $date_delimiter        
-		// 					) AS `error`	
-		// 				";
-		
-		$tests 	=		R::getAll($sql);
-
-		return $tests;
-
-	}
-	public function periodic_facility_pima_errors($from,$to){
-		
-        $user_delimiter ="";
-		$error_results=array();
-
-		$user_group  = $this->session->userdata("user_group_id");
-		$user_filter= $this->session->userdata("user_filter");
-		
-		if($user_group==3 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
-			$user_delimiter 	= 	" `partner_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==6 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
-			$user_delimiter 	= 	" `facility_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==8 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
-			$user_delimiter 	= 	" `district_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==9 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
-			$user_delimiter 	= 	" `region_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}
-       
-		// $sql =	"SELECT 
-		// 				`pima_error`.`error_code`, 
-		// 				`pima_error`.`error_detail`, 
-		// 				COUNT(`pima_test`.`error_id`) as `total` 
-		// 			FROM `pima_error` 
-		// 			LEFT JOIN `pima_test` 
-		// 			ON `pima_test`.`error_id`=`pima_error`.`id`
-		// 			AND `pima_test`.`sample_code`!='NORMAL' 
-		// 				AND `pima_test`.`sample_code` !='QC NORMAL' 
-		// 				AND `pima_test`.`sample_code`!='LOW' 
-		// 				AND `pima_test`.`sample_code` !='QC LOW'
-		// 				AND  1 	
-		// 				LEFT JOIN `cd4_test`
-		// 				ON `pima_test`.`cd4_test_id`=`cd4_test`.`id`
-						  
-		// 				WHERE `cd4_test`.`result_date` between '$from' and '$to' 
-		// 				AND $user_delimiter 
-		// 			GROUP BY `error_code`";
-
-		if(!$from==""||!$from==0||!$from==null){
-
-			if($user_delimiter)
-			{
-				$sql="call periodic_facility_pima_errors('$from','$to','$user_delimiter')";
-			}else
-			{
-				$sql="call periodic_facility_pima_errors('$from','$to','1')";
-			}
-			
-		}
-		$errors_reported_assoc 	=	R::getAll($sql);
-
-		foreach($errors_reported_assoc as $key => $error_reported)
-		{
-			$error_results[$key]["name"][0]=$error_reported['error_detail'].'(Code '.$error_reported['error_code'].')';
-			$error_results[$key]["data"][0]=(int)$error_reported['total'];
-		}
-
-		return $error_results;
-	}
-	function month_categories(){
-		$cat = array();
-		for($i=1;$i<=12;$i++){
-			$cat[]=$this->get_month_name($i);
-		}
-		return $cat;
 	}
 
 }
