@@ -75,6 +75,7 @@ class home_2 extends MY_Controller {
 		// 		echo json_encode($error_results);
 		// 		echo "</pre>";die;
 
+		$data['mapdata']=$this->overview_model_1->home_map_data($this->get_filter_start_date(),$this->get_filter_stop_date());
 
 		$data['error_data']=$error_results;
 		$data['cd4_tests_graph']=$resultant_graph;
@@ -83,6 +84,22 @@ class home_2 extends MY_Controller {
 
 		$data['menus']	= 	$this->overview_model_1->menus(1);
 		$this -> template($data);
+	}
+
+	function county_homepage()
+	{
+		$data['content_view'] = "home/kenyan_map";
+		$data['title'] = "Poc Overview";
+
+		$data['filter']	=	true;
+		$data	=array_merge($data,$this->load_libraries(array('poc','county_home','FusionCharts','dataTables'/*,'highcharts','highmaps'*/)));
+
+		$this->load->model('overview_model_1');
+
+		$data['counties_results']=$this->overview_model_1->county_table_breakdown($this->get_filter_start_date(),$this->get_filter_stop_date());
+
+		$data['menus']	= 	$this->overview_model_1->menus(2);
+		$this -> template($data);		
 	}
 	/* This is the Kenayan Maps */
 	public function get_json_map_data(){

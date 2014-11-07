@@ -6,7 +6,14 @@ class overview_model_1 extends MY_Model{
 			$menus = array(
 							array(	'num'			=>	1,
 									'name'			=>	'National Overview',
-									'url'			=>	base_url()."home",
+									'url'			=>	base_url()."home/home_2",
+									'other'			=>	"",
+						 			'selected'		=>	false,
+						 			'selectedString'=>	"",							
+									),
+							array(	'num'			=>	2,
+									'name'			=>	'County Overview',
+									'url'			=>	base_url()."home/home_2/county_homepage",
 									'other'			=>	"",
 						 			'selected'		=>	false,
 						 			'selectedString'=>	"",							
@@ -219,6 +226,7 @@ class overview_model_1 extends MY_Model{
 											        
 											    ) as `errors_res`
 									";
+									// echo $pima_test_sql;die;
 		$pima_test_res	=	R::getAll($pima_test_sql);
 		
 		//catching division by zero error
@@ -260,59 +268,87 @@ class overview_model_1 extends MY_Model{
 		return $pima_array;
 	}
 
+	/* This function brings all devices that have reported or not broken down by county */
+
+	function county_devices($from,$to)
+	{
+		$county_devices_results=array();
+
+		$sql="call county_devices('".$from."','".$to."')";
+
+		$county_devices_sql=$this->db->query($sql);
+
+		foreach($county_devices_sql->result_array() as $county_view)
+		{
+			$county_devices_results[]=$county_view;
+		}
+
+		$county_devices_sql->next_result();
+		$county_devices_sql->free_result();
+
+		return $county_devices_results;
+	}
+
 	/* This function brings the sql results broken down by county */
 	function national_view_data_detailed($from,$to)
 	{
-		$sql="SELECT vfp.region_id,vfp.region_name as region_name,
-					COUNT(DISTINCT(vfp.facility_pima_serial_num)) as number_of_devices,
-					COUNT(DISTINCT(cd4t.facility_id)) as reported_devices,
-					(COUNT(DISTINCT(cd4t.facility_id))/COUNT(DISTINCT(vfp.facility_pima_serial_num))*100) as percentage_reported,
-					COUNT(cd4t.id)as total_tests,
-					SUM(CASE WHEN `p_t`.`error_id`= '0' THEN 1 ELSE 0 END) AS `valid`,
-					SUM(CASE WHEN `p_t`.`error_id`> '0' THEN 1 ELSE 0 END) AS `errors`,
-					SUM(CASE WHEN `cd4t`.`cd4_count` < 500 AND `p_t`.`error_id`= '0' THEN 1 ELSE 0 END) AS `failed`,
-					SUM(CASE WHEN `cd4t`.`cd4_count` >= 500 AND `p_t`.`error_id`= '0' THEN 1 ELSE 0 END) AS `passed`
-					from v_facility_pima_details vfp
-										LEFT JOIN (SELECT cd4.id,cd4.facility_id,cd4.cd4_count,cd4.valid
-													FROM cd4_test cd4 
-													WHERE `cd4`.`result_date` BETWEEN '".$from."' AND '".$to."' ) 
-										as `cd4t` ON vfp.facility_id=`cd4t`.facility_id
-										LEFT JOIN(SELECT pt.cd4_test_id,pt.error_id from pima_test pt
-													WHERE `pt`.`sample_code`!='NORMAL' 
-													AND `pt`.`sample_code` !='QC NORMAL' 
-													AND `pt`.`sample_code`!='LOW' 
-													AND `pt`.`sample_code` !='QC LOW'
-													) as p_t
-										ON cd4t.id=p_t.cd4_test_id
-					WHERE vfp.facility_equipment_status='Functional' AND p_t.error_id>=0
-					GROUP BY vfp.region_name";
-		//$sql="call map_procedure('".$from."','".$to."')";
+		$detailed_view=array();
 
-		return $results=R::getAll($sql);
+		$sql="call detailed_reporting('".$from."','".$to."')";
+		// $sql="SELECT vfp.region_id,vfp.region_name as region_name,
+		// 		COUNT(cd4t.id)as total_tests,
+		// 		SUM(CASE WHEN `p_t`.`error_id`= '0' THEN 1 ELSE 0 END) AS `valid`,
+		// 		SUM(CASE WHEN `p_t`.`error_id`> '0' THEN 1 ELSE 0 END) AS `errors`,
+		// 		SUM(CASE WHEN `cd4t`.`cd4_count` < 500 AND `p_t`.`error_id`= '0' THEN 1 ELSE 0 END) AS `failed`,
+		// 		SUM(CASE WHEN `cd4t`.`cd4_count` >= 500 AND `p_t`.`error_id`= '0' THEN 1 ELSE 0 END) AS `passed`
+		// 		from v_facility_pima_details vfp
+		// 		LEFT JOIN (SELECT cd4.id,cd4.facility_id,cd4.cd4_count,cd4.valid
+		// 				FROM cd4_test cd4 
+		// 				WHERE `cd4`.`result_date` BETWEEN '".$from."' AND '".$to."' ) 
+		// 		as `cd4t` ON vfp.facility_id=`cd4t`.facility_id
+		// 		LEFT JOIN(SELECT * from pima_test pt
+		// 				) as p_t
+		// 		ON cd4t.id=p_t.cd4_test_id 
+		// 		WHERE vfp.facility_equipment_status='Functional'
+		// 		AND `p_t`.`sample_code`!='NORMAL' 
+		// 		AND `p_t`.`sample_code` !='QC NORMAL' 
+		// 		AND `p_t`.`sample_code`!='LOW' 
+		// 		AND `p_t`.`sample_code` !='QC LOW' 
+		// 		GROUP BY vfp.region_name";
+
+		$detailed_sql=$this->db->query($sql);
+
+		foreach($detailed_sql->result_array() as $view)
+		{
+			$detailed_view[$view['region_name']]=$view;
+		}
+
+		$detailed_sql->next_result();
+		$detailed_sql->free_result();
+		//$detailed_view=R::getAll($sql);
+
+		return $detailed_view;
+
 	}
 	/* This function brings sql results as a summary */
 	function national_view_data_summary($from,$to)
 	{
-		$sql_summary="SELECT
-						COUNT(DISTINCT(vfp.facility_pima_serial_num)) as number_of_devices,
-						COUNT(DISTINCT(cd4t.facility_id)) as reported_devices,
-						(COUNT(DISTINCT(vfp.facility_pima_serial_num))-COUNT(DISTINCT(cd4t.facility_id))) as not_reported,
-						(COUNT(DISTINCT(cd4t.facility_id))/COUNT(DISTINCT(vfp.facility_pima_serial_num))*100) as percentage_reported,
-						(100-COUNT(DISTINCT(cd4t.facility_id))/COUNT(DISTINCT(vfp.facility_pima_serial_num))*100) as percentage_not
-						from v_facility_pima_details vfp
-											LEFT JOIN (SELECT cd4.id,cd4.facility_id,cd4.cd4_count,cd4.valid
-														FROM cd4_test cd4 
-														WHERE `cd4`.`result_date` BETWEEN '".$from."' AND '".$to."' ) 
-											as `cd4t` ON vfp.facility_id=`cd4t`.facility_id
-											LEFT JOIN(SELECT pt.cd4_test_id,pt.error_id from pima_test pt
-															WHERE pt.sample_code!='NORMAL' 
-															AND pt.sample_code !='QC NORMAL' 
-															AND pt.sample_code!='LOW' 
-															AND pt.sample_code !='QC LOW') as p_t
-											ON cd4t.id=p_t.cd4_test_id
-						WHERE vfp.facility_equipment_status='Functional'";
+		$summary_view=array();
 
-		return $summary=R::getAll($sql_summary);
+		$sql="call summary_reporting('".$from."','".$to."')";
+
+		$summary_results_sql=$this->db->query($sql);
+
+		foreach($summary_results_sql->result_array() as $view)
+		{
+			$summary_view[]=$view;
+		}
+
+		$summary_results_sql->next_result();
+		$summary_results_sql->free_result();
+
+		return $summary_view;
+
 	}
 	/* This is a progress bar function to show percentage reported */
 	function national_view_progress_bar_reported($from,$to)
@@ -333,7 +369,7 @@ class overview_model_1 extends MY_Model{
 	/* This function shows counties that have not reported */
 	function national_view_breakdown_not_reported($from,$to)
 	{
-		$summary_results=$this->national_view_data_detailed($from,$to);
+		$county_not_reporting=$this->county_devices($from,$to);
 		$number_not_reporting=$this->national_view_data_summary($from,$to);
 
 		foreach($number_not_reporting as $nor)
@@ -363,7 +399,7 @@ class overview_model_1 extends MY_Model{
 
 		
 
-		foreach($summary_results as $summary_report)
+		foreach($county_not_reporting as $summary_report)
 		{
 			if($summary_report['percentage_reported']<100)
 			{
@@ -399,45 +435,33 @@ class overview_model_1 extends MY_Model{
 		$map = array();
         $datas = array();
 
-		$national_results=$this->national_view_data_detailed($from,$to); //fetch map data
+        $devices_per_county=$this->county_devices($from,$to);
 
-		foreach($national_results as $row)
+		foreach($devices_per_county as $county_device)
 		{
-			$region_id	=	(int)$row["region_id"];
-			$region_name=	$row["region_name"];
-			$total_tests = (int)$row["total_tests"];
-			$less_than500 = (int)$row["failed"];
-			$greater_than500 = (int)$row["passed"];
-			$errors = (int)$row["errors"];
-			$percentage=floor((int)$row['percentage_reported']);
-			$no_of_devices=(int)$row['number_of_devices'];
-			$reported_devices=(int)$row['reported_devices'];
+			/*echo $national_results[$county_device['region_name']]['total_tests']."<br />";*/
+			$region_id	=	(int)$county_device["region_id"];
+			$region_name=	$county_device["region_name"];
+			$percentage=floor((int)$county_device['percentage_reported']);
+			$no_of_devices=(int)$county_device['number_of_devices'];
+			$reported_devices=(int)$county_device['reported_devices'];
+			//echo $percentage;die;
 
-			switch ($percentage) {
-                case ($percentage < 25):
-                    $status = '#FFCC99';
-                    break;
-
-                case ($percentage ==25 || $percentage < 49):
-                    $status = '#FFCCCC';
-                    break;
-
-                case ($percentage == 50 || $percentage < 75):
-                    $status = '#FFFFCC';
-                    break;
-
-                case ($percentage ==75 || $percentage < 99):
-                    $status = '#CBCB96';
-                    break;
-               case ($percentage == 100):
-                    $status = '#B3D7FF';
-                    break;
-             }
-
-			$datas[]=array('id' => $region_id, 'value' => $region_name, 'color' => $status, 
-							'tooltext' => $region_name.' County{br}Percentage Reported: '.$percentage.' %{br}Total No. of Devices: '.$no_of_devices.'{br}Reported Devices: '.$reported_devices.'{br}Total Tests: '.$total_tests.'{br}Total Tests < 500cp/ml: '.$less_than500.'{br}Total Tests >=500cp/ml: '.$greater_than500.'{br}Total Errors: '.$errors);
-
+			if($percentage <25){
+				$status = '#FFCC99';
+			}else if($percentage ==25 || $percentage <49){
+				$status = '#FFCCCC';
+			}else if($percentage==50 || $percentage<75){
+				$status = '#FFFFCC';
+			}else if($percentage==75 || $percentage <99){
+				$status = '#CBCB96';
+			}elseif ($percentage==100) {
+				$status = '#B3D7FF';
+			}
+			$datas[]=array('id' => $region_id, 'value' => $region_name, 'color' => $status,
+			'tooltext'=>$region_name.' County{br}Device Percentage Reporting: '.$percentage.' %{br}Total No. of Devices: '.$no_of_devices.'{br}Reported Devices: '.$reported_devices.'');
 		}
+
 		/* Map settings and aesthetics */
 		$map[]=array("showBevel" => "0",
 					 "showLegend"=>"1",
@@ -461,9 +485,24 @@ class overview_model_1 extends MY_Model{
 					 "showExportDataMenuItem"=>"1");
 		$styles[] = array("name"=>"myShadow", "type"=>"Shadow","distance"=>"1");
 		$finalMap = array('map' => $map, 'data' => $datas, 'styles' => $styles);
+
 		$finalMap = json_encode($finalMap);
         
-       echo $finalMap;die;
+       	return $finalMap;
+	}
+
+	function county_table_breakdown($from,$to)
+	{	
+		$county_table_breakdown=array();
+
+		$national_results=$this->national_view_data_detailed($from,$to); //fetch data
+
+		foreach($national_results as $county_result)
+		{
+			$county_table_breakdown[]=$county_result;
+		}
+
+		return $county_table_breakdown;
 	}
 
 
