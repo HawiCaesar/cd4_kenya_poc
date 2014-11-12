@@ -16,8 +16,7 @@ class home_2 extends MY_Controller {
 		$data	=array_merge($data,$this->load_libraries(array('poc','home','FusionCharts','dataTables','highcharts','highmaps')));
 
 		$this->load->model('overview_model_1');			
-		//$data['devices_tests_totals']= $this->overview_model_1->devices_tests_totals($this->get_filter_start_date(),$this->get_filter_stop_date(),$this->session->userdata("user_filter_used"));
-		$data['pima_statistics']= $this->overview_model_1->pima_statistics($this->get_filter_start_date(),$this->get_filter_stop_date(),$this->session->userdata("user_filter_used"));
+		$data['pima_statistics']= $this->overview_model_1->pima_statistics($this->get_filter_start_date(),$this->get_filter_stop_date());
 		
 		$resultant_graph = array();
 		$resultant_pie_chart=array();
@@ -62,9 +61,9 @@ class home_2 extends MY_Controller {
 
 		array_push($resultant_pie_chart,$percenatge_tests_and_errors);
 
-		// echo "<pre>";
-		// 		print_r($resultant_graph);
-		// 		echo "</pre>";die;
+				
+				//echo json_encode($categories);die;
+
 
 		// $error_categories=array();
 		// $error_bar_graph=array();
@@ -75,8 +74,6 @@ class home_2 extends MY_Controller {
 		// 		echo json_encode($error_results);
 		// 		echo "</pre>";die;
 
-		$data['mapdata']=$this->overview_model_1->home_map_data($this->get_filter_start_date(),$this->get_filter_stop_date());
-
 		$data['error_data']=$error_results;
 		$data['cd4_tests_graph']=$resultant_graph;
 		$data['tests_errors_pie_chart']=$resultant_pie_chart;
@@ -86,28 +83,12 @@ class home_2 extends MY_Controller {
 		$this -> template($data);
 	}
 
-	function county_homepage()
-	{
-		$data['content_view'] = "home/kenyan_map";
-		$data['title'] = "Poc Overview";
-
-		$data['filter']	=	true;
-		$data	=array_merge($data,$this->load_libraries(array('poc','county_home','FusionCharts','dataTables'/*,'highcharts','highmaps'*/)));
-
-		$this->load->model('overview_model_1');
-
-		$data['counties_results']=$this->overview_model_1->county_table_breakdown($this->get_filter_start_date(),$this->get_filter_stop_date());
-
-		$data['menus']	= 	$this->overview_model_1->menus(2);
-		$this -> template($data);		
-	}
 	/* This is the Kenayan Maps */
 	public function get_json_map_data(){
 		$this->load->model('overview_model_1');
 		echo $this->overview_model_1->home_map_data($this->get_filter_start_date(),$this->get_filter_stop_date());
 
 	}
-
 	/* Progress bar functions */
 	public function national_progress_bar_reported()
 	{
