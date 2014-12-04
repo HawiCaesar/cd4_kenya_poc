@@ -33,7 +33,7 @@ public function get_county_id($county_name_value)
 
 /*...................................... Start of PDF Functions .......................................................*/
 
-	function year_month_report($Year,$Monthly,$all,$facility,$device,$from_month,$end_month,$report_type,$login_id,$county_name_value)
+	function year_month_report($all,$facility,$device,$from_month,$end_month,$report_type,$login_id,$county_name_value)
 	{
 
 		$county_id="";
@@ -230,7 +230,7 @@ public function get_county_id($county_name_value)
 
 	}
 
-	function year_quarter_report($yearQ,$quarter,$q_no,$all,$facility,$device,$from_month,$end_month,$report_type,$login_id,$county_name_value)
+	function year_quarter_report($all,$facility,$device,$from_month,$end_month,$report_type,$login_id,$county_name_value)
 	{
 		$custom="";
 		$county_id="";
@@ -428,7 +428,7 @@ public function get_county_id($county_name_value)
 		
 	}
 
-	function year_biannual_report($yearB,$biannual,$b_no,$all,$facility,$device,$from_month,$end_month,$report_type,$login_id,$county_name_value)
+	function year_biannual_report($all,$facility,$device,$from_month,$end_month,$report_type,$login_id,$county_name_value)
 	{
 		$custom="";
 		$county_id="";
@@ -628,7 +628,7 @@ public function get_county_id($county_name_value)
 	}
 
 
-	function year_report($yearo,$all,$facility,$device,$from_month,$end_month,$report_type,$login_id,$county_name_value)
+	function year_report($all,$facility,$device,$from_month,$end_month,$report_type,$login_id,$county_name_value)
 	{
 		$custom="";
 		$county_id="";
@@ -1020,7 +1020,7 @@ public function get_county_id($county_name_value)
 		return $pdf_data;
 	}
 
-	function tests_less_than350_month($year,$monthly,$from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value)
+	function tests_less_than350_month($monthly,$from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value)
 	{
 		$custom="";
 		$county_id="";
@@ -1121,7 +1121,7 @@ public function get_county_id($county_name_value)
 		return $pdf_data;	
 	}
 
-	function tests_less_than350_quarter($year,$quarter,$q_no,$from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value)
+	function tests_less_than350_quarter($from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value)
 	{
 		$custom="";
 		$county_id="";
@@ -1220,7 +1220,7 @@ public function get_county_id($county_name_value)
 	return $pdf_data;			
 	}
 
-	function tests_less_than350_bian($year,$bian,$b_no,$from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value)
+	function tests_less_than350_bian($bian,$b_no,$from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value)
 	{
 		$custom="";
 		$county_id="";
@@ -1320,7 +1320,7 @@ public function get_county_id($county_name_value)
 	return $pdf_data;	
 	}
 
-	function tests_less_than350_yearly($yearo,$from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value)
+	function tests_less_than350_yearly($from,$to,$facility,$device,$all,$report_type,$login_id,$county_name_value)
 	{
 		$custom="";
 		$county_id="";

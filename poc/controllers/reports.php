@@ -83,7 +83,7 @@ class reports extends MY_Controller {
 /*================================= Report Specs Function ======================================================*/
 	function get_report()
 	{	
-		ini_set('max_execution_time', 900);
+		ini_set('max_execution_time', 1600);
 
 		$login_id=$this->session->userdata('id');//login session
 		$user_group=$this->session->userdata('user_group_id');//user access level session
@@ -226,22 +226,28 @@ class reports extends MY_Controller {
 			 	if($quarterly==1)
 			 	{		 		
 			 		$from_month=$yearQ.'-01-01';
-			 		$end_month=$yearQ.'-04-30';
-			 		$quarter="January - April";
+				 	$end_month=$yearQ.'-03-31';
+			 		$quarter="January - March";
 
 			 	}
 			 	else if($quarterly==2)
 			 	{
-			 		$from_month=$yearQ.'-05-01';
-			 		$end_month=$yearQ.'-08-31';
-			 		$quarter="May - August";
+			 		$from_month=$yearQ.'-04-01';
+				 	$end_month=$yearQ.'-06-30';
+			 		$quarter="April - June";
 			 	}
 			 	else if($quarterly==3)
 			 	{
-			 		$from_month=$yearQ.'-09-01';
-			 		$end_month=$yearQ.'-12-31';
-			 		$quarter="September - December";
+			 		$from_month=$yearQ.'-07-01';
+				 	$end_month=$yearQ.'-09-30';
+			 		$quarter="July - September";
 			 	}
+			 	else if($quarterly==4)
+			 	{
+			 		$from_month=$yearQ.'-10-01';
+			 		$end_month=$yearQ.'-12-31';
+			 		$quarter="October - December";
+			 	}	
 
 			 	if($report_type==3)// Tests < 350 
 		 		{
@@ -697,21 +703,28 @@ class reports extends MY_Controller {
 					if($quarterly==1)
 					{
 						$from_month=$yearQ.'-01-01';
-				 		$end_month=$yearQ.'-04-30';
-				 		$quarter="January - April";
+				 		$end_month=$yearQ.'-03-31';
+				 		$quarter="January - March";
 				 	}
 				 	else if($quarterly==2)
 					{
-						$from_month=$yearQ.'-05-01';
-				 		$end_month=$yearQ.'-08-31';
-				 		$quarter="May - August";
+						$from_month=$yearQ.'-04-01';
+				 		$end_month=$yearQ.'-06-30';
+				 		$quarter="April - June";
 
 				 	}
 				 	else if($quarterly==3)
 					{
-						$from_month=$yearQ.'-09-01';
+						$from_month=$yearQ.'-07-01';
+				 		$end_month=$yearQ.'-09-30';
+				 		$quarter="July - September";
+
+				 	}
+				 	else if($quarterly==4)
+					{
+						$from_month=$yearQ.'-10-01';
 				 		$end_month=$yearQ.'-12-31';
-				 		$quarter="September - December";
+				 		$quarter="October - December";
 
 				 	}	
 
@@ -1000,24 +1013,23 @@ class reports extends MY_Controller {
 					if($quarterly==1)
 				 	{			 		
 				 		$from_month=$yearQ.'-01-01';
-				 		$end_month=$yearQ.'-04-30';
-				 		$quarter="January - April";
-				 		$end=5;
+				 		$end_month=$yearQ.'-03-31';
 
 				 	}
 				 	else if($quarterly==2)
 				 	{
-				 		$from_month=$yearQ.'-05-01';
-				 		$end_month=$yearQ.'-08-31';
-				 		$quarter="May - August";
-				 		$end=9;
+				 		$from_month=$yearQ.'-04-01';
+				 		$end_month=$yearQ.'-06-30';
 				 	}
 				 	else if($quarterly==3)
 				 	{
+				 		$from_month=$yearQ.'-07-01';
+				 		$end_month=$yearQ.'-09-30';
+				 	}
+				 	else if($quarterly==4)
+				 	{
 				 		$from_month=$yearQ.'-09-01';
 				 		$end_month=$yearQ.'-12-31';
-				 		$quarter="September - December";
-				 		$end=13;
 
 				 	}
 				 	for($i=1; $i< $end;$i++)
@@ -1079,26 +1091,13 @@ class reports extends MY_Controller {
 					$month_limit_begin=date('m',strtotime($Fromdate));//month limit
 					$month_limit_end=date('m',strtotime($Todate));
 
-					$year_begin=date('Y',strtotime($Fromdate));//year limit
-					$year_end=date('Y',strtotime($Todate));
-
 					$new_from_date=date('d-F-Y',strtotime($Fromdate));
 					$new_to_date=date('d-F-Y',strtotime($Todate));
 
-					// $category[]=$new_from_date;
-					// $category[]=$new_to_date;
-					// $c="Customized_Dates";
-					//$category[]=array('Customized_Dates');
 					$category[]=$this->reports_model->GetMonthName($month_limit_begin);
 					$category[]=$this->reports_model->GetMonthName($month_limit_end);
-					// print_r($category);
-					// die;
 
-					// array_push($category,$new_from_date);
-					// array_push($category,$new_to_date);
-
-
-					$test_results=$this->reports_charts_model->customized_graph_view($month_limit_begin,$month_limit_end,$year_begin,$year_end,$Facility,$Device,$all_data,$login_id,$report_type);
+					$test_results=$this->reports_charts_model->customized_graph_view($Fromdate,$Todate,$Facility,$Device,$all_data,$login_id,$report_type);
 					
 					$data['customized']=1;//set a subtitle
 					$data['customized_value']=$new_from_date;

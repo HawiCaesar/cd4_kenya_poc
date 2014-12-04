@@ -156,9 +156,10 @@
 											<span class="input-group-addon" style="width: 40%;"><b style="color:red;">*</b> Quarterly :</span>
 											<select  class="textfield form-control" style='border-radius:0px 5px 5px 0px;' name="quarterly" >
 							                   	<option value="">*Select a Quarter*</option>
-							                   	<option value="1">January - April</option>
-                              					<option value="2">May - August</option>
-                              					<option value="3">September - December</option>                 					
+							                   	<option value="1">January - March</option>
+                              					<option value="2">April - June</option>
+                              					<option value="3">July - September</option>
+                              					<option value="4">October - December</option>                 					
 							                </select>
 							                <select  class="textfield form-control" name="YearQ" >
 							                   	<option value="">*Select Year*</option>

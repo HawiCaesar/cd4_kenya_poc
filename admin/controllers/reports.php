@@ -109,7 +109,7 @@ class reports extends MY_Controller {
 
 	function get_reports()
 	{
-		ini_set('max_execution_time', 900);
+		ini_set('max_execution_time', 1600);
 
 		$this->load->model('reports_model');//load reports_model
 		
@@ -201,15 +201,15 @@ class reports extends MY_Controller {
 		 	
 			 	if($report_type==3)// Tests < 350 
 			 	{
-			 		$pdf_data=$this->reports_model->tests_less_than350_month($YearM,$monthly,$from_month,$end_month,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value);	
+			 		$pdf_data=$this->reports_model->tests_less_than350_month($from_month,$end_month,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value);	
 			 	}
-			 	else if($report_type==4)//Percentage Errors
-			 	{
-			 		$this->reports_model->percentage_error_by_month($YearM,$monthly,$from_month,$end_month,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value);
-			 	}
+			 	// else if($report_type==4)//Percentage Errors
+			 	// {
+			 	// 	$this->reports_model->percentage_error_by_month($YearM,$monthly,$from_month,$end_month,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value);
+			 	// }
 				else if($report_type==1 || $report_type==2 || $report_type==0)// Tests, Errors, Both Tests and Errors
 				{
-					$pdf_data=$this->reports_model->year_month_report($YearM,$monthly,$all_data,$Facility,$Device,$from_month,$end_month,$report_type,$login_id,$county_name_value);
+					$pdf_data=$this->reports_model->year_month_report($all_data,$Facility,$Device,$from_month,$end_month,$report_type,$login_id,$county_name_value);
 				}
 
 				$the_month=$this->reports_model->GetMonthName($monthly);
@@ -305,35 +305,42 @@ class reports extends MY_Controller {
 			 	if($quarterly==1)
 			 	{			 		
 			 		$from_month=$yearQ.'-01-01';
-			 		$end_month=$yearQ.'-04-30';
-			 		$quarter="January - April";
+			 		$end_month=$yearQ.'-03-31';
+			 		$quarter="January - March";
 
 			 	}
 			 	else if($quarterly==2)
 			 	{
-			 		$from_month=$yearQ.'-05-01';
-			 		$end_month=$yearQ.'-08-31';
-			 		$quarter="May - August";
+			 		$from_month=$yearQ.'-04-01';
+			 		$end_month=$yearQ.'-06-30';
+			 		$quarter="April - June";
 
 			 	}
 			 	else if($quarterly==3)
 			 	{
-			 		$from_month=$yearQ.'-09-01';
+			 		$from_month=$yearQ.'-07-01';
+			 		$end_month=$yearQ.'-09-30';
+			 		$quarter="July - September";
+
+			 	}
+			 	else if($quarterly==4)
+			 	{
+			 		$from_month=$yearQ.'-10-01';
 			 		$end_month=$yearQ.'-12-31';
-			 		$quarter="September - December";
+			 		$quarter="October - December";
 
 			 	}
 			 	if($report_type==3)// Tests < 350 
 		 		{
-		 			$pdf_data=$this->reports_model->tests_less_than350_quarter($yearQ,$quarter,$quarterly,$from_month,$end_month,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value);
+		 			$pdf_data=$this->reports_model->tests_less_than350_quarter($from_month,$end_month,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value);
 		 		}
-		 		else if($report_type==4)
-		 		{
-		 			$this->reports_model->percentage_error_by_quarter($yearQ,$quarter,$quarterly,$from_month,$end_month,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value);
-		 		}
+		 		// else if($report_type==4)
+		 		// {
+		 		// 	$this->reports_model->percentage_error_by_quarter($yearQ,$quarter,$quarterly,$from_month,$end_month,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value);
+		 		// }
 				else if($report_type==1 || $report_type==2 || $report_type==0)// Tests or Errors or Both Tests and Errors
 				{	
-					$pdf_data=$this->reports_model->year_quarter_report($yearQ,$quarter,$quarterly,$all_data,$Facility,$Device,$from_month,$end_month,$report_type,$login_id,$county_name_value);
+					$pdf_data=$this->reports_model->year_quarter_report($all_data,$Facility,$Device,$from_month,$end_month,$report_type,$login_id,$county_name_value);
 				}
 
 				if($Facility!="")//check if facility was selected
@@ -429,15 +436,15 @@ class reports extends MY_Controller {
 
 				if($report_type==3)// Tests < 350 
 		 		{
-		 			$pdf_data=$this->reports_model->tests_less_than350_bian($yearB,$biannual_name,$biannual,$from_month,$end_month,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value);
+		 			$pdf_data=$this->reports_model->tests_less_than350_bian($biannual_name,$biannual,$from_month,$end_month,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value);
 		 		}
-		 		else if($report_type==4)
-		 		{
-		 			$this->reports_model->percentage_error_by_biannual($yearB,$biannual_name,$biannual,$from_month,$end_month,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value);
-		 		}
+		 		// else if($report_type==4)
+		 		// {
+		 		// 	$this->reports_model->percentage_error_by_biannual($yearB,$biannual_name,$biannual,$from_month,$end_month,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value);
+		 		// }
 				else if($report_type==1 || $report_type==2 || $report_type==0)// Tests or Errors or Both Tests and Errors
 				{
-					$pdf_data=$this->reports_model->year_biannual_report($yearB,$biannual_name,$biannual,$all_data,$Facility,$Device,$from_month,$end_month,$report_type,$login_id,$county_name_value);
+					$pdf_data=$this->reports_model->year_biannual_report($biannual_name,$biannual,$all_data,$Facility,$Device,$from_month,$end_month,$report_type,$login_id,$county_name_value);
 				}
 
 				if($Facility!="")// check if facility selected
@@ -519,15 +526,15 @@ class reports extends MY_Controller {
 
 				if($report_type==3)// Tests < 350 
 				{
-					$pdf_data=$this->reports_model->tests_less_than350_yearly($Yearo,$from_month,$end_month,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value);
+					$pdf_data=$this->reports_model->tests_less_than350_yearly($from_month,$end_month,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value);
 				}
-				if($report_type==4)
-				{
-					$this->reports_model->percentage_error_by_year($Yearo,$from_month,$end_month,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value);
-				}
+				// if($report_type==4)
+				// {
+				// 	$this->reports_model->percentage_error_by_year($Yearo,$from_month,$end_month,$Facility,$Device,$all_data,$report_type,$login_id,$county_name_value);
+				// }
 				else if($report_type==1 || $report_type==2 || $report_type==0)// Tests or Errors or Both Tests and Errors
 				{
-					$pdf_data=$this->reports_model->year_report($Yearo,$all_data,$Facility,$Device,$from_month,$end_month,$report_type,$login_id,$county_name_value);
+					$pdf_data=$this->reports_model->year_report($all_data,$Facility,$Device,$from_month,$end_month,$report_type,$login_id,$county_name_value);
 				}
 
 				if($Facility!="")
@@ -852,23 +859,31 @@ class reports extends MY_Controller {
 				if($yearQ!="" && $quarterly!="")// Quarter and Year chosen
 				{
 					if($quarterly==1)
-					{
-						$from_month=$yearQ.'-01-01';
-				 		$end_month=$yearQ.'-04-30';
-				 		$quarter="January - April";
+				 	{			 		
+				 		$from_month=$yearQ.'-01-01';
+				 		$end_month=$yearQ.'-03-31';
+				 		$quarter="January - March";
+
 				 	}
 				 	else if($quarterly==2)
-					{
-						$from_month=$yearQ.'-05-01';
-				 		$end_month=$yearQ.'-08-31';
-				 		$quarter="May - August";
+				 	{
+				 		$from_month=$yearQ.'-04-01';
+				 		$end_month=$yearQ.'-06-30';
+				 		$quarter="April - June";
 
 				 	}
 				 	else if($quarterly==3)
-					{
-						$from_month=$yearQ.'-09-01';
+				 	{
+				 		$from_month=$yearQ.'-07-01';
+				 		$end_month=$yearQ.'-09-30';
+				 		$quarter="July - September";
+
+				 	}
+				 	else if($quarterly==4)
+				 	{
+				 		$from_month=$yearQ.'-10-01';
 				 		$end_month=$yearQ.'-12-31';
-				 		$quarter="September - December";
+				 		$quarter="October - December";
 
 				 	}	
 				 		if($all_data>2)
@@ -1157,25 +1172,24 @@ class reports extends MY_Controller {
 					if($quarterly==1)
 				 	{			 		
 				 		$from_month=$yearQ.'-01-01';
-				 		$end_month=$yearQ.'-04-30';
-				 		$quarter="January - April";
-				 		$end=5;
+				 		$end_month=$yearQ.'-03-31';
 
 				 	}
 				 	else if($quarterly==2)
 				 	{
-				 		$from_month=$yearQ.'-05-01';
-				 		$end_month=$yearQ.'-08-31';
-				 		$quarter="May - August";
-				 		$end=9;
+				 		$from_month=$yearQ.'-04-01';
+				 		$end_month=$yearQ.'-06-30';
 				 	}
 				 	else if($quarterly==3)
 				 	{
-				 		$from_month=$yearQ.'-09-01';
+				 		$from_month=$yearQ.'-07-01';
+				 		$end_month=$yearQ.'-09-30';
+				 	}
+				 	else if($quarterly==4)
+				 	{
+				 		$from_month=$yearQ.'-10-01';
 				 		$end_month=$yearQ.'-12-31';
-				 		$quarter="September - December";
-				 		$end=13;
-
+				 		
 				 	}
 				 	for($i=1; $i< $end;$i++)
 				 	{
@@ -1303,7 +1317,12 @@ class reports extends MY_Controller {
 			 		array_push($result,$series_percentage_successful);
 		 			array_push($result,$series_percentage_errors);
 			 	}
+
 				$data['graph_data']=$result;
+
+				// echo "<pre>";
+				// print_r($result);
+				// echo "</pre>";die;
 				$data['categories']=$category;
 
 
