@@ -1,12 +1,11 @@
-<div class="row">
-	<div class="tabbable span12">
-			<div class="tab-pane  active" id="tabs1-pima">					
+<div class="row"> <!-- first row -->
+			<div class="col-md-4" style="">					
 				<table>
 					<tr>
 						<td><br/>
 							<div style="width:400px;border-radius:-15px;color:#088A29;float:left;margin-left:-20px;"><center><b>DEVICE REPORTING (Hover On Map To View Statistics)<br /><?php  echo $date_filter_desc;?></b></center></div>
 							<br />
-							<div id="legend" style="background-color:#e9e9e9;height:40px;padding:10px;margin-left:-13px;">
+							<div id="legend" style="background-color:#e9e9e9;height:40px;padding:10px;margin-left:-13px;max-width:400px;">
 								<div style="width:50px;border-radius:-15px;background-color:#F7F7F7;color:#000;float:left;margin-left:50px;"><center>NO PIMA</center></div>
 								<div style="width:50px;border-radius:-15px;background-color:#FFCC99;color:#000;float:left;"><center>< 25%</center></div>
 								<div style="width:50px;border-radius:-15px;background-color:#FFCCCC;color:#000;float:left;"><center>25-50%</center></div>
@@ -21,7 +20,7 @@
 									 	
 										 $.ajax({
 										          type:"POST",        
-										           url:"<?php echo base_url('home/home_2/get_json_map_data');?>",
+										           url:"<?php echo base_url('home/home/get_json_map_data');?>",
 										           success:function(data) {
 									            		mapdata = jQuery.parseJSON(data);									
 										 				map.setJSONData(mapdata);
@@ -32,11 +31,12 @@
 								</script>
 								
 						</td>
-						<td style="height:130px;width:30%;vertical-align: top;">
-							<center>
-								<!-- <div class="section-title" ><center>% CD4 Tests for Year <?php //echo $date_filter_year;?></center></div>
-								<div id="yearlyTestReportingRates" style="align:center;"></div> -->
-								<script type="text/javascript">
+					</tr>
+				</table>
+			</div>
+			<div class="row" style="">
+				<div class="col-md-5" style="padding:0px;">
+					<script type="text/javascript">
 								    $(function () {
 							            $('#cd4_tests_year').highcharts({
 							                title: {
@@ -71,30 +71,10 @@
 							            });
 							        });							    
 							    </script>
-							    <div id="cd4_tests_year" style="min-width: 500px; height: 250px; margin: 0 auto;border:3px solid #ABC;"></div>
-						    </center>  
-						   <!--  <center> -->
-								<div class="section-title" ><center>Statistics for : <?php  echo $date_filter_desc;?></center></div>
-								<table class="data-table" style=" margin-left:0px;">
-				                    <tbody>
-				                    	<?php 
-				                    		foreach ($pima_statistics as $pima_s ) { 
-				                    	?>
-						                <tr>						                	
-						                    <td><center><?php echo $pima_s['caption'];?></center></td>
-						                    <td style="font-family:Georgia, 'Times New Roman', Times, serif ;background-color: #F2F2F2"><center><?php echo $pima_s['data'];?></center></td>					                   					                   
-						                </tr>
-						                <?php 
-				                    		} 
-				                    	?> 
-				           	 		</tbody>
-				        		</table>
-							<!-- </center>  -->
-						</td>
-						<td style="height:130px;width:30%;vertical-align: top;">
-						    <!-- <div class="section-title" ><center>Device Errors For: <?php  //echo $date_filter_desc;?></center></div>
-								<div id="periodicTestErrorPerc" style="align:center;"></div> -->
-								<script type="text/javascript">
+							    <div id="cd4_tests_year" style="min-width: 490px; height: 250px; margin: 0 auto;border:3px solid #ABC;"></div>
+				</div>
+				<div class="col-md-2">
+					<script type="text/javascript">
 								    $(function () {
 									    $('#pie_tests_errors').highcharts({
 									        chart: {
@@ -134,41 +114,59 @@
 									});				    
 							    </script>  
 							    <div id="pie_tests_errors" style="min-width: 300px; height: 250px; margin: 0 auto;border:3px solid #ABC;"></div>
-							<center>
-								<script type="text/javascript">
-										$.ajax({
-											          type:"POST",        
-											          url:"<?php echo base_url('home/home_2/national_progress_bar_reported');?>",
-											          success:function(data) {
-									            			$('#reported').append(data);
+				</div>
+				<div class="col-md-5" style="padding:0px;">
+					<div class="section-title" ><center>Statistics for : <?php  echo $date_filter_desc;?></center></div>
+						<table class="data-table" style=" margin-left:0px;">
+		                    <tbody>
+		                    	<?php 
+		                    		foreach ($pima_statistics as $pima_s ) { 
+		                    	?>
+				                <tr>						                	
+				                    <td><center><?php echo $pima_s['caption'];?></center></td>
+				                    <td style="font-family:Georgia, 'Times New Roman', Times, serif ;background-color: #F2F2F2"><center><?php echo $pima_s['data'];?></center></td>					                   					                   
+				                </tr>
+				                <?php 
+		                    		} 
+		                    	?> 
+		           	 		</tbody>
+		        		</table>
+				</div>
+				<div class="col-md-2">
+					<script type="text/javascript">
+						$.ajax({
+							          type:"POST",        
+							          url:"<?php echo base_url('home/home/national_progress_bar_reported');?>",
+							          success:function(data) {
+					            			$('#reported').append(data);
 
-													}
-												});
+									}
+								});
 
-								</script>
-								<div class="section-title"><center>% Devices Reported: <?php  echo $date_filter_desc;?></center></div>
-								<div class="progress" id="reported" style='height:50px'>
-								</div>
-								<script type="text/javascript">
-										$.ajax({
-											          type:"POST",        
-											          url:"<?php echo base_url('home/home_2/national_progress_bar_not_reported');?>",
-											          success:function(data) {
-									            			$('#notreported').append(data);
-													}
-												});
+					</script>
+					<div class="section-title" style="min-width:300px;"><center>% Devices Reported: <?php  echo $date_filter_desc;?></center></div>
+					<div class="progress" id="reported" style='height:50px; min-width:300px;'>
+					</div>
+					<script type="text/javascript">
+							$.ajax({
+								          type:"POST",        
+								          url:"<?php echo base_url('home/home_2/national_progress_bar_not_reported');?>",
+								          success:function(data) {
+						            			$('#notreported').append(data);
+										}
+									});
 
-								</script>
-								<div class="section-title"><center>% Devices NOT Reported: <?php  echo $date_filter_desc;?></center></div>
-								<div style="color:red">Click Percentage Value to view counties not reported</div>
-								<div class="progress" id="notreported" style='height:50px'>
-								</div>
-						    </center>
-						</td>
-						
-					</tr>
-				</table>
-				<div class="section-title" ><center>Errors encountered For: <?php echo $date_filter_desc;?></center></div>
+					</script>
+					<div class="section-title" style="min-width:300px;"><center>% Devices NOT Reported: <?php  echo $date_filter_desc;?></center></div>
+					<div style="color:red;min-width:300px;">Click Percentage Value to view counties not reported</div>
+					<div class="progress" id="notreported" style='height:50px;min-width:300px;'>
+					</div>
+				</div>
+			</div>
+</div><!--  end of row -->
+<div class="row">
+	<div class="col-md-16">
+		<div class="section-title" ><center>Errors encountered For: <?php echo $date_filter_desc;?></center></div>
 								<div id="chartTestDataColumn" style="align:center;"></div>
 								<script type="text/javascript">
 								     $(function () {
@@ -219,32 +217,30 @@
 			    		<div id="errorscolumn">
 			    		</div>
 			    	</div>
-			</div>
-			<script type="text/javascript">
-					$.ajax({
-						          type:"POST",        
-						          url:"<?php echo base_url('home/home_2/national_breakdown_not_reported');?>",
-						          success:function(data) {
-				            			$('#response').append(data);
-								}
-							});
+	</div>
+</div>
+<script type="text/javascript">
+	$.ajax({
+		          type:"POST",        
+		          url:"<?php echo base_url('home/home/national_breakdown_not_reported');?>",
+		          success:function(data) {
+            			$('#response').append(data);
+				}
+			});
 
-			</script>
-			<!-- non reported modal -->
-			<div class="modal fade" id="nrep" >
-			  	<div class="modal-dialog" style="width:47%;margin-bottom:2px;">
-			    	<div class="modal-content" >
-			      		<div class="modal-header">
-			        	<h4>Counties Not Reported<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button></h4>
-			      		</div>
-			      			<div id="response"></div>   				      		
-			      		<div class="modal-footer" style="height:11px;padding-top:11px;">
-			      			<?php echo $this->config->item("copyrights");?>
-			      		</div> 
-			   		</div><!-- /.modal-content -->
-				</div><!-- /.modal-dialog -->
-			</div><!-- /.modal -->
-		<!-- END non reported modal -->				
-		<!-- </div> --><!-- /.tab-content -->
-	</div><!-- /.tabbable -->
-</div><!-- /.row -->
+</script>
+<!-- non reported modal -->
+	<div class="modal fade" id="nrep" >
+	  	<div class="modal-dialog" style="width:47%;margin-bottom:2px;">
+	    	<div class="modal-content" >
+	      		<div class="modal-header">
+	        	<h4>Counties Not Reported<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button></h4>
+	      		</div>
+	      			<div id="response"></div>   				      		
+	      		<div class="modal-footer" style="height:11px;padding-top:11px;">
+	      			<?php echo $this->config->item("copyrights");?>
+	      		</div> 
+	   		</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+<!-- END non reported modal -->
