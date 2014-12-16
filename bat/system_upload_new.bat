@@ -1,2 +1,3 @@
-start "Firefox" "C:\Program Files (x86)\Mozilla Firefox\firefox.exe" http://localhost/cd4Poc/uploads/server_upload
-call stop_firefox.bat
+cd c:\xampplite\php
+php.exe -f c:\xampplite\htdocs\cd4Poc\index.php uploads uploads server_upload
+exit
