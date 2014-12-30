@@ -11,10 +11,57 @@ function __construct()
 	$this->load->library('email');
 	$this->load->model('send_mail_model');
 }
-/* |==================== Monthly Critical Patients Email function END =================| */
 
+function daemon_casco()
+{
+	ini_set('max_execution_time', 1900);
+
+	for($i=84; $i<=129;$i++)
+	{
+		$credentials=$this->send_mail_model->casco_cred($i);
+
+		//$file=$this->config->item('server_root').'assets/files/CD4_UserGuide_Final.pdf';
+
+		foreach($credentials as $details)
+		{
+			$this->email->from('cd4poc@gmail.com', 'CD4 POC Notification');
+			$this->email->to($details['email']);//send to specific receiver
+			$this->email->bcc('tngugi@clintonhealthaccess.org','brianhawi92@gmail.com');
+			
+			$this->email->subject('CD4 Poc Credentials'); //subject
+			//$this->email->attach($file);//attach the facility pdf document
+
+			 $message="Hi ".$details['name'].".<br /><br />Please note that you can now access the CD4 Poc tool using the following credentials listed below
+								<br /><br />Username - <b>".$details['username']."</b>
+								<br /><br />Password - <b>123456</b>
+								<br /><br /> 
+												1) You can change your password at your own discretion.											
+								<br /><br />	2) You can access the system by following link below.
+								<br /><br /><b>http://www.nascop.org/cd4Poc/</b>
+								<br /><br />CD4 Support Team
+								<br /><br />--
+								<br /><br />Please do NOT reply to this message as it is sent from an unattended mailbox.";
+
+			$this->email->message($message);// the message
+
+			if($this->email->send())//send email and check if the email was sent
+			{	
+				$this->email->clear(TRUE);//clear any attachments on the email
+			}
+			else 
+			{
+				show_error($this->email->print_debugger());//show error message
+			}
+		}
+
+		 
+	}
+}
+/* |==================== Monthly Critical Patients Email function =================| */
 function daemon_critical_monthly_email()
 {
+	ini_set('max_execution_time', 2000);
+
 	$month=date('m');
 	$year=date('Y');
 
@@ -37,10 +84,6 @@ function daemon_critical_monthly_email()
 	}
 
 	$pdf_results="";
-	$all_data="";
-	$login_id="";
-	$report_type=3;
-	$Device="";
 	$email_receipients=array();
 
 	//CHAI team
@@ -52,6 +95,12 @@ function daemon_critical_monthly_email()
 					 'kanyonga.nicholas@gmail.com'
 					 );
 	//$CHAI_team=array('brianhawi92@gmail.com','kanyonga.nicholas@gmail.com');
+
+	$table_style='<style>table.data-table {border: 1px solid #DDD;margin: 10px auto;border-spacing: 0px;}
+						table.data-table th {border: none;color: #036;text-align: center;border: 1px solid #DDD;border-top: none;max-width: 450px;}
+						table.data-table td, table th {padding: 4px;}
+						table.data-table td {border: none;border-left: 1px solid #DDD;border-right: 1px solid #DDD;height: 30px;margin: 0px;border-bottom: 1px solid #DDD;}
+					</style>';
 
 	$img=$this->config->item('server_root').'img/nascop.jpg';// Nascop Logo
 
@@ -101,15 +150,15 @@ function daemon_critical_monthly_email()
 			$PDF_content.='</tr>';
 			$PDF_content.='</table><br />';
 
-			$PDF_content.='<table width="480" border="1" align="center">';
+			$PDF_content.='<table width="480" border="0" align="center" class="data-table">';
 			$PDF_content.='<tr>';
-			$PDF_content.='<th bgcolor="#990000" style="color:#FFF;"># Tests < 500</th>';
+			$PDF_content.='<th bgcolor="#eb9316" style="color:#FFF;"># Tests < 500</th>';
 			$PDF_content.='<th bgcolor="#000066" style="color:#FFF;">Total Number of Tests</th>';
 			$PDF_content.='</tr>';
-			$PDF_content.='<tr><td align="center" style="width:50%;">'.$pdf_results['less_than500'].'</td>';
+			$PDF_content.='<tr><td align="center" style="width:50%;">'.$pdf_results['less_than350'].'</td>';
 			$PDF_content.='<td align="center" style="width:50%;">'.$pdf_results['count'].'</td></tr></table>';
 		
-			$PDF_content.='<br />'.$pdf_results['table']; //place details in table
+			$PDF_content.=$table_style.'<br />'.$pdf_results['table']; //place details in table
 
 			$mpdf->SetWatermarkText('NASCOP',0.09);//Water Mark Text
 			$mpdf ->watermark_size="0.2";
@@ -156,6 +205,11 @@ function daemon_critical_monthly_email()
 
 			$email_receipients=array_merge($partner_receipients,$county_receipients);
 
+			echo $results['facility_name'];
+			echo "<pre>";
+			print_r($email_receipients);
+			echo "</pre>";
+
 			$this->email->from('cd4poc@gmail.com', 'CD4 PIMA Notification');
 			$this->email->to($email_receipients);//send to specific receiver
 			$this->email->bcc($CHAI_team);//CHAI team
@@ -167,9 +221,8 @@ function daemon_critical_monthly_email()
 								<br /><br />They require a Follow Up Viral Load Test & Initiation into treatment.
 								<br /><br />Many Thanks.
 								<br /><br />NB: You can access the system by following link below
-								<br /><br /><b>http://www.nascop.org/cd4Poc/login</b>
+								<br /><br /><b>http://www.nascop.org/cd4Poc</b>
 								<br /><br />CD4 Support Team
-								<br /><br />--
 								<br /><br />Please do NOT reply to this message as it is sent from an unattended mailbox.";
 
 			$this->email->message($message);// the message
@@ -186,7 +239,7 @@ function daemon_critical_monthly_email()
 		}
 		
 	}
-	//delete_files($this->config->item('server_root').'assets/email/');//delete the files
+	delete_files($this->config->item('server_root').'assets/monthly_critical/');//delete the files
 }
 /* |==================== Monthly Critical Patients Email function END =================| */
 
@@ -194,6 +247,8 @@ function daemon_critical_monthly_email()
 
 function daemon_monthly_activity_email()
 {
+	ini_set('max_execution_time', 2000);
+
 	$month=date('m');
 	$year=date('Y');
 
@@ -216,10 +271,6 @@ function daemon_monthly_activity_email()
 	}
 
 	$pdf_results="";
-	$all_data="";
-	$login_id="";
-	$report_type=3;
-	$Device="";
 	$email_receipients=array();
 
 	//CHAI team
@@ -349,37 +400,40 @@ function daemon_monthly_activity_email()
 
 			$email_receipients=array_merge($partner_receipients,$county_receipients);
 
-			// $this->email->from('cd4poc@gmail.com', 'CD4 PIMA Notification');
-			// $this->email->to($email_receipients);//send to specific receiver
-			// $this->email->bcc($CHAI_team);//CHAI team
+			echo $results['facility_name'];
+			echo "<pre>";
+			print_r($email_receipients);
+			echo "</pre>";
+
+			$this->email->from('cd4poc@gmail.com', 'CD4 PIMA Notification');
+			$this->email->to($email_receipients);//send to specific receiver
+			$this->email->bcc($CHAI_team);//CHAI team
 			
-			// $this->email->subject('Tests < 500 cp/ml Monthly Report'); //subject
-			// $this->email->attach($file);//attach the facility pdf document
+			$this->email->subject('Monthly Report'); //subject
+			$this->email->attach($file);//attach the facility pdf document
 
-			// $message="Hi.<br /><br />Please Find Attached the summary for PIMA Test uploads for the month of ".$month."
-			// 					<br /><br />
-			// 					<br /><br />Many Thanks.
-			// 					<br /><br />NB: You can access the system by following link below
-			// 					<br /><br /><b>http://www.nascop.org/cd4Poc/login</b>
-			// 					<br /><br />CD4 Support Team
-			// 					<br /><br />--
-			// 					<br /><br />Please do NOT reply to this message as it is sent from an unattended mailbox.";
+			$message="Hi.<br /><br />Please Find Attached the summary for PIMA Test uploads for the month of ".$the_month."
+								<br /><br />
+								<br /><br />Many Thanks.
+								<br /><br />NB: You can access the system by following link below
+								<br /><br /><b>http://www.nascop.org/cd4Poc</b>
+								<br /><br />CD4 Support Team
+								<br /><br />Please do NOT reply to this message as it is sent from an unattended mailbox.";
 
-			// $this->email->message($message);// the message
+			$this->email->message($message);// the message
 
-			// if($this->email->send())//send email and check if the email was sent
-			// {	
-			// 	$this->email->clear(TRUE);//clear any attachments on the email
-			// }
-			// else 
-			// {
-			// 	show_error($this->email->print_debugger());//show error message
-			// } 
+			if($this->email->send())//send email and check if the email was sent
+			{	
+				$this->email->clear(TRUE);//clear any attachments on the email
+			}
+			else 
+			{
+				show_error($this->email->print_debugger());//show error message
+			} 
 
 		}
-		break;
 	}
-	//delete_files($this->config->item('server_root').'assets/email/');//delete the files
+	delete_files($this->config->item('server_root').'assets/monthly_activity/');//delete the files
 }
 /* |==================== Monthly Activity Email function END =================| */
  
@@ -387,10 +441,11 @@ function daemon_monthly_activity_email()
 
 function daemon_weekly_email()
 {
-	ini_set('max_execution_time', 600);
+	ini_set('max_execution_time', 2000);
 
 	$last_monday_date=date('Y-m-d',strtotime('last monday'));//last monday
 	$last_sunday_date=date('Y-m-d',strtotime('last sunday'));//last sunday
+
 
 	$last_monday=date('jS F Y',strtotime('last monday'));
 	$last_sunday=date('jS F Y',strtotime('last sunday'));
@@ -483,19 +538,20 @@ function daemon_weekly_email()
 				$e->getMessage();
 			}
 
+			/*|====================== National Team Email =========================== |*/
 			$this->email->from('cd4poc@gmail.com', 'CD4 PIMA Notification');
 	
 			$this->email->to($National_team);//send to CHAI team
 			$this->email->bcc($CHAI_team);//send to CHAI team
 			//$this->email->to('brianhawi92@gmail.com');
 
-			$this->email->subject('Weekly National Activty Report'); //subject
+			$this->email->subject('Weekly National Activity Report'); //subject
 			$this->email->attach($file);//attach the pdf document
 
 			$message="Hi.<br /><br />Please find attached the summary for PIMA Test uploads for the week ending ".$last_monday." and ".$last_sunday.".
 								<br /><br />Many Thanks.
 								<br /><br />NB: You can access the system by following link below
-								<br /><br /><b>http://www.nascop.org/cd4Poc/login</b>
+								<br /><br /><b>http://www.nascop.org/cd4Poc</b>
 								<br /><br />CD4 Support Team
 								<br /><br />--
 								<br /><br />Please do NOT reply to this message as it is sent from an unattended mailbox.";
@@ -511,9 +567,10 @@ function daemon_weekly_email()
 				show_error($this->email->print_debugger());//show error message
 			}
 		  	break;//break to not loop again
-		 }
+	 	 }
 		
-	}
+	 }
+	
 	$uploaded_counties=$this->send_mail_model->uploads_by_county($last_monday_date,$last_sunday_date);
 
 	foreach($uploaded_counties as $results)//begin foreach loop for counties
@@ -592,12 +649,11 @@ function daemon_weekly_email()
 			print_r($county_receipients);
 			 echo "</pre>";
 			echo "<br />";
+			/*|====================== County Cordinators Team Email =========================== |*/
 			$this->email->from('cd4poc@gmail.com', 'CD4 PIMA Notification');
 			
 			$this->email->to($county_receipients); //send to specific receiver
 			$this->email->bcc($CHAI_team); //CHAI team
-
-			//$this->email->to('brianhawi92@gmail.com');
 
 			$this->email->subject('Weekly Activity Report'); //subject
 			$this->email->attach($file);//attach the pdf document
@@ -606,9 +662,8 @@ function daemon_weekly_email()
 								<br /><br />These tests are for the previous week
 								<br /><br />Many Thanks.
 								<br /><br />NB: You can access the system by following link below
-								<br /><br /><b>http://www.nascop.org/cd4Poc/login</b>
+								<br /><br /><b>http://www.nascop.org/cd4Poc</b>
 								<br /><br />CD4 Support Team
-								<br /><br />--
 								<br /><br />Please do NOT reply to this message as it is sent from an unattended mailbox.";
 
 			$this->email->message($message);// the message
@@ -620,9 +675,9 @@ function daemon_weekly_email()
 			{
 				show_error($this->email->print_debugger());//show error message
 			}
-		}
+	 	}
 		
-	}
+	 }
 
 	$uploaded_partners=$this->send_mail_model->uploads_by_partner($last_monday_date,$last_sunday_date);//get uploaded data by partner
 
@@ -703,11 +758,11 @@ function daemon_weekly_email()
 			print_r($partner_receipients);
 			echo "</pre>";
 			echo "...<br />";
-			$this->email->from('cd4poc@gmail.com', 'CD4 PIMA Notification');
-			// $this->email->to($partner_receipients); //send to specific receivers
-			// $this->email->bcc($CHAI_team); //CHAI team
 
-			$this->email->to('brianhawi92@gmail.com');
+			/*|====================== Partners Team Email =========================== |*/
+			$this->email->from('cd4poc@gmail.com', 'CD4 PIMA Notification');
+			$this->email->to($partner_receipients); //send to specific receivers
+			$this->email->bcc($CHAI_team); //CHAI team
 
 			$this->email->subject('Weekly Activity Report'); //subject
 			$this->email->attach($file);//attach the pdf document
@@ -715,9 +770,8 @@ function daemon_weekly_email()
 			$message="Hi.<br /><br />Please find attached the summary for PIMA Test uploads for the week ending ".$last_monday." and ".$last_sunday." for ".$results['partner_name'].".
 								<br /><br />Many Thanks.
 								<br /><br />NB: You can access the system by following link below
-								<br /><br /><b>http://www.nascop.org/cd4Poc/login</b>
+								<br /><br /><b>http://www.nascop.org/cd4Poc</b>
 								<br /><br />CD4 Support Team
-								<br /><br />--
 								<br /><br />Please do NOT reply to this message as it is sent from an unattended mailbox.";
 
 			$this->email->message($message);// the message
@@ -733,10 +787,10 @@ function daemon_weekly_email()
 		}
 	}
 
-	die;
-	// delete_files($this->config->item('server_root').'assets/weekly_email_national/');//delete the files
-	// delete_files($this->config->item('server_root').'assets/weekly_email_county/');//delete the files
-	// delete_files($this->config->item('server_root').'assets/weekly_email_partner/');//delete the files
+	//die;
+	delete_files($this->config->item('server_root').'assets/weekly_email_national/');//delete the files
+	delete_files($this->config->item('server_root').'assets/weekly_email_county/');//delete the files
+	delete_files($this->config->item('server_root').'assets/weekly_email_partner/');//delete the files
 
 }
 /* |==================== Weekly Email function END =================| */	
