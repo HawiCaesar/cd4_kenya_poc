@@ -74,6 +74,31 @@ class cd4_reports extends MY_Controller
 
 		$this->template($data);//load template and put data on page
 	}
+	function excel_file()
+	{
+		$this->load->model('cd4_reports_model'); //load cd4_reports_model
+
+		if($this->get_start())
+		{
+			$start=$this->get_start();
+			$stop=$this->get_stop();
+		}else
+		{	
+			$start = date('Y-m-d', strtotime("first day of -1 months"));
+			$stop = $stop=date('Y-m-d',strtotime('last day of -1 months'));
+		}
+
+		$PHPExcel[]=$this->cd4_reports_model->excel_file_download($start,$stop);
+
+		$filename="CD4 Reporting_".date('jS F Y',strtotime($start))."-".date('jS F Y',strtotime($stop)).".xlsx";
+		
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');// *can use ms-excel2007
+		header('Content-Disposition: attachment;filename="'.$filename.'" ');
+		header('Cache-Control: max-age=0');
+		$obWrite=PHPExcel_IOFactory::createWriter($this->excel,'Excel2007');
+		$obWrite->save('php://output');	
+		
+	}
  	public function getfacilitiesreportingpima(){
 		
 		$sql 	= "SELECT * 
@@ -89,7 +114,7 @@ class cd4_reports extends MY_Controller
 		if($this-> session-> userdata('cd4_start_date')){
 			return date("Y-m-d",strtotime($this-> session-> userdata('cd4_start_date')));
 		}else{
-				//		
+			
 			return 0;
 		}
 	}

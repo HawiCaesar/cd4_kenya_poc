@@ -2,11 +2,11 @@
 	<div class="section-title"><center><b><strong>CD4 Reporting - <?php 
 				if($this->session->userdata('cd4_filter_desc'))
 				{
-					echo $this->session->userdata('cd4_filter_desc');
+					echo $this->session->userdata('cd4_filter_desc')." | <a href='".base_url()."admin/cd4_reports/excel_file'>Download Excel File</a>";
 				}
 				else
 				{
-					echo date('F , Y', strtotime("-1 months"));
+					echo date('F , Y', strtotime("-1 months"))." | <a href='".base_url()."admin/cd4_reports/excel_file'>Download Excel File</a>";
 				}
 
 				 ?></strong></b></center></div>
