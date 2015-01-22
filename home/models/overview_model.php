@@ -39,25 +39,32 @@ class overview_model extends MY_Model{
 
 		//if date is set
 		if(!$from==""||!$from==0||!$from==null){
-			//$date_delimiter	=	"AND `cd4_test`.`result_date` between '$from' and '$to'";
-			$date_delimiter	=	" AND MONTH(`cd4_test`.`result_date`) BETWEEN '".date('m',strtotime($from))."' AND '".date('m',strtotime($to))."'
+
+			if($this->session->userdata('custom_filter'))
+			{
+				$date_delimiter	=	"AND `cd4_test`.`result_date` between '$from' and '$to'";
+			}else
+			{
+				$date_delimiter	=	" AND MONTH(`cd4_test`.`result_date`) BETWEEN '".date('m',strtotime($from))."' AND '".date('m',strtotime($to))."'
 								  AND YEAR(`cd4_test`.`result_date`) BETWEEN '".date('Y',strtotime($from))."' AND '".date('Y',strtotime($to))."' ";
+			}
+			
 		}
 		//USER FILTER
-		$user_delimiter=$this->get_user_sql_where_delimiter();
+		// $user_delimiter=$this->get_user_sql_where_delimiter();
 
-		$user_group  = $this->session->userdata("user_group_id");
-		$user_filter= $this->session->userdata("user_filter");
+		// $user_group  = $this->session->userdata("user_group_id");
+		// $user_filter= $this->session->userdata("user_filter");
 
-		if($user_group==3 && sizeof($user_filter)> 0 ){
-			$user_delimiter 	= 	" AND `partner_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==6 && sizeof($user_filter)> 0 ){
-			$user_delimiter 	= 	" AND `facility_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==8 && sizeof($user_filter)> 0 ){
-			$user_delimiter 	= 	" AND `district_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==9 && sizeof($user_filter)> 0 ){
-			$user_delimiter 	= 	" AND `region_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}
+		// if($user_group==3 && sizeof($user_filter)> 0 ){
+		// 	$user_delimiter 	= 	" AND `partner_id` ='".$user_filter[0]['user_filter_id']."' ";
+		// }elseif($user_group==6 && sizeof($user_filter)> 0 ){
+		// 	$user_delimiter 	= 	" AND `facility_id` ='".$user_filter[0]['user_filter_id']."' ";
+		// }elseif($user_group==8 && sizeof($user_filter)> 0 ){
+		// 	$user_delimiter 	= 	" AND `district_id` ='".$user_filter[0]['user_filter_id']."' ";
+		// }elseif($user_group==9 && sizeof($user_filter)> 0 ){
+		// 	$user_delimiter 	= 	" AND `region_id` ='".$user_filter[0]['user_filter_id']."' ";
+		// }
 
 		$pima_test_sql	=	"SELECT 	`totals_res`.`totals` ,
 								        `fails_res`.`fails`,
@@ -372,7 +379,7 @@ class overview_model extends MY_Model{
 	 function yearly_pima_result_trend($year){
 
 		$from=$year.'-01-01';
-		$to=date('Y-m-d');
+		$to=date(''.$year.'-12-31');
 
 		$user_delimiter ="";
 		
@@ -420,7 +427,7 @@ class overview_model extends MY_Model{
 	function yearly_pima_errors_trend($year){
 		
 		$from=$year.'-01-01';
-		$to=date('Y-m-d');
+		$to=date(''.$year.'-12-31');
 
 		$user_delimiter ="";
 
@@ -456,9 +463,17 @@ class overview_model extends MY_Model{
 		
 		if(!$from==""||!$from==0||!$from==null){
 
-			$sql="call periodic_test_error_perc('$from','$to')";
-		}
 
+			if($this->session->userdata('custom_filter'))
+			{
+				$sql="call periodic_test_error_perc_customized_dates('$from','$to')";
+			}
+			else
+			{
+				$sql="call periodic_test_error_perc(".date('m',strtotime($from)).",".date('m',strtotime($to)).",
+																".date('Y',strtotime($from)).",".date('Y',strtotime($to)).")";
+			}
+		}
 		$tests=$this->db->query($sql);
 
 		$tests_results=$tests->row_array();
@@ -477,27 +492,32 @@ class overview_model extends MY_Model{
         $user_delimiter ="";
 		$error_results=array();
 
-		$user_group  = $this->session->userdata("user_group_id");
-		$user_filter= $this->session->userdata("user_filter");
+		// $user_group  = $this->session->userdata("user_group_id");
+		// $user_filter= $this->session->userdata("user_filter");
 		
-		if($user_group==3 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
-			$user_delimiter 	= 	" `partner_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==6 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
-			$user_delimiter 	= 	" `facility_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==8 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
-			$user_delimiter 	= 	" `district_id` ='".$user_filter[0]['user_filter_id']."' ";
-		}elseif($user_group==9 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
-			$user_delimiter 	= 	" `region_id` ='".$user_filter[0]['user_filter_id']."' ";
+		// if($user_group==3 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+		// 	$user_delimiter 	= 	" `partner_id` ='".$user_filter[0]['user_filter_id']."' ";
+		// }elseif($user_group==6 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+		// 	$user_delimiter 	= 	" `facility_id` ='".$user_filter[0]['user_filter_id']."' ";
+		// }elseif($user_group==8 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+		// 	$user_delimiter 	= 	" `district_id` ='".$user_filter[0]['user_filter_id']."' ";
+		// }elseif($user_group==9 && sizeof($user_filter)> 0 && $this->session->userdata("user_filter_used")!=0  ){
+		// 	$user_delimiter 	= 	" `region_id` ='".$user_filter[0]['user_filter_id']."' ";
+		// }
+		if(!$user_delimiter)
+		{
+			$user_delimiter='1';
 		}
 
 		if(!$from==""||!$from==0||!$from==null){
 
-			if($user_delimiter)
+			if($this->session->userdata('custom_filter'))
 			{
-				$sql="call periodic_facility_pima_errors('$from','$to','$user_delimiter')";
+				$sql="call periodic_facility_pima_errors_cutomized_dates('$from','$to','$user_delimiter')";
 			}else
 			{
-				$sql="call periodic_facility_pima_errors('$from','$to','1')";
+				$sql="call periodic_facility_pima_errors(".date('m',strtotime($from)).",".date('m',strtotime($to)).",
+																".date('Y',strtotime($from)).",".date('Y',strtotime($to)).",'$user_delimiter')";
 			}
 			
 		}
@@ -514,7 +534,10 @@ class overview_model extends MY_Model{
 		
 		$errors_reported_assoc->next_result();
 		$errors_reported_assoc->free_result();
-
+		// echo "<pre>";
+		// print_r($error_results);
+		// echo "</pre>";
+		// die;
 		return $error_results;
 	}
 	function month_categories(){
